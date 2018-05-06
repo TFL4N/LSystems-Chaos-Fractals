@@ -25,6 +25,10 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
         NotificationCenter.default.addObserver(self, selector: #selector(handleVariableDidChange(_:)), name: Notifications.VariableTypeDidChangeNotification, object: nil)
     }
     
+    @objc func saveDocument(_: Any?) {
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
