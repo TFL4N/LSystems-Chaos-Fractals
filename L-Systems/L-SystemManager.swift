@@ -31,8 +31,9 @@ enum VariableType: String {
     static let allTypeStrings = VariableType.allTypes.map {$0.rawValue}
 }
 
-class LSystemManager {
+class LSystem {
     var axiom = Axiom()
+    var iterations: Int = 0
     var rules: [Rule] = []
     var variables: [Variable] = []
     
@@ -43,4 +44,8 @@ class LSystemManager {
     func addNewVariable() {
         self.variables.append(Variable())
     }
+}
+
+class LSystemManager {
+    var system: LSystem = LSystem()
 }

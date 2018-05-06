@@ -13,6 +13,9 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
     var l_system_manager: LSystemManager = LSystemManager()
     
     @IBOutlet weak var axiomTextField: NSTextField!;
+    @IBOutlet weak var iterationsTextField: NSTextField!;
+    @IBOutlet weak var iterationsStepper: NSStepper!;
+    
     @IBOutlet weak var variableTableView: NSTableView!;
     @IBOutlet weak var ruleTableView: NSTableView!;
     
@@ -28,6 +31,9 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
         // axiom text field
         self.axiomTextField.delegate = self
         
+        // iterations text field
+        self.iterationsTextField.delegate = self
+        
         // variables table view
         self.variableTableView.dataSource = self
         self.variableTableView.delegate = self
@@ -40,28 +46,42 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
         self.ruleTableView.usesAutomaticRowHeights = true
     }
     
-    override func controlTextDidChange(_ obj: Notification) {
-        if let textField = obj.object as? NSTextField {
-            if self.axiomTextField.identifier == textField.identifier {
-                self.l_system_manager.axiom.value = self.axiomTextField.stringValue
-            }
-        }
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        
+        self.refreshView()
+    }
+    
+    func refreshView() {
+        self.iterationsTextField.stringValue = "\(self.l_system_manager.system.iterations)"
+        self.iterationsStepper.integerValue = self.l_system_manager.system.iterations
     }
     
     // MARK: Actions
     @IBAction func addRule(_: Any?) {
-        self.l_system_manager.addNewRule()
+        self.l_system_manager.system.addNewRule()
         self.ruleTableView.reloadData()
     }
     
     @IBAction func addVariable(_: Any?) {
-        self.l_system_manager.addNewVariable()
+        self.l_system_manager.system.addNewVariable()
         self.variableTableView.reloadData()
     }
     
-    // MARK: Notifications Handlers
-    @objc private func handleVariableDidChange(_ notification: Notification) {
-        self.ruleTableView.reloadData()
+    @IBAction func handleIterationsStepper(_ sender:Any?) {
+        if let stepper = sender as? NSStepper {
+            self.l_system_manager.system.iterations = stepper.integerValue
+            self.refreshView()
+        }
+    }
+    
+    // MARK: TextField Delegate
+    override func controlTextDidChange(_ obj: Notification) {
+        if let textField = obj.object as? NSTextField {
+            if self.axiomTextField.identifier == textField.identifier {
+                self.l_system_manager.system.axiom.value = self.axiomTextField.stringValue
+            }
+        }
     }
     
     // MARK: TableView DataSource
@@ -74,9 +94,9 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
     
     func numberOfRows(in tableView: NSTableView) -> Int {
         if tableView == self.ruleTableView {
-            return self.l_system_manager.rules.count
+            return self.l_system_manager.system.rules.count
         } else if tableView == self.variableTableView {
-            return self.l_system_manager.variables.count
+            return self.l_system_manager.system.variables.count
         }
         
         return 0
@@ -95,11 +115,11 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
             }
             
             // fill with data
-            let rule = self.l_system_manager.rules[row]
+            let rule = self.l_system_manager.system.rules[row]
             let rule_cell = cell as! RuleCellView
             rule_cell.rule = rule
         } else if tableView == self.variableTableView {
-            let variable = self.l_system_manager.variables[row]
+            let variable = self.l_system_manager.system.variables[row]
             
             if tableColumn == self.variableTableView.tableColumns[0] {
                 // create cell
@@ -131,5 +151,10 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
         }
         
         return cell
+    }
+    
+    // MARK: Notifications Handlers
+    @objc private func handleVariableDidChange(_ notification: Notification) {
+        self.ruleTableView.reloadData()
     }
 }
