@@ -25,6 +25,8 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
     @IBOutlet weak var variableTableView: NSTableView!;
     @IBOutlet weak var ruleTableView: NSTableView!;
     
+    @IBOutlet weak var outputStringTextView: NSTextView!;
+    
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         
@@ -83,6 +85,14 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
         if let stepper = sender as? NSStepper {
             self.l_system_manager?.system.iterations = stepper.integerValue
             self.refreshStepperView()
+        }
+    }
+    
+    @IBAction func createString(_: Any?) {
+        do {
+            self.outputStringTextView.string = try self.l_system_manager!.createLSystemString()
+        } catch {
+            self.outputStringTextView.string = "\(error)"
         }
     }
     

@@ -146,13 +146,56 @@ class LSystem: NSObject, NSCoding {
     func addNewVariable() {
         self.variables.append(Variable())
     }
+    
+    func rule(withVariableName name: String) -> Rule? {
+        for r in self.rules {
+            if r.variable == name {
+                return r
+            }
+        }
+        
+        return nil
+    }
 }
 
 class LSystemManager {
     var system: LSystem = LSystem()
     
-    func createLSystemString() -> String {
+    enum LSystemError: Error {
+        case RuleNotFound
+    }
+    
+    static let reservedCharacters = ["[","]","\\","|","/"]
+    
+    func createLSystemString() throws -> String {
         var str = self.system.axiom.value
+        
+        if self.system.iterations == 0 {
+            return str
+        }
+        
+        for _ in 1...self.system.iterations {
+            var working = ""
+            
+            var range = str.startIndex...str.startIndex
+            while range.upperBound < str.endIndex {
+                let el = String(str[range])
+                
+                if !LSystemManager.reservedCharacters.contains(el) {
+                    if let rule = self.system.rule(withVariableName: String(el)) {
+                        working.append(rule.value)
+                    } else {
+                        throw LSystemError.RuleNotFound
+                    }
+                }
+                
+                // loop condition
+                let index = str.index(after: range.upperBound)
+                range = index...index
+            }
+            
+            str = working
+        }
         
         return str
     }
