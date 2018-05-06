@@ -15,6 +15,9 @@
 		65F1EB2E206C8083007DF72B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65F1EB2C206C8083007DF72B /* Main.storyboard */; };
 		65F1EB3A206C8083007DF72B /* L_SystemsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F1EB39206C8083007DF72B /* L_SystemsTests.swift */; };
 		65F1EB45206C8083007DF72B /* L_SystemsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F1EB44206C8083007DF72B /* L_SystemsUITests.swift */; };
+		65F1EB53206C859C007DF72B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F1EB52206C859C007DF72B /* MainViewController.swift */; };
+		65F1EB55206C8AC8007DF72B /* L-SystemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F1EB54206C8AC8007DF72B /* L-SystemManager.swift */; };
+		65F1EB57206C9145007DF72B /* RuleTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F1EB56206C9145007DF72B /* RuleTableCellView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,9 @@
 		65F1EB40206C8083007DF72B /* L-SystemsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "L-SystemsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		65F1EB44206C8083007DF72B /* L_SystemsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L_SystemsUITests.swift; sourceTree = "<group>"; };
 		65F1EB46206C8083007DF72B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		65F1EB52206C859C007DF72B /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		65F1EB54206C8AC8007DF72B /* L-SystemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "L-SystemManager.swift"; sourceTree = "<group>"; };
+		65F1EB56206C9145007DF72B /* RuleTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleTableCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +116,9 @@
 				65F1EB2C206C8083007DF72B /* Main.storyboard */,
 				65F1EB2F206C8083007DF72B /* Info.plist */,
 				65F1EB30206C8083007DF72B /* L_Systems.entitlements */,
+				65F1EB52206C859C007DF72B /* MainViewController.swift */,
+				65F1EB56206C9145007DF72B /* RuleTableCellView.swift */,
+				65F1EB54206C8AC8007DF72B /* L-SystemManager.swift */,
 			);
 			path = "L-Systems";
 			sourceTree = "<group>";
@@ -268,7 +277,10 @@
 				65F1EB28206C8083007DF72B /* Shaders.metal in Sources */,
 				65F1EB24206C8083007DF72B /* GameViewController.swift in Sources */,
 				65F1EB26206C8083007DF72B /* Renderer.swift in Sources */,
+				65F1EB57206C9145007DF72B /* RuleTableCellView.swift in Sources */,
 				65F1EB22206C8083007DF72B /* AppDelegate.swift in Sources */,
+				65F1EB53206C859C007DF72B /* MainViewController.swift in Sources */,
+				65F1EB55206C8AC8007DF72B /* L-SystemManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
