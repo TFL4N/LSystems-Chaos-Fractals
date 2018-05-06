@@ -8,22 +8,24 @@
 
 import Foundation
 
-class Rule: NSCoding {
+class Rule: NSObject, NSCoding {
     var variable: String = ""
     var value: String = ""
     
-    init() {
-        
+    override init() {
+        super.init()
     }
     
     init(variable: String, value: String) {
+        super.init()
+        
         self.variable = variable
         self.value = value
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
         guard let variable = aDecoder.decodeObject(forKey: "variable") as? String,
-            let value = aDecoder.decodeObject(forKey: "value") as? String
+            let value = aDecoder.decodeObject(forKey: "var_value") as? String
             else { return nil }
         
         self.init(variable: variable, value: value)
@@ -31,42 +33,46 @@ class Rule: NSCoding {
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(self.variable, forKey: "variable")
-        aCoder.encode(self.value, forKey: "value")
+        aCoder.encode(self.value, forKey: "var_value")
     }
 }
 
-class Axiom: NSCoding {
+class Axiom: NSObject, NSCoding {
     var value: String = ""
     
-    init() {
-        
+    override init() {
+        super.init()
     }
     
     init(value: String) {
+        super.init()
+        
         self.value = value
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        guard let value = aDecoder.decodeObject(forKey: "value") as? String
+        guard let value = aDecoder.decodeObject(forKey: "axiom_value") as? String
             else { return nil }
         
         self.init(value: value)
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.value, forKey: "value")
+        aCoder.encode(self.value, forKey: "axiom_value")
     }
 }
 
-class Variable: NSCoding {
+class Variable: NSObject, NSCoding {
     var name: String = ""
     var type: VariableType = .Draw
     
-    init() {
-        
+    override init() {
+        super.init()
     }
     
     init(name: String, type: VariableType) {
+        super.init()
+        
         self.name = name
         self.type = type
     }
@@ -94,17 +100,19 @@ enum VariableType: String {
     static let allTypeStrings = VariableType.allTypes.map {$0.rawValue}
 }
 
-class LSystem: NSCoding {
+class LSystem: NSObject, NSCoding {
     var axiom = Axiom()
     var iterations: Int = 0
     var rules: [Rule] = []
     var variables: [Variable] = []
     
-    init() {
-        
+    override init() {
+        super.init()
     }
     
     init(axiom: Axiom, iterations: Int, rules: [Rule], variables: [Variable]) {
+        super.init()
+        
         self.axiom = axiom
         self.iterations = iterations
         self.rules = rules
