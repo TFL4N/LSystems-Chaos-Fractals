@@ -1,5 +1,5 @@
 //
-//  RuleView.swift
+//  RuleCellView.swift
 //  L-Systems
 //
 //  Created by Spizzace on 3/28/18.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class RuleTableCellView: NSTableCellView, NSTextFieldDelegate {
+class RuleCellView: NSTableCellView, NSTextFieldDelegate {
 
     var lhsTextField: NSTextField!
     var rhsTextField: NSTextField!
@@ -36,9 +36,10 @@ class RuleTableCellView: NSTableCellView, NSTextFieldDelegate {
         
         let views: [String:Any] = ["lhs": self.lhsTextField,
                      "rhs": self.rhsTextField]
+        let metrics: [String:NSNumber] = ["marg": Style.TableCellMargin_Height]
         
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[lhs(100)]-[rhs]-|", options: .alignAllCenterY, metrics: nil, views: views))
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[lhs]-|", options: [], metrics: nil, views: views))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-marg-[lhs(100)]-[rhs]-marg-|", options: .alignAllCenterY, metrics: metrics, views: views))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-marg-[lhs]-marg-|", options: [], metrics: metrics, views: views))
     }
     
     required init?(coder decoder: NSCoder) {

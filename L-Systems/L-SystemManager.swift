@@ -17,11 +17,30 @@ class Axiom {
     var value: String = ""
 }
 
+class Variable {
+    var name: String = ""
+    var type: VariableType = .Draw
+}
+
+enum VariableType: String {
+    case Draw = "Draw"
+    case NonDraw = "Non-Draw"
+    case Angle = "Angle"
+    
+    static let allTypes = [Draw, NonDraw, Angle]
+    static let allTypeStrings = VariableType.allTypes.map {$0.rawValue}
+}
+
 class LSystemManager {
     var axiom = Axiom()
     var rules: [Rule] = []
+    var variables: [Variable] = []
     
     func addNewRule() {
         self.rules.append(Rule())
+    }
+    
+    func addNewVariable() {
+        self.variables.append(Variable())
     }
 }
