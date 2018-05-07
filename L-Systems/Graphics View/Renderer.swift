@@ -91,8 +91,6 @@ class Renderer: NSObject, MTKViewDelegate {
             let color_length = colors.count * MemoryLayout.size(ofValue: colors[0])
             
             self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
-            
-            print(vertices)
         } catch {
             throw error
         }

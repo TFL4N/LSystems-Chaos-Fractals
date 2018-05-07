@@ -194,7 +194,7 @@ class LSystemManager {
         case MissingAngleVariable
     }
     
-    static let reservedCharacters = ["[","]","\\","|","/"]
+    static let reservedCharacters = ["[","]","\\","|","/","-","+"]
     
     init(l_system: LSystem) {
         self.system = l_system
@@ -271,20 +271,23 @@ class LSystemManager {
             let el = String(working[currentRange])
             
             if LSystemManager.reservedCharacters.contains(el) {
+                if ["[","]","-","+"].contains(el) {
+                    guard angleValue != nil else {
+                        throw LSystemError.MissingAngleVariable
+                    }
+                }
+                
                 switch el {
-                case "[", "]":
-                    guard let angle = angleValue else {
-                      throw LSystemError.MissingAngleVariable
-                    }
-                    
-                    if el == "[" {
-                        positionStack.push((currentPos, currentAngle))
-                        currentAngle -= angle
-                    } else {
-                        (currentPos, currentAngle) = positionStack.pop()
-                        currentAngle += angle
-                    }
-                    
+                case "[":
+                    positionStack.push((currentPos, currentAngle))
+                    currentAngle -= angleValue!
+                case "]":
+                    (currentPos, currentAngle) = positionStack.pop()
+                    currentAngle += angleValue!
+                case "-":
+                    currentAngle -= angleValue!
+                case "+":
+                    currentAngle += angleValue!
                 default:
                     throw LSystemError.UnsupportedReserveCharacter
                 }
@@ -305,8 +308,8 @@ class LSystemManager {
                         appendPosition(currentPos, buffer: &outputBuffer)
                         
                         // move turtle
-                        let new_x = sinf(currentAngle) * currentSegmentLength
-                        let new_y = cosf(currentAngle) * currentSegmentLength
+                        let new_x = sinf(radians_from_degrees(currentAngle)) * currentSegmentLength
+                        let new_y = cosf(radians_from_degrees(currentAngle)) * currentSegmentLength
                         let new_z = Float(0.0)
                         
                         currentPos += Position(x: new_x, y: new_y, z: new_z)
