@@ -33,15 +33,15 @@ class LGraphicsViewController: NSViewController {
 
         mtkView.device = defaultDevice
 
-        guard let newRenderer = Renderer(metalKitView: mtkView, l_system: self.l_system!) else {
-            print("Renderer cannot be initialized")
+        do {
+            self.renderer = try Renderer(metalKitView: mtkView, l_system: self.l_system!)
+        } catch {
+            print("Renderer cannot be initialized: \(error)")
             return
         }
 
-        renderer = newRenderer
+        self.renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
 
-        renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
-
-        mtkView.delegate = renderer
+        mtkView.delegate = self.renderer
     }
 }

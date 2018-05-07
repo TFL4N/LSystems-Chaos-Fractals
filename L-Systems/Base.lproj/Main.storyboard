@@ -694,9 +694,6 @@
                             <outlet property="delegate" destination="gth-8A-Eyl" id="zf5-zK-3O8"/>
                         </connections>
                     </window>
-                    <connections>
-                        <segue destination="qDo-Nm-xKe" kind="relationship" relationship="window.shadowedContentViewController" id="KPD-N9-f8g"/>
-                    </connections>
                 </windowController>
                 <customObject id="D0i-XY-KNT" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1146,7 +1143,7 @@
         <!--Graphics View Controller-->
         <scene sceneID="xIX-Xn-yFc">
             <objects>
-                <viewController id="qDo-Nm-xKe" customClass="LGraphicsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Graphics Controller" id="qDo-Nm-xKe" customClass="LGraphicsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="Eym-H5-yvN" customClass="MTKView">
                         <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>

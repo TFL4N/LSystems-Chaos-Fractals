@@ -268,7 +268,7 @@ class LSystemManager {
         let ruleMap = self.mapRules()
         
         while currentRange.upperBound < working.endIndex {
-            let el = String(working)
+            let el = String(working[currentRange])
             
             if LSystemManager.reservedCharacters.contains(el) {
                 switch el {

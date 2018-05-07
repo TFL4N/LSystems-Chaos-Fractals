@@ -36,7 +36,9 @@ class PopUpCellView: NSTableCellView {
     }
     
     @objc private func handleSelectedItem(sender: AnyObject) {
-        if let menuItem = sender as? NSMenuItem, let h = self.handler {
+        if  let button = sender as? NSPopUpButton,
+            let menuItem = button.selectedItem,
+            let h = self.handler {
             h(self, self.popUpButton.itemTitles.index(of: menuItem.title)!, menuItem.title)
         }
     }

@@ -34,13 +34,16 @@ class Renderer: NSObject, MTKViewDelegate {
     var uniforms: UnsafeMutablePointer<Uniforms>
     
     var vertexBuffer: MTLBuffer
+    var vertexCount: Int
+    
+    var colorBuffer: MTLBuffer
     
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     var rotation: Float = 0
     
     var l_system_manager: LSystemManager
     
-    init?(metalKitView: MTKView, l_system: LSystem) {
+    init(metalKitView: MTKView, l_system: LSystem) throws {
         self.l_system_manager = LSystemManager(l_system: l_system)
         self.device = metalKitView.device!
         self.commandQueue = self.device.makeCommandQueue()!
@@ -67,8 +70,8 @@ class Renderer: NSObject, MTKViewDelegate {
                                                                            metalKitView: metalKitView,
                                                                            mtlVertexDescriptor: mtlVertexDescriptor)
         } catch {
-            print("Unable to compile render pipeline state.  Error info: \(error)")
-            return nil
+            print("Unable to compile render pipeline state.")
+            throw error
         }
         
         // Build State Descriptor
@@ -82,11 +85,16 @@ class Renderer: NSObject, MTKViewDelegate {
             let vertices = try self.l_system_manager.buildLineVertexBuffer()
             let length = vertices.count * MemoryLayout.size(ofValue: vertices[0])
             self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
+            self.vertexCount = vertices.count
+            
+            let colors = Array<Float>(repeating: 0.0, count: self.vertexCount / 3 * 4)
+            let color_length = colors.count * MemoryLayout.size(ofValue: colors[0])
+            
+            self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
             
             print(vertices)
         } catch {
-            print(error)
-            return nil
+            throw error
         }
             
         super.init()
@@ -183,6 +191,7 @@ class Renderer: NSObject, MTKViewDelegate {
             let renderPassDescriptor = view.currentRenderPassDescriptor
             
             if let renderPassDescriptor = renderPassDescriptor {
+                renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 1.0, 1.0, 1.0)
                 
                 /// Final pass rendering code here
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
@@ -199,32 +208,18 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                     renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                     
+                    // set vertex buffer
+                    renderEncoder.setVertexBuffer(self.vertexBuffer, offset: 0, index: BufferIndex.vertexPositions.rawValue)
+                    renderEncoder.setFragmentBuffer(self.vertexBuffer, offset: 0, index: BufferIndex.vertexPositions.rawValue)
+                    
+                    // set color buffer
+                    renderEncoder.setVertexBuffer(self.colorBuffer, offset: 0, index: BufferIndex.vertexColors.rawValue)
+                    renderEncoder.setFragmentBuffer(self.colorBuffer, offset: 0, index: BufferIndex.vertexColors.rawValue)
+                    
                     // draw vertices
- //                   renderEncoder.draw
+                    renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: self.vertexCount)
                     
-                    
-//                    for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
-//                        guard let layout = element as? MDLVertexBufferLayout else {
-//                            return
-//                        }
-//
-//                        if layout.stride != 0 {
-//                            let buffer = mesh.vertexBuffers[index]
-//                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-//                        }
-//                    }
-//
-//                    renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
-//
-//                    for submesh in mesh.submeshes {
-//                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-//                                                            indexCount: submesh.indexCount,
-//                                                            indexType: submesh.indexType,
-//                                                            indexBuffer: submesh.indexBuffer.buffer,
-//                                                            indexBufferOffset: submesh.indexBuffer.offset)
-//
-//                    }
-                    
+                    // end encoding
                     renderEncoder.popDebugGroup()
                     
                     renderEncoder.endEncoding()
