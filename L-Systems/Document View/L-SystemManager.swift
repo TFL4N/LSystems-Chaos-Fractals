@@ -162,6 +162,26 @@ class LSystem: NSObject, NSCoding {
         
         return nil
     }
+    
+    func variable(withName name: String) -> Variable? {
+        for v in self.variables {
+            if v.name == name {
+                return v
+            }
+        }
+        
+        return nil
+    }
+    
+    func firstAngleVariable() -> Variable? {
+        for v in self.variables {
+            if v.type == .Angle {
+                return v
+            }
+        }
+        
+        return nil
+    }
 }
 
 class LSystemManager {
@@ -170,6 +190,8 @@ class LSystemManager {
     
     enum LSystemError: Error {
         case RuleNotFound
+        case UnsupportedReserveCharacter
+        case MissingAngleVariable
     }
     
     static let reservedCharacters = ["[","]","\\","|","/"]
@@ -212,5 +234,167 @@ class LSystemManager {
         
         self.output_str = str
         return self.output_str!
+    }
+    
+    func buildLineVertexBuffer() throws -> [Float] {
+        // working string
+        let working: String
+        if let str = self.output_str {
+            working = str
+        } else {
+            working = try self.createLSystemString()
+        }
+        
+        // output buffer
+        var outputBuffer = Array<Float>()
+        outputBuffer.reserveCapacity(self.output_str!.count * 2 * 3)
+        
+        // angle var
+        let angleVar = self.system.firstAngleVariable()
+        let angleValue: Float?
+        if let val = angleVar?.value  {
+            angleValue = Float(val)
+        } else {
+            angleValue = nil
+        }
+        
+        // state info
+        var currentPos: Position = Position()
+        var currentAngle: Float = 0.0
+        var currentRange = working.startIndex...working.startIndex
+        var currentSegmentLength: Float = 1.0
+        
+        let positionStack = PositionStack()
+        let ruleMap = self.mapRules()
+        
+        while currentRange.upperBound < working.endIndex {
+            let el = String(working)
+            
+            if LSystemManager.reservedCharacters.contains(el) {
+                switch el {
+                case "[", "]":
+                    guard let angle = angleValue else {
+                      throw LSystemError.MissingAngleVariable
+                    }
+                    
+                    if el == "[" {
+                        positionStack.push((currentPos, currentAngle))
+                        currentAngle -= angle
+                    } else {
+                        (currentPos, currentAngle) = positionStack.pop()
+                        currentAngle += angle
+                    }
+                    
+                default:
+                    throw LSystemError.UnsupportedReserveCharacter
+                }
+            } else {
+                guard let rule = ruleMap.first(where: { (item) -> Bool in
+                    if let variable = item.variable {
+                        return variable.name == el
+                    } else {
+                        return false
+                    }
+                }) else {
+                    throw LSystemError.RuleNotFound
+                }
+                
+                if let variable = rule.variable {
+                    if variable.type == .Draw {
+                        // append current pos
+                        appendPosition(currentPos, buffer: &outputBuffer)
+                        
+                        // move turtle
+                        let new_x = sinf(currentAngle) * currentSegmentLength
+                        let new_y = cosf(currentAngle) * currentSegmentLength
+                        let new_z = Float(0.0)
+                        
+                        currentPos += Position(x: new_x, y: new_y, z: new_z)
+                        
+                        // append new pos
+                        appendPosition(currentPos, buffer: &outputBuffer)
+                    }
+                }
+            }
+            
+            // loop condition
+            let index = working.index(after: currentRange.upperBound)
+            currentRange = index...index
+        }
+        
+        return outputBuffer
+    }
+    
+    private func appendPosition(_ position: Position, buffer: inout [Float]) {
+        buffer.append(position.x)
+        buffer.append(position.y)
+        buffer.append(position.z)
+    }
+    
+    private func mapRules() -> [RuleMapItem] {
+        var output: [RuleMapItem] = []
+        for r in self.system.rules {
+            output.append(RuleMapItem(rule: r, l_system: &self.system))
+        }
+        
+        return output
+    }
+    
+    struct Position {
+        var x: Float
+        var y: Float
+        var z: Float
+        
+        init() {
+            self.x = 0.0
+            self.y = 0.0
+            self.z = 0.0
+        }
+        
+        init(x: Float, y: Float, z: Float) {
+            self.x = x
+            self.y = y
+            self.z = z
+        }
+        
+        static func +(_ p1: Position, _ p2: Position) -> Position {
+            return Position(x: p1.x + p2.x,
+                            y: p1.y + p2.y,
+                            z: p1.z + p2.z)
+        }
+        
+        static func +=(_ p1: inout Position, _ p2: Position) {
+            p1.x += p2.x
+            p1.y += p2.y
+            p1.z += p2.z
+        }
+    }
+    
+    class PositionStack {
+        typealias Element = (pos: Position, angle: Float)
+        
+        private var stack: [Element] = []
+        
+        func push(pos: Position, angle: Float) {
+            self.push((pos,angle))
+        }
+        
+        func push(_ element: Element) {
+            stack.append(element)
+        }
+        
+        func pop() -> Element {
+            return stack.removeLast()
+        }
+    }
+    
+    class RuleMapItem {
+        let rule: Rule
+        let variable: Variable?
+        
+        init(rule: Rule, l_system: inout LSystem) {
+            self.rule = rule
+            self.variable = l_system.variable(withName: self.rule.variable)
+        }
     }
 }

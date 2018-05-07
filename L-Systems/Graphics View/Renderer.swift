@@ -23,15 +23,17 @@ class Renderer: NSObject, MTKViewDelegate {
     
     public let device: MTLDevice
     let commandQueue: MTLCommandQueue
-    var dynamicUniformBuffer: MTLBuffer
     var pipelineState: MTLRenderPipelineState
     var depthState: MTLDepthStencilState
     
     let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
-    
+
+    var dynamicUniformBuffer: MTLBuffer
     var uniformBufferOffset = 0
     var uniformBufferIndex = 0
     var uniforms: UnsafeMutablePointer<Uniforms>
+    
+    var vertexBuffer: MTLBuffer
     
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     var rotation: Float = 0
@@ -58,10 +60,10 @@ class Renderer: NSObject, MTKViewDelegate {
         metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm_srgb
         metalKitView.sampleCount = 1
         
-        let mtlVertexDescriptor = AAPLRenderer.buildMetalVertexDescriptor()
+        let mtlVertexDescriptor = Renderer.buildMetalVertexDescriptor()
         
         do {
-            pipelineState = try AAPLRenderer.buildRenderPipelineWithDevice(device: device,
+            pipelineState = try Renderer.buildRenderPipelineWithDevice(device: device,
                                                                            metalKitView: metalKitView,
                                                                            mtlVertexDescriptor: mtlVertexDescriptor)
         } catch {
@@ -76,9 +78,18 @@ class Renderer: NSObject, MTKViewDelegate {
         self.depthState = device.makeDepthStencilState(descriptor:depthStateDesciptor)!
         
         // Build Vertex Data
-        
+        do {
+            let vertices = try self.l_system_manager.buildLineVertexBuffer()
+            let length = vertices.count * MemoryLayout.size(ofValue: vertices[0])
+            self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
+            
+            print(vertices)
+        } catch {
+            print(error)
+            return nil
+        }
+            
         super.init()
-        
     }
     
     class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
@@ -89,19 +100,19 @@ class Renderer: NSObject, MTKViewDelegate {
         
         mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = MTLVertexFormat.float3
         mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
+        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.vertexPositions.rawValue
         
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].format = MTLVertexFormat.float2
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = 0
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshGenerics.rawValue
+        mtlVertexDescriptor.attributes[VertexAttribute.color.rawValue].format = MTLVertexFormat.float4
+        mtlVertexDescriptor.attributes[VertexAttribute.color.rawValue].offset = 0
+        mtlVertexDescriptor.attributes[VertexAttribute.color.rawValue].bufferIndex = BufferIndex.vertexColors.rawValue
         
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 12
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+        mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stride = 12
+        mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stepRate = 1
+        mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
-        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stride = 8
-        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stepRate = 1
-        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+        mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stride = 16
+        mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stepRate = 1
+        mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
         return mtlVertexDescriptor
     }
@@ -184,29 +195,34 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.setRenderPipelineState(pipelineState)
                     renderEncoder.setDepthStencilState(depthState)
                     
+                    // set uniform buffer
                     renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                     renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                    
+                    // draw vertices
+ //                   renderEncoder.draw
+                    
                     
 //                    for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
 //                        guard let layout = element as? MDLVertexBufferLayout else {
 //                            return
 //                        }
-//                        
+//
 //                        if layout.stride != 0 {
 //                            let buffer = mesh.vertexBuffers[index]
 //                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
 //                        }
 //                    }
-//                    
+//
 //                    renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
-//                    
+//
 //                    for submesh in mesh.submeshes {
 //                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
 //                                                            indexCount: submesh.indexCount,
 //                                                            indexType: submesh.indexType,
 //                                                            indexBuffer: submesh.indexBuffer.buffer,
 //                                                            indexBufferOffset: submesh.indexBuffer.offset)
-//                        
+//
 //                    }
                     
                     renderEncoder.popDebugGroup()
