@@ -123,7 +123,6 @@
 				6568AA9C209EFF65009B828A /* TextFieldCellView.swift */,
 				6568AA9E209F076E009B828A /* PopUpCellView.swift */,
 				6568AA96209EF33E009B828A /* VariableTypeCellView.swift */,
-				65F1EB54206C8AC8007DF72B /* L-SystemManager.swift */,
 			);
 			path = "Document View";
 			sourceTree = "<group>";
@@ -162,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				65F1EB21206C8083007DF72B /* AppDelegate.swift */,
+				65F1EB54206C8AC8007DF72B /* L-SystemManager.swift */,
 				6568AB35209F49EA009B828A /* Graphics View */,
 				6568AB36209F4A13009B828A /* Document View */,
 				6568AA9A209EF44F009B828A /* Style.swift */,

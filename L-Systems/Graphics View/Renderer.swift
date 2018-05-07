@@ -40,6 +40,7 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     var rotation: Float = 0
+    var scale: Float = 1.0
     
     var l_system_manager: LSystemManager
     
@@ -163,7 +164,11 @@ class Renderer: NSObject, MTKViewDelegate {
         uniforms[0].projectionMatrix = projectionMatrix
         
         let rotationAxis = float3(1, 1, 0)
-        let modelMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
+        let rotationMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
+        
+        let scaleMatrix = matrix4x4_scaling(self.scale)
+        
+        let modelMatrix = simd_mul(scaleMatrix, rotationMatrix)
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -8.0)
         uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
         rotation += 0.01
