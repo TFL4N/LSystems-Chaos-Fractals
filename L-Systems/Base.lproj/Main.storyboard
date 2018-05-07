@@ -684,7 +684,7 @@
         <!--Window Controller-->
         <scene sceneID="xhY-nQ-azX">
             <objects>
-                <windowController id="gth-8A-Eyl" sceneMemberID="viewController">
+                <windowController storyboardIdentifier="Graphics Window Controller" id="gth-8A-Eyl" sceneMemberID="viewController">
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="kBI-Et-ebh">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -700,7 +700,7 @@
                 </windowController>
                 <customObject id="D0i-XY-KNT" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="570" y="140"/>
+            <point key="canvasLocation" x="107" y="146"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -721,7 +721,7 @@
                 </windowController>
                 <customObject id="6f7-a7-6o1" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2" y="244"/>
+            <point key="canvasLocation" x="-690" y="-476"/>
         </scene>
         <!--Main View Controller-->
         <scene sceneID="9Q5-4C-PAg">
@@ -1003,6 +1003,9 @@
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="cellTitle"/>
                                                 </buttonCell>
+                                                <connections>
+                                                    <action selector="showGraphicsWindow:" target="3Le-LH-v21" id="3Lb-75-XaG"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <visibilityPriorities>
@@ -1107,10 +1110,10 @@
             </objects>
             <point key="canvasLocation" x="-671" y="273"/>
         </scene>
-        <!--Game View Controller-->
+        <!--Graphics View Controller-->
         <scene sceneID="xIX-Xn-yFc">
             <objects>
-                <viewController id="qDo-Nm-xKe" customClass="GameViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="qDo-Nm-xKe" customClass="LGraphicsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="Eym-H5-yvN" customClass="MTKView">
                         <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1118,7 +1121,7 @@
                 </viewController>
                 <customObject id="Vnb-Ih-8Ea" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="750" y="712"/>
+            <point key="canvasLocation" x="107" y="716"/>
         </scene>
     </scenes>
 </document>

@@ -160,12 +160,17 @@ class LSystem: NSObject, NSCoding {
 
 class LSystemManager {
     var system: LSystem = LSystem()
+    var output_str: String? = nil
     
     enum LSystemError: Error {
         case RuleNotFound
     }
     
     static let reservedCharacters = ["[","]","\\","|","/"]
+    
+    init(l_system: LSystem) {
+        self.system = l_system
+    }
     
     func createLSystemString() throws -> String {
         var str = self.system.axiom.value
@@ -197,6 +202,7 @@ class LSystemManager {
             str = working
         }
         
-        return str
+        self.output_str = str
+        return self.output_str!
     }
 }

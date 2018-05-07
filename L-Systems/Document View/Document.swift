@@ -10,7 +10,7 @@ import Cocoa
 
 class Document: NSDocument {
 
-    var l_system_manager: LSystemManager = LSystemManager()
+    var l_system: LSystem = LSystem()
     
     override init() {
         super.init()
@@ -25,6 +25,7 @@ class Document: NSDocument {
         // Returns the Storyboard that contains your Document window.
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
         let windowController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Document Window Controller")) as! NSWindowController
+        
         self.addWindowController(windowController)
     }
 
@@ -33,13 +34,13 @@ class Document: NSDocument {
         // You can also choose to override fileWrapperOfType:error:, writeToURL:ofType:error:, or writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
         
         if false {
-            return NSKeyedArchiver.archivedData(withRootObject: self.l_system_manager.system)
+            return NSKeyedArchiver.archivedData(withRootObject: self.l_system)
         } else {
             let data = NSMutableData()
             let archiver = NSKeyedArchiver(forWritingWith: data)
             archiver.outputFormat = .xml
             
-            archiver.encode(self.l_system_manager.system, forKey: "root")
+            archiver.encode(self.l_system, forKey: "root")
             archiver.finishEncoding()
             
             return data as Data
@@ -51,7 +52,7 @@ class Document: NSDocument {
         // You can also choose to override readFromFileWrapper:ofType:error: or readFromURL:ofType:error: instead.
         // If you override either of these, you should also override -isEntireFileLoaded to return false if the contents are lazily loaded.
         
-        self.l_system_manager.system = NSKeyedUnarchiver.unarchiveObject(with: data) as! LSystem
+        self.l_system = NSKeyedUnarchiver.unarchiveObject(with: data) as! LSystem
     }
 
 

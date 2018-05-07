@@ -10,11 +10,13 @@ import Cocoa
 import MetalKit
 
 // Our macOS specific view controller
-class GameViewController: NSViewController {
+class LGraphicsViewController: NSViewController {
 
     var renderer: Renderer!
     var mtkView: MTKView!
 
+    var l_system: LSystem?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
