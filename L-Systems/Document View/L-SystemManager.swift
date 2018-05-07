@@ -280,10 +280,8 @@ class LSystemManager {
                 switch el {
                 case "[":
                     positionStack.push((currentPos, currentAngle))
-                    currentAngle -= angleValue!
                 case "]":
                     (currentPos, currentAngle) = positionStack.pop()
-                    currentAngle += angleValue!
                 case "-":
                     currentAngle -= angleValue!
                 case "+":
