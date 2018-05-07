@@ -24,16 +24,16 @@ class Rule: NSObject, NSCoding {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        guard let variable = aDecoder.decodeObject(forKey: "variable") as? String,
-            let value = aDecoder.decodeObject(forKey: "var_value") as? String
+        guard let variable = aDecoder.decodeObject(forKey: "rule_variable") as? String,
+            let value = aDecoder.decodeObject(forKey: "rule_value") as? String
             else { return nil }
         
         self.init(variable: variable, value: value)
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.variable, forKey: "variable")
-        aCoder.encode(self.value, forKey: "var_value")
+        aCoder.encode(self.variable, forKey: "rule_variable")
+        aCoder.encode(self.value, forKey: "rule_value")
     }
 }
 
@@ -65,29 +65,35 @@ class Axiom: NSObject, NSCoding {
 class Variable: NSObject, NSCoding {
     var name: String = ""
     var type: VariableType = .Draw
+    var value: String = ""
     
     override init() {
         super.init()
     }
     
-    init(name: String, type: VariableType) {
+    init(name: String, type: VariableType, value: String) {
         super.init()
         
         self.name = name
         self.type = type
+        self.value = value
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        guard let name = aDecoder.decodeObject(forKey: "name") as? String,
-            let type = aDecoder.decodeObject(forKey: "type") as? String
+        guard let name = aDecoder.decodeObject(forKey: "variable_name") as? String,
+            let type = aDecoder.decodeObject(forKey: "variable_type") as? String,
+            let value = aDecoder.decodeObject(forKey: "variable_value") as? String
             else { return nil }
         
-        self.init(name: name, type: VariableType(rawValue: type) ?? .NonDraw)
+        self.init(name: name,
+                  type: VariableType(rawValue: type) ?? .NonDraw,
+                  value: value)
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.name, forKey: "name")
-        aCoder.encode(self.type.rawValue, forKey: "type")
+        aCoder.encode(self.name, forKey: "variable_name")
+        aCoder.encode(self.type.rawValue, forKey: "variable_type")
+        aCoder.encode(self.value, forKey: "variable_value")
     }
 }
 
@@ -120,10 +126,10 @@ class LSystem: NSObject, NSCoding {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let iterations = aDecoder.decodeInteger(forKey: "iterations")
-        guard let axiom = aDecoder.decodeObject(forKey: "axiom") as? Axiom,
-            let rules = aDecoder.decodeObject(forKey: "rules") as? [Rule],
-            let variables = aDecoder.decodeObject(forKey: "variables") as? [Variable]
+        let iterations = aDecoder.decodeInteger(forKey: "lsystem_iterations")
+        guard let axiom = aDecoder.decodeObject(forKey: "lsystem_axiom") as? Axiom,
+            let rules = aDecoder.decodeObject(forKey: "lsystem_rules") as? [Rule],
+            let variables = aDecoder.decodeObject(forKey: "lsystem_variables") as? [Variable]
             else { return nil }
         
         self.init(axiom: axiom,
@@ -133,10 +139,10 @@ class LSystem: NSObject, NSCoding {
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.axiom, forKey: "axiom")
-        aCoder.encode(self.iterations, forKey: "iterations")
-        aCoder.encode(self.rules, forKey: "rules")
-        aCoder.encode(self.variables, forKey: "variables")
+        aCoder.encode(self.axiom, forKey: "lsystem_axiom")
+        aCoder.encode(self.iterations, forKey: "lsystem_iterations")
+        aCoder.encode(self.rules, forKey: "lsystem_rules")
+        aCoder.encode(self.variables, forKey: "lsystem_variables")
     }
     
     func addNewRule() {
@@ -186,7 +192,9 @@ class LSystemManager {
             while range.upperBound < str.endIndex {
                 let el = String(str[range])
                 
-                if !LSystemManager.reservedCharacters.contains(el) {
+                if LSystemManager.reservedCharacters.contains(el) {
+                    working.append(el)
+                } else {
                     if let rule = self.system.rule(withVariableName: String(el)) {
                         working.append(rule.value)
                     } else {

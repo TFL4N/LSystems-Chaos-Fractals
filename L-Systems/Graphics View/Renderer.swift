@@ -187,27 +187,27 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                     renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                     
-                    for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
-                        guard let layout = element as? MDLVertexBufferLayout else {
-                            return
-                        }
-                        
-                        if layout.stride != 0 {
-                            let buffer = mesh.vertexBuffers[index]
-                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-                        }
-                    }
-                    
-                    renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
-                    
-                    for submesh in mesh.submeshes {
-                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-                                                            indexCount: submesh.indexCount,
-                                                            indexType: submesh.indexType,
-                                                            indexBuffer: submesh.indexBuffer.buffer,
-                                                            indexBufferOffset: submesh.indexBuffer.offset)
-                        
-                    }
+//                    for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
+//                        guard let layout = element as? MDLVertexBufferLayout else {
+//                            return
+//                        }
+//                        
+//                        if layout.stride != 0 {
+//                            let buffer = mesh.vertexBuffers[index]
+//                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
+//                        }
+//                    }
+//                    
+//                    renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
+//                    
+//                    for submesh in mesh.submeshes {
+//                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
+//                                                            indexCount: submesh.indexCount,
+//                                                            indexType: submesh.indexType,
+//                                                            indexBuffer: submesh.indexBuffer.buffer,
+//                                                            indexBufferOffset: submesh.indexBuffer.offset)
+//                        
+//                    }
                     
                     renderEncoder.popDebugGroup()
                     

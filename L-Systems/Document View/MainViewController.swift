@@ -62,12 +62,12 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
         self.ruleTableView.reloadData()
         self.variableTableView.reloadData()
         
-        self.axiomTextField.stringValue = self.l_system.axiom.value ?? ""
+        self.axiomTextField.stringValue = self.l_system.axiom.value
     }
     
     func refreshStepperView() {
-        self.iterationsTextField.stringValue = "\(self.l_system.iterations ?? 0)"
-        self.iterationsStepper.integerValue = self.l_system.iterations ?? 0
+        self.iterationsTextField.stringValue = "\(self.l_system.iterations)"
+        self.iterationsStepper.integerValue = self.l_system.iterations
     }
     
     // MARK: Actions
@@ -127,6 +127,7 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
         static let TextField = NSUserInterfaceItemIdentifier(rawValue: "textfield")
         static let VariableType = NSUserInterfaceItemIdentifier(rawValue: "variable_type")
         static let VariableName = NSUserInterfaceItemIdentifier(rawValue: "variable_name")
+        static let VariableValue = NSUserInterfaceItemIdentifier(rawValue: "variable_value")
     }
     
     func numberOfRows(in tableView: NSTableView) -> Int {
@@ -184,6 +185,20 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
                 // fill with data
                 let temp = cell as! VariableTypeCellView
                 temp.variable = variable
+             } else if tableColumn == self.variableTableView.tableColumns[2] {
+                // create cell
+                cell = tableView.makeView(withIdentifier: CellID.VariableValue, owner: nil) as? NSTableCellView
+                if cell == nil {
+                    cell = TextFieldCellView()
+                    cell?.identifier = CellID.VariableValue
+                }
+                
+                // fill with data
+                let temp = cell as! TextFieldCellView
+                temp.mainTextField.stringValue = variable.value
+                temp.handler = { (text_cell) in
+                    variable.value = text_cell.mainTextField.stringValue
+                }
             }
         }
         

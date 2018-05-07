@@ -33,7 +33,7 @@ class LGraphicsViewController: NSViewController {
 
         mtkView.device = defaultDevice
 
-        guard let newRenderer = Renderer(metalKitView: mtkView) else {
+        guard let newRenderer = Renderer(metalKitView: mtkView, l_system: self.l_system!) else {
             print("Renderer cannot be initialized")
             return
         }
