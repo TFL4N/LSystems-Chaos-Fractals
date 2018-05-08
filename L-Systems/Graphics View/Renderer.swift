@@ -84,12 +84,12 @@ class Renderer: NSObject, MTKViewDelegate {
         // Build Vertex Data
         do {
             let vertices = try self.l_system_manager.buildLineVertexBuffer()
-            let length = vertices.count * MemoryLayout.size(ofValue: vertices[0])
+            let length = vertices.count * MemoryLayout<Float>.stride
             self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
             self.vertexCount = vertices.count
             
             let colors = Array<Float>(repeating: 0.0, count: self.vertexCount / 3 * 4)
-            let color_length = colors.count * MemoryLayout.size(ofValue: colors[0])
+            let color_length = colors.count * MemoryLayout<Float>.stride
             
             self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
         } catch {
