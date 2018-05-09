@@ -24,14 +24,19 @@
 typedef NS_ENUM(NSInteger, BufferIndex)
 {
     BufferIndexVertexPositions = 0,
-    BufferIndexVertexColors = 1,
-    BufferIndexUniforms        = 2
+    BufferIndexVertexColors    = 1,
+    BufferIndexTexCoord        = 2,
+    
+    BufferIndexUniforms        = 3,
+    
+    BufferIndexColorMode       = 4
 };
 
 typedef NS_ENUM(NSInteger, VertexAttribute)
 {
     VertexAttributePosition  = 0,
-    VertexAttributeColor  = 1,
+    VertexAttributeColor     = 1,
+    VertexAttributeTexCoord  = 2
 };
 
 typedef NS_ENUM(NSInteger, TextureIndex)

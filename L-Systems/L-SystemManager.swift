@@ -329,6 +329,52 @@ class LSystemManager {
         return outputBuffer
     }
     
+    func findMaxAndMin(withVertices vertices: inout [Float]) -> (max_x: Float, min_x: Float, max_y: Float, min_y: Float) {
+        var output = (max_x: Float(0.0), min_x: Float(0.0),
+                      max_y: Float(0.0), min_y: Float(0.0))
+        
+        for i in 0..<vertices.count/3 {
+            let x = vertices[i*3]
+            let y = vertices[i*3+1]
+            
+            // x
+            if x > output.max_x {
+                output.max_x = x
+            }
+            if x < output.min_x {
+                output.min_x = x
+            }
+            
+            // y
+            if y > output.max_y {
+                output.max_y = y
+            }
+            if y < output.min_y {
+                output.min_y = y
+            }
+        }
+        
+        return output
+    }
+    
+    func buildTexCoordsBuffer(withVertices vertices: inout [Float]) -> [Float] {
+        let extremes = self.findMaxAndMin(withVertices: &vertices)
+        var output = [Float]()
+        
+        let x_range = extremes.max_x - extremes.min_x
+        let y_range = extremes.max_y - extremes.min_y
+        
+        for i in 0..<vertices.count/3 {
+            let x = vertices[i*3]
+            let y = vertices[i*3+1]
+            
+            output.append((x - extremes.min_x) / x_range)
+            output.append((y - extremes.min_y) / y_range)
+        }
+        
+        return output
+    }
+    
     private func appendPosition(_ position: Position, buffer: inout [Float]) {
         buffer.append(position.x)
         buffer.append(position.y)

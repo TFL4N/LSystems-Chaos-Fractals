@@ -38,6 +38,10 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var colorBuffer: MTLBuffer
     
+    var texCoordsBuffer: MTLBuffer
+    var colorMap: MTLTexture?
+    var colorMode: Int32 = 1
+    
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     var rotation: Float = 0
     var rotationAxis: float3 = float3(0.0, 0.0, 1.0)
@@ -85,15 +89,30 @@ class Renderer: NSObject, MTKViewDelegate {
         
         // Build Vertex Data
         do {
-            let vertices = try self.l_system_manager.buildLineVertexBuffer()
+            var vertices = try self.l_system_manager.buildLineVertexBuffer()
             let length = vertices.count * MemoryLayout<Float>.stride
             self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
             self.vertexCount = vertices.count
             
+            // color
             let colors = Array<Float>(repeating: 0.0, count: self.vertexCount / 3 * 4)
             let color_length = colors.count * MemoryLayout<Float>.stride
             
             self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
+            
+            // texture coords
+            let texCoords = self.l_system_manager.buildTexCoordsBuffer(withVertices: &vertices)
+            let tex_length = texCoords.count * MemoryLayout<Float>.stride
+            self.texCoordsBuffer = self.device.makeBuffer(bytes: texCoords, length: tex_length, options: [])!
+        } catch {
+            throw error
+        }
+        
+        // Load Texture
+        do {
+            let bundle = Bundle.main
+            let url = bundle.urlForImageResource(NSImage.Name(rawValue: "colormap_4"))!
+            self.colorMap = try Renderer.loadTexture(device: self.device, textureUrl: url)
         } catch {
             throw error
         }
@@ -115,6 +134,10 @@ class Renderer: NSObject, MTKViewDelegate {
         mtlVertexDescriptor.attributes[VertexAttribute.color.rawValue].offset = 0
         mtlVertexDescriptor.attributes[VertexAttribute.color.rawValue].bufferIndex = BufferIndex.vertexColors.rawValue
         
+        mtlVertexDescriptor.attributes[VertexAttribute.texCoord.rawValue].format = MTLVertexFormat.float2
+        mtlVertexDescriptor.attributes[VertexAttribute.texCoord.rawValue].offset = 0
+        mtlVertexDescriptor.attributes[VertexAttribute.texCoord.rawValue].bufferIndex = BufferIndex.texCoord.rawValue
+        
         mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stride = 12
         mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
@@ -122,6 +145,10 @@ class Renderer: NSObject, MTKViewDelegate {
         mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stride = 16
         mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+        
+        mtlVertexDescriptor.layouts[BufferIndex.texCoord.rawValue].stride = 8
+        mtlVertexDescriptor.layouts[BufferIndex.texCoord.rawValue].stepRate = 1
+        mtlVertexDescriptor.layouts[BufferIndex.texCoord.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
         return mtlVertexDescriptor
     }
@@ -213,11 +240,20 @@ class Renderer: NSObject, MTKViewDelegate {
                     
                     // set vertex buffer
                     renderEncoder.setVertexBuffer(self.vertexBuffer, offset: 0, index: BufferIndex.vertexPositions.rawValue)
-                    renderEncoder.setFragmentBuffer(self.vertexBuffer, offset: 0, index: BufferIndex.vertexPositions.rawValue)
                     
                     // set color buffer
                     renderEncoder.setVertexBuffer(self.colorBuffer, offset: 0, index: BufferIndex.vertexColors.rawValue)
-                    renderEncoder.setFragmentBuffer(self.colorBuffer, offset: 0, index: BufferIndex.vertexColors.rawValue)
+                    
+                    // set tex coords buffer
+                    renderEncoder.setVertexBuffer(self.texCoordsBuffer, offset: 0, index: BufferIndex.texCoord.rawValue)
+                    
+                    // set texture
+                    if let colorMap = self.colorMap {
+                        renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
+                    }
+                    
+                    // set color mode
+                    renderEncoder.setFragmentBytes(&self.colorMode, length: MemoryLayout.size(ofValue: self.colorMode), index: BufferIndex.colorMode.rawValue)
                     
                     // draw vertices
                     renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: self.vertexCount)
@@ -239,7 +275,6 @@ class Renderer: NSObject, MTKViewDelegate {
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         /// Respond to drawable size or orientation changes here
-        
         let aspect = Float(size.width) / Float(size.height)
         projectionMatrix = matrix_perspective_right_hand(fovyRadians: radians_from_degrees(65), aspectRatio:aspect, nearZ: 0.1, farZ: 100.0)
     }
@@ -253,5 +288,19 @@ class Renderer: NSObject, MTKViewDelegate {
         
         self.translation.x += trans_vector.x
         self.translation.y += trans_vector.y
+    }
+    
+    class func loadTexture(device: MTLDevice,
+                           textureUrl: URL) throws -> MTLTexture {
+        /// Load texture data with optimal parameters for sampling
+        
+        let textureLoader = MTKTextureLoader(device: device)
+        
+        let textureLoaderOptions = [
+            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
+        ]
+        
+        return try textureLoader.newTexture(URL: textureUrl, options: textureLoaderOptions)
     }
 }
