@@ -40,9 +40,9 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     var rotation: Float = 0
+    var rotationAxis: float3 = float3(0.0, 0.0, 1.0)
     var scale: Float = 1.0
-    var transX: Float = 0.0
-    var transY: Float = 0.0
+    var translation: (x: Float, y: Float) = (0.0, 0.0)
     
     var l_system_manager: LSystemManager
     
@@ -165,17 +165,13 @@ class Renderer: NSObject, MTKViewDelegate {
         
         uniforms[0].projectionMatrix = projectionMatrix
         
-        let rotationAxis = float3(1, 1, 0)
-        let rotationMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
-        
+        let rotationMatrix = matrix4x4_rotation(radians: rotation, axis: self.rotationAxis)
         let scaleMatrix = matrix4x4_scaling(self.scale)
-        
-        let translationMatrix = matrix4x4_translation(self.transX, self.transY, 0.0)
+        let translationMatrix = matrix4x4_translation(self.translation.x, self.translation.y, 0.0)
         
         let modelMatrix = simd_mul(simd_mul(scaleMatrix, rotationMatrix), translationMatrix)
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -8.0)
         uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
-//        rotation += 0.01
     }
     
     func draw(in view: MTKView) {
@@ -246,5 +242,16 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let aspect = Float(size.width) / Float(size.height)
         projectionMatrix = matrix_perspective_right_hand(fovyRadians: radians_from_degrees(65), aspectRatio:aspect, nearZ: 0.1, farZ: 100.0)
+    }
+    
+    // MARK: Helpers
+    func addTranslationWithAdjustment(_ trans: (x: Float, y: Float)) {
+        var trans_vector = float4(trans.x, trans.y, 0.0, 0.0)
+        let rotation_matrix = matrix4x4_rotation(radians: self.rotation, axis: self.rotationAxis)
+        
+        trans_vector = simd_mul(trans_vector, rotation_matrix)
+        
+        self.translation.x += trans_vector.x
+        self.translation.y += trans_vector.y
     }
 }

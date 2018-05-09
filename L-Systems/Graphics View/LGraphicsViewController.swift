@@ -19,6 +19,7 @@ class LGraphicsViewController: NSViewController {
     
     var pinchGesture: NSMagnificationGestureRecognizer!
     var panGesture: NSPanGestureRecognizer!
+    var rotateGesture: NSRotationGestureRecognizer!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,14 +56,17 @@ class LGraphicsViewController: NSViewController {
         /////////////////
         self.pinchGesture = NSMagnificationGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
         self.panGesture = NSPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        self.rotateGesture = NSRotationGestureRecognizer(target: self, action: #selector(handleRotationGesture(_:)))
         
         self.mtkView.addGestureRecognizer(self.pinchGesture)
         self.mtkView.addGestureRecognizer(self.panGesture)
+        self.mtkView.addGestureRecognizer(self.rotateGesture)
     }
     
     // MARK: Gesture Handlers
     var lastScaleValue: CGFloat = 0.0
     var lastPanValue: CGPoint = CGPoint.zero
+    var lastRotationValue: CGFloat = 0.0
     
     @objc func handlePinchGesture(_ gesture: NSMagnificationGestureRecognizer) {
         switch gesture.state {
@@ -86,10 +90,25 @@ class LGraphicsViewController: NSViewController {
         case .changed, .ended:
             let translation = gesture.translation(in: gesture.view)
             
-            self.renderer.transX += Float(translation.x - self.lastPanValue.x)
-            self.renderer.transY += Float(translation.y - self.lastPanValue.y)
+            let new_x = Float(translation.x - self.lastPanValue.x)
+            let new_y = Float(translation.y - self.lastPanValue.y)
+            self.renderer.addTranslationWithAdjustment((x: new_x, y: new_y))
             
             self.lastPanValue = translation
+        default:
+            break
+        }
+    }
+    
+    @objc func handleRotationGesture(_ gesture: NSRotationGestureRecognizer) {
+        switch gesture.state {
+        case .began:
+            self.lastRotationValue = 0.0
+        case .changed, .ended:
+            let new_rotation = self.renderer.rotation + Float(gesture.rotation - self.lastRotationValue)
+            self.renderer.rotation = new_rotation
+            
+            self.lastRotationValue = gesture.rotation
         default:
             break
         }
