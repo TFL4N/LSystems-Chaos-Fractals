@@ -98,21 +98,7 @@ class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewData
     }
     
     @IBAction func showGraphicsWindow(_: Any?) {
-        // deep copy l system
-        let new_l_system = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: self.l_system)) as! LSystem
-        
-        // create new graphics window
-        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-        
-        let windowController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Graphics Window Controller")) as! NSWindowController
-        
-        let graphics_cntlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Graphics Controller")) as! LGraphicsViewController
-        graphics_cntlr.l_system = new_l_system
-        
-        windowController.contentViewController = graphics_cntlr
-        
-        // show window
-        windowController.showWindow(self)
+       self.document?.showGraphicsWindowController()
     }
     
     // MARK: TextField Delegate

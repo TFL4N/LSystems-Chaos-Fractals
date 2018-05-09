@@ -80,24 +80,27 @@ class Variable: NSObject, NSCoding {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        guard let name = aDecoder.decodeObject(forKey: "variable_name") as? String,
-            let type = aDecoder.decodeObject(forKey: "variable_type") as? String,
-            let value = aDecoder.decodeObject(forKey: "variable_value") as? String
+        let coder = aDecoder as! NSKeyedUnarchiver
+        guard let name = coder.decodeObject(forKey: "variable_name") as? String,
+            let type = coder.decodeDecodable(VariableType.self, forKey: "variable_type"),
+            let value = coder.decodeObject(forKey: "variable_value") as? String
             else { return nil }
         
         self.init(name: name,
-                  type: VariableType(rawValue: type) ?? .NonDraw,
+                  type: type,
                   value: value)
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.name, forKey: "variable_name")
-        aCoder.encode(self.type.rawValue, forKey: "variable_type")
-        aCoder.encode(self.value, forKey: "variable_value")
+        let coder = aCoder as! NSKeyedArchiver
+        
+        coder.encode(self.name, forKey: "variable_name")
+        try! coder.encodeEncodable(self.type, forKey: "variable_type")
+        coder.encode(self.value, forKey: "variable_value")
     }
 }
 
-enum VariableType: String {
+enum VariableType: String, Codable {
     case Draw = "Draw"
     case NonDraw = "Non-Draw"
     case Angle = "Angle"
