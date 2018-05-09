@@ -18,7 +18,7 @@ class Document: NSDocument {
     }
 
     override class var autosavesInPlace: Bool {
-        return false
+        return true
     }
 
     override func makeWindowControllers() {
