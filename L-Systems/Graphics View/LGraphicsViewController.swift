@@ -65,10 +65,13 @@ class LGraphicsViewController: NSViewController {
         case .began:
             self.lastScaleValue = 0.0
         case .changed, .ended:
-            self.renderer.scale += Float(gesture.magnification - self.lastScaleValue)
+            let new_scale = self.renderer.scale + Float(gesture.magnification - self.lastScaleValue)
+            self.renderer.scale = max(new_scale, 0.0001)
+            
             self.lastScaleValue = gesture.magnification
         default:
             break
         }
+        
     }
 }

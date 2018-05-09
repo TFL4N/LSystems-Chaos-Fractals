@@ -171,7 +171,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let modelMatrix = simd_mul(scaleMatrix, rotationMatrix)
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -8.0)
         uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
-        rotation += 0.01
+//        rotation += 0.01
     }
     
     func draw(in view: MTKView) {
