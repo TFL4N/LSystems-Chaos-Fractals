@@ -111,7 +111,7 @@ class Renderer: NSObject, MTKViewDelegate {
         // Load Texture
         do {
             let bundle = Bundle.main
-            let url = bundle.urlForImageResource(NSImage.Name(rawValue: "colormap_4"))!
+            let url = bundle.urlForImageResource(NSImage.Name(rawValue: "colormap_6"))!
             self.colorMap = try Renderer.loadTexture(device: self.device, textureUrl: url)
         } catch {
             throw error

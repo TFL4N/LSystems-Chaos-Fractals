@@ -8,10 +8,10 @@
 
 import Cocoa
 
-class MainViewController: NSViewController, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate {
+class LSystemMainViewController: NSViewController, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate {
     // MARK: ivars
-    var document: Document? {
-        return view.window?.windowController?.document as? Document
+    var document: LSystemDocument? {
+        return view.window?.windowController?.document as? LSystemDocument
     }
     
     var l_system: LSystem! {
