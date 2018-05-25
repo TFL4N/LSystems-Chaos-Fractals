@@ -13,6 +13,7 @@ class AttractorDocument: NSDocument {
     var attractor: Attractor = PickoverAttractor()
     
     weak var graphics_window_ctlr: NSWindowController!
+    weak var info_panel_window_ctlr: NSWindowController!
     
     override init() {
         super.init()
@@ -47,8 +48,15 @@ class AttractorDocument: NSDocument {
         
         self.addWindowController(self.graphics_window_ctlr)
         
-        // show window
+        // create info panel window
+        self.info_panel_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Info Panel Window")) as! NSWindowController
+        self.info_panel_window_ctlr.shouldCloseDocument = false
+        
+        self.addWindowController(self.info_panel_window_ctlr)
+        
+        // show windows
         self.graphics_window_ctlr.showWindow(self)
+        self.info_panel_window_ctlr.showWindow(self)
     }
 
     // MARK: File IO

@@ -23,12 +23,6 @@ class AttractorMainViewController: NSViewController, NSTextFieldDelegate, NSTabl
     @IBOutlet var showGraphicsButton: NSButton!
     
     // MARK: - Lifecycle
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(handleVariableDidChange(_:)), name: Notifications.VariableTypeDidChangeNotification, object: nil)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -21,6 +21,12 @@ class AttractorGraphicsViewController: NSViewController {
     var panGesture: NSPanGestureRecognizer!
     var rotateGesture: NSRotationGestureRecognizer!
     
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleSaveImagePress(_:)), name: Notifications.SaveImagePressNotification, object: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -61,6 +67,11 @@ class AttractorGraphicsViewController: NSViewController {
         self.mtkView.addGestureRecognizer(self.pinchGesture)
         self.mtkView.addGestureRecognizer(self.panGesture)
         self.mtkView.addGestureRecognizer(self.rotateGesture)
+    }
+    
+    // MARK: Panel Handlers
+    @objc func handleSaveImagePress(_ notification: Notification) {
+        print("Save Image Press")
     }
     
     // MARK: Gesture Handlers

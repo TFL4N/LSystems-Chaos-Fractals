@@ -16,6 +16,7 @@
 		65252A4220B7810E008CD676 /* AttractorGraphicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A4120B7810E008CD676 /* AttractorGraphicsViewController.swift */; };
 		65252A4420B78299008CD676 /* LSystemDataStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A4320B78299008CD676 /* LSystemDataStructs.swift */; };
 		65252A4620B782D5008CD676 /* AttractorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A4520B782D5008CD676 /* AttractorManager.swift */; };
+		65252A4920B7DF83008CD676 /* ImageInfoPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A4820B7DF83008CD676 /* ImageInfoPanelViewController.swift */; };
 		6568AA97209EF33E009B828A /* VariableTypeCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568AA96209EF33E009B828A /* VariableTypeCellView.swift */; };
 		6568AA9B209EF44F009B828A /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568AA9A209EF44F009B828A /* Style.swift */; };
 		6568AA9D209EFF65009B828A /* TextFieldCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568AA9C209EFF65009B828A /* TextFieldCellView.swift */; };
@@ -87,6 +88,7 @@
 		65252A4120B7810E008CD676 /* AttractorGraphicsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttractorGraphicsViewController.swift; sourceTree = "<group>"; };
 		65252A4320B78299008CD676 /* LSystemDataStructs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LSystemDataStructs.swift; sourceTree = "<group>"; };
 		65252A4520B782D5008CD676 /* AttractorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttractorManager.swift; sourceTree = "<group>"; };
+		65252A4820B7DF83008CD676 /* ImageInfoPanelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInfoPanelViewController.swift; sourceTree = "<group>"; };
 		6568AA96209EF33E009B828A /* VariableTypeCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableTypeCellView.swift; sourceTree = "<group>"; };
 		6568AA9A209EF44F009B828A /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		6568AA9C209EFF65009B828A /* TextFieldCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldCellView.swift; sourceTree = "<group>"; };
@@ -233,6 +235,14 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		65252A4720B7DF4E008CD676 /* Panels */ = {
+			isa = PBXGroup;
+			children = (
+				65252A4820B7DF83008CD676 /* ImageInfoPanelViewController.swift */,
+			);
+			path = Panels;
+			sourceTree = "<group>";
+		};
 		6568AB35209F49EA009B828A /* Graphics View */ = {
 			isa = PBXGroup;
 			children = (
@@ -319,6 +329,7 @@
 		65F1EB20206C8083007DF72B /* LSystems */ = {
 			isa = PBXGroup;
 			children = (
+				65252A4720B7DF4E008CD676 /* Panels */,
 				65252A3920B66080008CD676 /* Shared */,
 				65252A2B20B62B72008CD676 /* Attractors */,
 				6568AB36209F4A13009B828A /* LSystems */,
@@ -512,6 +523,7 @@
 				6568AA9F209F076E009B828A /* PopUpCellView.swift in Sources */,
 				65F1EB53206C859C007DF72B /* LSystemMainViewController.swift in Sources */,
 				6568AAA1209F148F009B828A /* NotificationCenter.swift in Sources */,
+				65252A4920B7DF83008CD676 /* ImageInfoPanelViewController.swift in Sources */,
 				65F1EB55206C8AC8007DF72B /* LSystemManager.swift in Sources */,
 				65252A3B20B660F1008CD676 /* AttractorRenderer.swift in Sources */,
 				65252A3420B6544E008CD676 /* PickoverAttractor.swift in Sources */,

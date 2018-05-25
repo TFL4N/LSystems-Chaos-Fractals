@@ -700,6 +700,109 @@
             <point key="canvasLocation" x="107" y="146"/>
         </scene>
         <!--Window Controller-->
+        <scene sceneID="uia-F8-sT1">
+            <objects>
+                <windowController storyboardIdentifier="Info Panel Window" showSeguePresentationStyle="single" id="lOn-eN-DpN" sceneMemberID="viewController">
+                    <window key="window" title="Info" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="eVc-xH-3Jz" customClass="NSPanel">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="196" y="249" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
+                        <connections>
+                            <outlet property="delegate" destination="lOn-eN-DpN" id="mN3-Di-uBM"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="wCH-jc-akD" kind="relationship" relationship="window.shadowedContentViewController" id="22q-qz-v0m"/>
+                    </connections>
+                </windowController>
+                <customObject id="CD7-wq-SPJ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="877" y="335"/>
+        </scene>
+        <!--Tab View Controller-->
+        <scene sceneID="BbS-mD-v93">
+            <objects>
+                <tabViewController selectedTabViewItemIndex="0" id="wCH-jc-akD" sceneMemberID="viewController">
+                    <tabViewItems>
+                        <tabViewItem identifier="" id="d2D-zr-ib8"/>
+                    </tabViewItems>
+                    <tabView key="tabView" type="noTabsNoBorder" id="ZR6-V2-wPO">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="message"/>
+                        <connections>
+                            <outlet property="delegate" destination="wCH-jc-akD" id="WrO-TL-3nZ"/>
+                        </connections>
+                    </tabView>
+                    <connections>
+                        <outlet property="tabView" destination="ZR6-V2-wPO" id="IDp-tP-nVz"/>
+                        <segue destination="3v3-ta-aM8" kind="relationship" relationship="tabItems" id="4XF-e1-Yrn"/>
+                    </connections>
+                </tabViewController>
+                <customObject id="kPi-ju-KJP" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="877" y="874"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="YPo-CC-t2g">
+            <objects>
+                <viewController id="pVH-JW-Lcb" sceneMemberID="viewController">
+                    <view key="view" id="nKg-9m-u7I">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="WNg-ex-AaJ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1635" y="518"/>
+        </scene>
+        <!--Image Info Panel View Controller-->
+        <scene sceneID="ZVe-BC-Hys">
+            <objects>
+                <viewController id="3v3-ta-aM8" customClass="ImageInfoPanelViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="vT4-n7-1fh">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="21"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ELq-ai-2OP">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="21"/>
+                                <subviews>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="C92-Oh-06h">
+                                        <rect key="frame" x="-6" y="-7" width="110" height="32"/>
+                                        <buttonCell key="cell" type="push" title="Save Image" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5GN-7j-CRF">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="handleSaveImagePress:" target="3v3-ta-aM8" id="6bx-FC-MdM"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="ELq-ai-2OP" firstAttribute="height" secondItem="vT4-n7-1fh" secondAttribute="height" id="HtF-LS-Whc"/>
+                            <constraint firstItem="ELq-ai-2OP" firstAttribute="centerY" secondItem="vT4-n7-1fh" secondAttribute="centerY" id="UOi-Bs-E93"/>
+                            <constraint firstItem="ELq-ai-2OP" firstAttribute="centerX" secondItem="vT4-n7-1fh" secondAttribute="centerX" id="fId-EC-9Tj"/>
+                            <constraint firstItem="ELq-ai-2OP" firstAttribute="width" secondItem="vT4-n7-1fh" secondAttribute="width" id="lOh-KQ-RsH"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="saveImageButton" destination="C92-Oh-06h" id="arB-SJ-fKa"/>
+                    </connections>
+                </viewController>
+                <customObject id="JDT-K4-1u0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1635" y="890"/>
+        </scene>
+        <!--Window Controller-->
         <scene sceneID="cGB-fg-nJH">
             <objects>
                 <windowController storyboardIdentifier="Attractor Document Window Controller" id="gpC-2s-fFs" sceneMemberID="viewController">
@@ -742,7 +845,7 @@
                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="anS-m1-a2C">
                                         <rect key="frame" x="0.0" y="29" width="440" height="300"/>
                                         <clipView key="contentView" id="EOm-Af-ysU">
-                                            <rect key="frame" x="1" y="23" width="438" height="276"/>
+                                            <rect key="frame" x="1" y="0.0" width="438" height="299"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="pBp-UO-g2V" viewBased="YES" id="9ex-Al-pet">
