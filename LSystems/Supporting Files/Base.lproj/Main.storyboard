@@ -1344,5 +1344,18 @@
             </objects>
             <point key="canvasLocation" x="107" y="716"/>
         </scene>
+        <!--Attractor Graphics View Controller-->
+        <scene sceneID="JXX-WV-IDH">
+            <objects>
+                <viewController storyboardIdentifier="Attractor Graphics Controller" id="ciJ-iM-PHT" customClass="AttractorGraphicsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="ijw-Tn-D2e" customClass="MTKView">
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="rDa-Xs-Yb5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="107" y="716"/>
+        </scene>
     </scenes>
 </document>

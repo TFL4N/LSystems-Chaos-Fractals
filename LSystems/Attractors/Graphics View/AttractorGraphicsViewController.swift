@@ -1,21 +1,21 @@
 //
-//  GameViewController.swift
+//  AttractorGraphicsViewController.swift
 //  L-Systems
 //
-//  Created by Spizzace on 3/28/18.
+//  Created by Spizzace on 5/24/18.
 //  Copyright © 2018 SpaiceMaine. All rights reserved.
 //
+
 
 import Cocoa
 import MetalKit
 
-// Our macOS specific view controller
-class LGraphicsViewController: NSViewController {
-
-    var renderer: Renderer!
+class AttractorGraphicsViewController: NSViewController {
+    
+    var renderer: AttractorRenderer!
     var mtkView: MTKView!
-
-    var l_system: LSystem?
+    
+    var attractor: Attractor!
     
     var pinchGesture: NSMagnificationGestureRecognizer!
     var panGesture: NSPanGestureRecognizer!
@@ -23,7 +23,7 @@ class LGraphicsViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Setup Metal View
         /////////////////////
         guard let mtkView = self.view as? MTKView else {
@@ -32,24 +32,24 @@ class LGraphicsViewController: NSViewController {
         }
         
         self.mtkView = mtkView
-
+        
         // Select the device to render with.  We choose the default device
         guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
             print("Metal is not supported on this device")
             return
         }
-
+        
         self.mtkView.device = defaultDevice
-
+        
         do {
-            self.renderer = try Renderer(metalKitView: self.mtkView, l_system: self.l_system!)
+            self.renderer = try AttractorRenderer(metalKitView: self.mtkView, attractor: self.attractor)
         } catch {
             print("Renderer cannot be initialized: \(error)")
             return
         }
-
+        
         self.renderer.mtkView(self.mtkView, drawableSizeWillChange: mtkView.drawableSize)
-
+        
         self.mtkView.delegate = self.renderer
         
         // Add Gestures

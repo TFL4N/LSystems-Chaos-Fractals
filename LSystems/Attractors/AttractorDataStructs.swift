@@ -8,43 +8,6 @@
 
 import Foundation
 
-class PickoverAttractor: Attractor {
-    override init() {
-        let params = [
-            Parameter(name: "A", value: Value(type: .float, value: 0)),
-            Parameter(name: "B", value: Value(type: .float, value: 0)),
-            Parameter(name: "C", value: Value(type: .float, value: 0)),
-            Parameter(name: "D", value: Value(type: .float, value: 0))
-        ]
-        
-        super.init(parameters: params)!
-    }
-    
-    override init?(parameters: [Parameter]) {
-        // check parameters
-        for p in ["A","B","C","D"] {
-            if !parameters.contains(where: { (par: Parameter) -> Bool in
-                return par.name == p
-                    && par.value != nil
-                    && par.value!.type == .float
-            }) {
-                return nil
-            }
-        }
-        
-        // init
-        super.init(parameters: parameters)
-    }
-    
-    required convenience init?(coder aDecoder: NSCoder) {
-        let coder = aDecoder as! NSKeyedUnarchiver
-        guard let params = coder.decodeObject(forKey: "attractor_parameters") as? [Parameter]
-            else { return nil }
-        
-        self.init(parameters: params)
-    }
-}
-
 class Attractor: NSObject, NSCoding {
     let parameters: [Parameter]
     
@@ -71,6 +34,20 @@ class Attractor: NSObject, NSCoding {
         
         coder.encode(self.parameters, forKey: "attractor_parameters")
     }
+    
+    func buildVertexArray() -> [Float] {
+        return []
+    }
+    
+    func parameter(withName name: String) -> Parameter? {
+        if let idx = self.parameters.index(where: { (p) -> Bool in
+            p.name == name
+        }) {
+            return self.parameters[idx]
+        }
+        
+        return nil
+    }
 }
 
 class Value: NSObject, NSCoding {
@@ -82,6 +59,8 @@ class Value: NSObject, NSCoding {
             switch self.type {
             case .float:
                 return self.value_store as? Float
+            case .integer:
+                return self.value_store as? Int
             }
         }
         
@@ -95,12 +74,24 @@ class Value: NSObject, NSCoding {
                 } else if let fl = newValue as? NSNumber {
                     self.value_store = fl.floatValue
                 }
+            case .integer:
+                if let i = newValue as? Int {
+                    self.value_store = i
+                } else if let str = newValue as? String {
+                    self.value_store = Int(str)
+                } else if let n = newValue as? NSNumber {
+                    self.value_store = n.intValue
+                }
             }
         }
     }
     
     var floatValue: Float? {
         return self.value as? Float
+    }
+    
+    var integerValue: Int? {
+        return self.value as? Int
     }
     
     var stringValue: String? {
@@ -138,6 +129,7 @@ class Value: NSObject, NSCoding {
 
 enum ValueType: String, Codable {
     case float =  "float"
+    case integer = "integer"
 }
 
 class Parameter: NSObject, NSCoding {

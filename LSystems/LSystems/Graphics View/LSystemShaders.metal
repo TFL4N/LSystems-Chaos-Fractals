@@ -12,15 +12,15 @@
 #include <simd/simd.h>
 
 // Including header shared between this Metal shader code and Swift/C code executing Metal API commands
-#import "ShaderTypes.h"
+#import "LSystemShaderTypes.h"
 
 using namespace metal;
 
 typedef struct
 {
-    float3 position [[attribute(VertexAttributePosition)]];
-    float4 color [[attribute(VertexAttributeColor)]];
-    float2 texCoord [[attribute(VertexAttributeTexCoord)]];
+    float3 position [[attribute(L_VertexAttributePosition)]];
+    float4 color [[attribute(L_VertexAttributeColor)]];
+    float2 texCoord [[attribute(L_VertexAttributeTexCoord)]];
 } Vertex;
 
 typedef struct
@@ -30,8 +30,8 @@ typedef struct
     float2 texCoord;
 } ColorInOut;
 
-vertex ColorInOut vertexShader(Vertex in [[stage_in]],
-                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+vertex ColorInOut lSystemVertexShader(Vertex in [[stage_in]],
+                               constant L_Uniforms & uniforms [[ buffer(L_BufferIndexUniforms) ]])
 {
     ColorInOut out;
 
@@ -43,10 +43,10 @@ vertex ColorInOut vertexShader(Vertex in [[stage_in]],
     return out;
 }
 
-fragment float4 fragmentShader(ColorInOut in [[stage_in]],
-                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
-                               texture2d<half> colorMap     [[ texture(TextureIndexColor) ]],
-                               constant int* color_mode [[ buffer(BufferIndexColorMode) ]])
+fragment float4 lSystemFragmentShader(ColorInOut in [[stage_in]],
+                               constant L_Uniforms & uniforms [[ buffer(L_BufferIndexUniforms) ]],
+                               texture2d<half> colorMap     [[ texture(L_TextureIndexColor) ]],
+                               constant int* color_mode [[ buffer(L_BufferIndexColorMode) ]])
 {
     if( *color_mode <= 0 ) {
         float4 color = float4(float3(0.0), float(1.0));

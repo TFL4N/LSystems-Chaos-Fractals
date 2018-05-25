@@ -9,8 +9,8 @@
 //
 //  Header containing types and enum constants shared between Metal shaders and Swift/ObjC source
 //
-#ifndef ShaderTypes_h
-#define ShaderTypes_h
+#ifndef LSystemShaderTypes_h
+#define LSystemShaderTypes_h
 
 #ifdef __METAL_VERSION__
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
@@ -21,34 +21,34 @@
 
 #include <simd/simd.h>
 
-typedef NS_ENUM(NSInteger, BufferIndex)
+typedef NS_ENUM(NSInteger, L_BufferIndex)
 {
-    BufferIndexVertexPositions = 0,
-    BufferIndexVertexColors    = 1,
-    BufferIndexTexCoord        = 2,
+    L_BufferIndexVertexPositions = 0,
+    L_BufferIndexVertexColors    = 1,
+    L_BufferIndexTexCoord        = 2,
     
-    BufferIndexUniforms        = 3,
+    L_BufferIndexUniforms        = 3,
     
-    BufferIndexColorMode       = 4
+    L_BufferIndexColorMode       = 4
 };
 
-typedef NS_ENUM(NSInteger, VertexAttribute)
+typedef NS_ENUM(NSInteger, L_VertexAttribute)
 {
-    VertexAttributePosition  = 0,
-    VertexAttributeColor     = 1,
-    VertexAttributeTexCoord  = 2
+    L_VertexAttributePosition  = 0,
+    L_VertexAttributeColor     = 1,
+    L_VertexAttributeTexCoord  = 2
 };
 
-typedef NS_ENUM(NSInteger, TextureIndex)
+typedef NS_ENUM(NSInteger, L_TextureIndex)
 {
-    TextureIndexColor    = 0,
+    L_TextureIndexColor    = 0,
 };
 
 typedef struct
 {
     matrix_float4x4 projectionMatrix;
     matrix_float4x4 modelViewMatrix;
-} Uniforms;
+} L_Uniforms;
 
 #endif /* ShaderTypes_h */
 

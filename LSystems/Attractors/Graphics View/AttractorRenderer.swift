@@ -1,8 +1,8 @@
 //
-//  Renderer.swift
+//  AttractorRenderer.swift
 //  L-Systems
 //
-//  Created by Spizzace on 5/6/18.
+//  Created by Spizzace on 5/23/18.
 //  Copyright © 2018 SpaiceMaine. All rights reserved.
 //
 
@@ -10,37 +10,38 @@ import Metal
 import MetalKit
 import simd
 
-// The 256 byte aligned size of our uniform structure
-let alignedUniformsSize = (MemoryLayout<Uniforms>.size & ~0xFF) + 0x100
-
-let maxBuffersInFlight = 3
-
-enum RendererError: Error {
-    case badVertexDescriptor
-}
-
-class Renderer: NSObject, MTKViewDelegate {
+class AttractorRenderer: NSObject, MTKViewDelegate {
+    // MARK: Class Vars
+    // The 256 byte aligned size of our uniform structure
+    static let alignedUniformsSize = (MemoryLayout<A_Uniforms>.size & ~0xFF) + 0x100
     
+    static let maxBuffersInFlight = 3
+    
+    enum RendererError: Error {
+        case badVertexDescriptor
+    }
+    
+    // MARK: Instance Vars
     public let device: MTLDevice
     let commandQueue: MTLCommandQueue
     var pipelineState: MTLRenderPipelineState
     var depthState: MTLDepthStencilState
     
     let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
-
+    
     var dynamicUniformBuffer: MTLBuffer
     var uniformBufferOffset = 0
     var uniformBufferIndex = 0
-    var uniforms: UnsafeMutablePointer<Uniforms>
+    var uniforms: UnsafeMutablePointer<A_Uniforms>
     
     var vertexBuffer: MTLBuffer
     var vertexCount: Int
     
     var colorBuffer: MTLBuffer
     
-    var texCoordsBuffer: MTLBuffer
-    var colorMap: MTLTexture?
-    var colorMode: Int32 = 1
+//    var texCoordsBuffer: MTLBuffer
+//    var colorMap: MTLTexture?
+//    var colorMode: Int32 = 1
     
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     var rotation: Float = 0
@@ -48,34 +49,34 @@ class Renderer: NSObject, MTKViewDelegate {
     var scale: Float = 1.0
     var translation: (x: Float, y: Float) = (0.0, 0.0)
     
-    var l_system_manager: LSystemManager
+    var attractor_manager: AttractorManager
     
-    init(metalKitView: MTKView, l_system: LSystem) throws {
-        self.l_system_manager = LSystemManager(l_system: l_system)
+    init(metalKitView: MTKView, attractor: Attractor) throws {
+        self.attractor_manager = AttractorManager(attractor: attractor)
         self.device = metalKitView.device!
         self.commandQueue = self.device.makeCommandQueue()!
         
         // Build Uniform Buffer
-        let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
+        let uniformBufferSize = AttractorRenderer.alignedUniformsSize * AttractorRenderer.maxBuffersInFlight
         
         self.dynamicUniformBuffer = self.device.makeBuffer(length:uniformBufferSize,
                                                            options:[MTLResourceOptions.storageModeShared])!
         
         self.dynamicUniformBuffer.label = "UniformBuffer"
         
-        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to:Uniforms.self, capacity:1)
+        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to:A_Uniforms.self, capacity:1)
         
         // Build Vertex Descriptor
         metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float_stencil8
         metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm_srgb
         metalKitView.sampleCount = 1
         
-        let mtlVertexDescriptor = Renderer.buildMetalVertexDescriptor()
+        let mtlVertexDescriptor = AttractorRenderer.buildMetalVertexDescriptor()
         
         do {
-            pipelineState = try Renderer.buildRenderPipelineWithDevice(device: device,
-                                                                           metalKitView: metalKitView,
-                                                                           mtlVertexDescriptor: mtlVertexDescriptor)
+            pipelineState = try AttractorRenderer.buildRenderPipelineWithDevice(device: device,
+                                                                              metalKitView: metalKitView,
+                                                                              mtlVertexDescriptor: mtlVertexDescriptor)
         } catch {
             print("Unable to compile render pipeline state.")
             throw error
@@ -89,7 +90,9 @@ class Renderer: NSObject, MTKViewDelegate {
         
         // Build Vertex Data
         do {
-            var vertices = try self.l_system_manager.buildLineVertexBuffer()
+            self.attractor_manager.buildAttractorVertexData()
+            let vertices = self.attractor_manager.vertex_data!
+            
             let length = vertices.count * MemoryLayout<Float>.stride
             self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
             self.vertexCount = vertices.count
@@ -101,22 +104,13 @@ class Renderer: NSObject, MTKViewDelegate {
             self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
             
             // texture coords
-            let texCoords = self.l_system_manager.buildTexCoordsBuffer(withVertices: &vertices)
-            let tex_length = texCoords.count * MemoryLayout<Float>.stride
-            self.texCoordsBuffer = self.device.makeBuffer(bytes: texCoords, length: tex_length, options: [])!
+//            let texCoords = self.A_system_manager.buildTexCoordsBuffer(withVertices: &vertices)
+//            let tex_length = texCoords.count * MemoryLayout<Float>.stride
+//            self.texCoordsBuffer = self.device.makeBuffer(bytes: texCoords, length: tex_length, options: [])!
         } catch {
             throw error
         }
         
-        // Load Texture
-        do {
-            let bundle = Bundle.main
-            let url = bundle.urlForImageResource(NSImage.Name(rawValue: "colormap_6"))!
-            self.colorMap = try Renderer.loadTexture(device: self.device, textureUrl: url)
-        } catch {
-            throw error
-        }
-            
         super.init()
     }
     
@@ -126,29 +120,29 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let mtlVertexDescriptor = MTLVertexDescriptor()
         
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = MTLVertexFormat.float3
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.vertexPositions.rawValue
+        mtlVertexDescriptor.attributes[A_VertexAttribute.position.rawValue].format = MTLVertexFormat.float3
+        mtlVertexDescriptor.attributes[A_VertexAttribute.position.rawValue].offset = 0
+        mtlVertexDescriptor.attributes[A_VertexAttribute.position.rawValue].bufferIndex = A_BufferIndex.vertexPositions.rawValue
         
-        mtlVertexDescriptor.attributes[VertexAttribute.color.rawValue].format = MTLVertexFormat.float4
-        mtlVertexDescriptor.attributes[VertexAttribute.color.rawValue].offset = 0
-        mtlVertexDescriptor.attributes[VertexAttribute.color.rawValue].bufferIndex = BufferIndex.vertexColors.rawValue
+        mtlVertexDescriptor.attributes[A_VertexAttribute.color.rawValue].format = MTLVertexFormat.float4
+        mtlVertexDescriptor.attributes[A_VertexAttribute.color.rawValue].offset = 0
+        mtlVertexDescriptor.attributes[A_VertexAttribute.color.rawValue].bufferIndex = A_BufferIndex.vertexColors.rawValue
         
-        mtlVertexDescriptor.attributes[VertexAttribute.texCoord.rawValue].format = MTLVertexFormat.float2
-        mtlVertexDescriptor.attributes[VertexAttribute.texCoord.rawValue].offset = 0
-        mtlVertexDescriptor.attributes[VertexAttribute.texCoord.rawValue].bufferIndex = BufferIndex.texCoord.rawValue
+//        mtlVertexDescriptor.attributes[A_VertexAttribute.texCoord.rawValue].format = MTLVertexFormat.float2
+//        mtlVertexDescriptor.attributes[A_VertexAttribute.texCoord.rawValue].offset = 0
+//        mtlVertexDescriptor.attributes[A_VertexAttribute.texCoord.rawValue].bufferIndex = A_BufferIndex.texCoord.rawValue
         
-        mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stride = 12
-        mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stepRate = 1
-        mtlVertexDescriptor.layouts[BufferIndex.vertexPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexPositions.rawValue].stride = 12
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexPositions.rawValue].stepRate = 1
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
-        mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stride = 16
-        mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stepRate = 1
-        mtlVertexDescriptor.layouts[BufferIndex.vertexColors.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexColors.rawValue].stride = 16
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexColors.rawValue].stepRate = 1
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexColors.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
-        mtlVertexDescriptor.layouts[BufferIndex.texCoord.rawValue].stride = 8
-        mtlVertexDescriptor.layouts[BufferIndex.texCoord.rawValue].stepRate = 1
-        mtlVertexDescriptor.layouts[BufferIndex.texCoord.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+//        mtlVertexDescriptor.layouts[A_BufferIndex.texCoord.rawValue].stride = 8
+//        mtlVertexDescriptor.layouts[A_BufferIndex.texCoord.rawValue].stepRate = 1
+//        mtlVertexDescriptor.layouts[A_BufferIndex.texCoord.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
         return mtlVertexDescriptor
     }
@@ -160,8 +154,8 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let library = device.makeDefaultLibrary()
         
-        let vertexFunction = library?.makeFunction(name: "vertexShader")
-        let fragmentFunction = library?.makeFunction(name: "fragmentShader")
+        let vertexFunction = library?.makeFunction(name: "attractorVertexShader")
+        let fragmentFunction = library?.makeFunction(name: "attractorFragmentShader")
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "RenderPipeline"
@@ -180,11 +174,11 @@ class Renderer: NSObject, MTKViewDelegate {
     private func updateDynamicBufferState() {
         /// Update the state of our uniform buffers before rendering
         
-        uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
+        uniformBufferIndex = (uniformBufferIndex + 1) % AttractorRenderer.maxBuffersInFlight
         
-        uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
+        uniformBufferOffset = AttractorRenderer.alignedUniformsSize * uniformBufferIndex
         
-        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to:Uniforms.self, capacity:1)
+        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to:A_Uniforms.self, capacity:1)
     }
     
     private func updateGameState() {
@@ -235,28 +229,28 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.setDepthStencilState(depthState)
                     
                     // set uniform buffer
-                    renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-                    renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                    renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: A_BufferIndex.uniforms.rawValue)
+                    renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: A_BufferIndex.uniforms.rawValue)
                     
                     // set vertex buffer
-                    renderEncoder.setVertexBuffer(self.vertexBuffer, offset: 0, index: BufferIndex.vertexPositions.rawValue)
+                    renderEncoder.setVertexBuffer(self.vertexBuffer, offset: 0, index: A_BufferIndex.vertexPositions.rawValue)
                     
                     // set color buffer
-                    renderEncoder.setVertexBuffer(self.colorBuffer, offset: 0, index: BufferIndex.vertexColors.rawValue)
+                    renderEncoder.setVertexBuffer(self.colorBuffer, offset: 0, index: A_BufferIndex.vertexColors.rawValue)
                     
-                    // set tex coords buffer
-                    renderEncoder.setVertexBuffer(self.texCoordsBuffer, offset: 0, index: BufferIndex.texCoord.rawValue)
+//                    // set tex coords buffer
+//                    renderEncoder.setVertexBuffer(self.texCoordsBuffer, offset: 0, index: A_BufferIndex.texCoord.rawValue)
                     
-                    // set texture
-                    if let colorMap = self.colorMap {
-                        renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
-                    }
+//                    // set texture
+//                    if let colorMap = self.colorMap {
+//                        renderEncoder.setFragmentTexture(colorMap, index: A_TextureIndex.color.rawValue)
+//                    }
                     
-                    // set color mode
-                    renderEncoder.setFragmentBytes(&self.colorMode, length: MemoryLayout.size(ofValue: self.colorMode), index: BufferIndex.colorMode.rawValue)
+//                    // set color mode
+//                    renderEncoder.setFragmentBytes(&self.colorMode, length: MemoryLayout.size(ofValue: self.colorMode), index: A_BufferIndex.colorMode.rawValue)
                     
                     // draw vertices
-                    renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: self.vertexCount)
+                    renderEncoder.drawPrimitives(type: .point, vertexStart: 0, vertexCount: self.vertexCount)
                     
                     // end encoding
                     renderEncoder.popDebugGroup()
@@ -288,19 +282,5 @@ class Renderer: NSObject, MTKViewDelegate {
         
         self.translation.x += trans_vector.x
         self.translation.y += trans_vector.y
-    }
-    
-    class func loadTexture(device: MTLDevice,
-                           textureUrl: URL) throws -> MTLTexture {
-        /// Load texture data with optimal parameters for sampling
-        
-        let textureLoader = MTKTextureLoader(device: device)
-        
-        let textureLoaderOptions = [
-            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
-            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
-        ]
-        
-        return try textureLoader.newTexture(URL: textureUrl, options: textureLoaderOptions)
     }
 }

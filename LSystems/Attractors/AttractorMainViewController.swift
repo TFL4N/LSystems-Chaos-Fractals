@@ -92,6 +92,6 @@ class AttractorMainViewController: NSViewController, NSTextFieldDelegate, NSTabl
     
     // MARK: - Button Handlers
     @IBAction func handleShowGraphicsPress(_: Any?) {
-        
+        self.document?.showGraphicsWindowController()
     }
 }
