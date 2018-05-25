@@ -38,6 +38,7 @@ class AttractorGraphicsViewController: NSViewController {
         }
         
         self.mtkView = mtkView
+        self.mtkView.framebufferOnly = false
         
         // Select the device to render with.  We choose the default device
         guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
@@ -71,7 +72,24 @@ class AttractorGraphicsViewController: NSViewController {
     
     // MARK: Panel Handlers
     @objc func handleSaveImagePress(_ notification: Notification) {
-        print("Save Image Press")
+        // get image from metal
+        guard let image = self.mtkView.currentDrawable!.texture.toImage() else {
+            print("Failed to get image from texture")
+            return
+        }
+        
+        // write image
+        let destinationURL = URL(fileURLWithPath: "/Users/SpaiceMaine/GoodKarmaCoding/LSystems Documents/test.png")
+        guard let destination = CGImageDestinationCreateWithURL(destinationURL as CFURL, kUTTypePNG, 1, nil) else {
+            print("Failed to create image destination")
+            return
+        }
+        CGImageDestinationAddImage(destination, image, nil)
+        if CGImageDestinationFinalize(destination) {
+            print("Successly Created Image: \(destinationURL)")
+        } else {
+            print("Failed to create image")
+        }
     }
     
     // MARK: Gesture Handlers
