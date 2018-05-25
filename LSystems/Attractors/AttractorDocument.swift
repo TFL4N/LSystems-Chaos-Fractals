@@ -33,7 +33,8 @@ class AttractorDocument: NSDocument {
     
     func showGraphicsWindowController() {
         // deep copy attractor
-        let new_attractor = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: self.attractor)) as! Attractor
+        var new_attractor = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: self.attractor)) as! Attractor
+        self.adjustAttractor(&new_attractor)
         
         // create new graphics window
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
@@ -87,6 +88,22 @@ class AttractorDocument: NSDocument {
         self.attractor = dict["attractor"] as! Attractor
     }
 
-
+    //
+    //
+    //
+    // temp
+    //
+    //
+    //
+    func adjustAttractor(_ obj: inout Attractor) {
+        let anim = AnimationSequence(keyFrames: [
+            KeyFrame(value: Value(type: .float, value: 1.0), duration: 200),
+            KeyFrame(value: Value(type: .float, value: 1.9), duration: 100),
+            ])
+        
+        
+        let param = obj.parameter(withName: "D")!
+        param.animation = anim
+    }
 }
 

@@ -47,7 +47,7 @@ class PickoverAttractor: Attractor {
         self.init(parameters: params)
     }
     
-    override func buildVertexArray() -> [Float] {
+    override func buildVertexArray(atFrame: FrameId) -> [Float] {
         // iterations
         let max_iters = self.parameter(withName: "iterations")!.value!.integerValue!
         let skip_iters = self.parameter(withName: "skip iterations")!.value!.integerValue!
@@ -57,10 +57,12 @@ class PickoverAttractor: Attractor {
         output.reserveCapacity((max_iters-skip_iters)*3)
         
         // seeds
-        let A = self.parameter(withName: "A")!.value!.floatValue!
-        let B = self.parameter(withName: "B")!.value!.floatValue!
-        let C = self.parameter(withName: "C")!.value!.floatValue!
-        let D = self.parameter(withName: "D")!.value!.floatValue!
+        let A = self.parameter(withName: "A")!.value(atFrame: atFrame)!.floatValue!
+        let B = self.parameter(withName: "B")!.value(atFrame: atFrame)!.floatValue!
+        let C = self.parameter(withName: "C")!.value(atFrame: atFrame)!.floatValue!
+        let D = self.parameter(withName: "D")!.value(atFrame: atFrame)!.floatValue!
+        
+        print("A: \(A), B: \(B), C: \(C), D: \(D)")
         
         var x: Float = 0
         var y: Float = 0

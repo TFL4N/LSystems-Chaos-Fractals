@@ -34,10 +34,11 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     var uniformBufferIndex = 0
     var uniforms: UnsafeMutablePointer<A_Uniforms>
     
-    var vertexBuffer: MTLBuffer
-    var vertexCount: Int
+//    var dynamicVertexBuffer: [(buffer: MTLBuffer, count: Int)]
+    var vertexBuffer: MTLBuffer!
+    var vertexCount: Int!
     
-    var colorBuffer: MTLBuffer
+    var colorBuffer: MTLBuffer!
     
 //    var texCoordsBuffer: MTLBuffer
 //    var colorMap: MTLTexture?
@@ -51,10 +52,16 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     
     var attractor_manager: AttractorManager
     
+    var rendererDidDraw: (()->())?
+    
     init(metalKitView: MTKView, attractor: Attractor) throws {
         self.attractor_manager = AttractorManager(attractor: attractor)
         self.device = metalKitView.device!
         self.commandQueue = self.device.makeCommandQueue()!
+        
+        //
+        // Build Buffers
+        //
         
         // Build Uniform Buffer
         let uniformBufferSize = AttractorRenderer.alignedUniformsSize * AttractorRenderer.maxBuffersInFlight
@@ -65,6 +72,10 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         self.dynamicUniformBuffer.label = "UniformBuffer"
         
         uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to:A_Uniforms.self, capacity:1)
+        
+        //
+        // Build Pipeline
+        //
         
         // Build Vertex Descriptor
         metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float_stencil8
@@ -88,30 +99,29 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         depthStateDesciptor.isDepthWriteEnabled = true
         self.depthState = device.makeDepthStencilState(descriptor:depthStateDesciptor)!
         
-        // Build Vertex Data
-        do {
-            self.attractor_manager.buildAttractorVertexData()
-            let vertices = self.attractor_manager.vertex_data!
-            
-            let length = vertices.count * MemoryLayout<Float>.stride
-            self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
-            self.vertexCount = vertices.count
-            
-            // color
-            let colors = Array<Float>(repeating: 0.0, count: self.vertexCount / 3 * 4)
-            let color_length = colors.count * MemoryLayout<Float>.stride
-            
-            self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
-            
-            // texture coords
-//            let texCoords = self.A_system_manager.buildTexCoordsBuffer(withVertices: &vertices)
-//            let tex_length = texCoords.count * MemoryLayout<Float>.stride
-//            self.texCoordsBuffer = self.device.makeBuffer(bytes: texCoords, length: tex_length, options: [])!
-        } catch {
-            throw error
-        }
-        
         super.init()
+        
+        //
+        // Build Data
+        //
+        
+        // Build Vertex Data
+        self.updateVertexBuffer()
+    }
+    
+    func updateVertexBuffer() {
+        self.attractor_manager.buildAttractorVertexDataAtCurrentFrame()
+        let vertices = self.attractor_manager.vertex_data!
+        
+        let length = vertices.count * MemoryLayout<Float>.stride
+        self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
+        self.vertexCount = vertices.count
+        
+        // color
+        let colors = Array<Float>(repeating: 0.0, count: self.vertexCount / 3 * 4)
+        let color_length = colors.count * MemoryLayout<Float>.stride
+        
+        self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
     }
     
     class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
@@ -203,11 +213,12 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         if let commandBuffer = commandQueue.makeCommandBuffer() {
             let semaphore = inFlightSemaphore
             commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+                self.rendererDidDraw?()
                 semaphore.signal()
             }
             
             self.updateDynamicBufferState()
-            
+            self.updateVertexBuffer()
             self.updateGameState()
             
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
