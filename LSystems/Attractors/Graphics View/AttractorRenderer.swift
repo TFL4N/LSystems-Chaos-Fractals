@@ -47,7 +47,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     var rotation: Float = 0
     var rotationAxis: float3 = float3(0.0, 0.0, 1.0)
-    var scale: Float = 1.0
+    var scale: Float = 2.5
     var translation: (x: Float, y: Float) = (0.0, 0.0)
     
     var attractor_manager: AttractorManager
@@ -79,7 +79,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         
         // Build Vertex Descriptor
         metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float_stencil8
-        metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm_srgb
+        metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm
         metalKitView.sampleCount = 1
         
         let mtlVertexDescriptor = AttractorRenderer.buildMetalVertexDescriptor()

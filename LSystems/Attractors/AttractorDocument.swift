@@ -96,14 +96,19 @@ class AttractorDocument: NSDocument {
     //
     //
     func adjustAttractor(_ obj: inout Attractor) {
-        let anim = AnimationSequence(keyFrames: [
-            KeyFrame(value: Value(type: .float, value: 1.0), duration: 200),
-            KeyFrame(value: Value(type: .float, value: 1.9), duration: 100),
+        var param = obj.parameter(withName: "D")!
+        param.animation = AnimationSequence(keyFrames: [
+            KeyFrame(value: Value(type: .float, value: 1.7), duration: 500),
+            KeyFrame(value: Value(type: .float, value: 2.0), duration: 200),
+            KeyFrame(value: Value(type: .float, value: 1.9), duration: 100)
             ])
         
-        
-        let param = obj.parameter(withName: "D")!
-        param.animation = anim
+        param = obj.parameter(withName: "B")!
+        param.animation = AnimationSequence(keyFrames: [
+            KeyFrame(value: Value(type: .float, value: 1.0), duration: 700),
+            KeyFrame(value: Value(type: .float, value: 1.0), duration: 200),
+            KeyFrame(value: Value(type: .float, value: 1.6), duration: 100)
+            ])
     }
 }
 

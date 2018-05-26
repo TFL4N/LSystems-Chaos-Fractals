@@ -28,7 +28,7 @@ enum VideoCaptureError: Error {
 
 class VideoCapture {
     let frame_rate: UInt = 24
-    let frame_count = 200
+    let frame_count = 500
     let video_size: CGSize = CGSize(width: 1600, height: 1200)
     
     var video_writer: AVAssetWriter!
@@ -126,7 +126,7 @@ class VideoCapture {
         
         // buffer adapter
         let sourceBufferAttributes : [String : AnyObject] = [
-            kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: kCVPixelFormatType_32ARGB),
+            kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: kCVPixelFormatType_32BGRA),
             kCVPixelBufferWidthKey as String : NSNumber(value: Int(self.video_size.width)),
             kCVPixelBufferHeightKey as String : NSNumber(value: Int(self.video_size.height)),
             ]
@@ -154,7 +154,7 @@ class VideoCapture {
             guard CVPixelBufferCreate(kCFAllocatorDefault,
                                       Int(self.video_size.width),
                                       Int(self.video_size.height),
-                                      kCVPixelFormatType_32ARGB,
+                                      kCVPixelFormatType_32BGRA,
                                       nil,
                                       pixel_buffer_ptr) == kCVReturnSuccess,
                 let pixel_buffer = pixel_buffer_ptr.pointee else {
