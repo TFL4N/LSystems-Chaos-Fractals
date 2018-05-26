@@ -8,9 +8,7 @@
 
 import Cocoa
 
-class AttractorMainViewController: NSViewController, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate {
-
-    // MARK: ivars
+class AttractorDocumentViewController: NSViewController {
     var document: AttractorDocument? {
         return self.view.window?.windowController?.document as? AttractorDocument
     }
@@ -18,7 +16,11 @@ class AttractorMainViewController: NSViewController, NSTextFieldDelegate, NSTabl
     var attractor: Attractor! {
         return self.document?.attractor
     }
-    
+}
+
+class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate {
+
+    // MARK: ivars
     @IBOutlet var parametersTableView: NSTableView!
     @IBOutlet var showGraphicsButton: NSButton!
     

@@ -8,6 +8,22 @@
 
 import Cocoa
 
+enum RenderMode: String {
+    case live = "Live"
+    case `static` = "Static"
+    case video_capture = "Video Capture"
+}
+
+enum CameraViewingMode: String {
+    case free_floating = "Free Floating"
+    case fixed_towards_origin = "Fixed Towards Origin"
+}
+
+enum CameraProjectionMode: String {
+    case perspective = "Perspective"
+    case orthogonal = "Orthogonal"
+}
+
 class AttractorDocument: NSDocument {
 
     var attractor: Attractor = PickoverAttractor()
