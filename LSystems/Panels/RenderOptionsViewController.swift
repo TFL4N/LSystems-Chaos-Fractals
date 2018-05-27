@@ -36,6 +36,13 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
     
     private var needsBindings = true
     
+    @objc dynamic var foo: Float {
+        get {
+            return 1
+        }
+
+    }
+    
     override func viewWillAppear() {
         super.viewWillAppear()
         
@@ -55,7 +62,7 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
             self.cameraViewingModeButton
                 .bind(.selectedObject,
                       to: renderer,
-                      withKeyPath: "camera_viewing_mode",
+                      withKeyPath: "camera_viewing_mode_raw",
                       options: nil)
             
             // Projection
@@ -67,7 +74,7 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
             self.cameraProjectionModeButton
                 .bind(.selectedObject,
                   to: renderer,
-                  withKeyPath: "camera_projection_mode",
+                  withKeyPath: "camera_projection_mode_raw",
                   options: nil)
             
             // transformations
@@ -83,13 +90,19 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
                       withKeyPath: "scale",
                       options: nil)
             
+            self.cameraTranslationTextField
+                .bind(.value,
+                      to: self,
+                      withKeyPath: "foo",
+                      options: nil)
+            
             // Rendering
             /////////////
-            self.renderModeButton
-                .bind(.content,
-                      to: self.document!.graphics_view_cltr,
-                      withKeyPath: "render_mode",
-                      options: nil)
+//            self.renderModeButton
+//                .bind(.content,
+//                      to: self.document!.graphics_view_cltr,
+//                      withKeyPath: "render_mode_raw",
+//                      options: nil)
         }
     }
     

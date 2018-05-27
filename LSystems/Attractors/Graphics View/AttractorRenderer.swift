@@ -55,21 +55,23 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     }
     
     // Camera Perspective Mode
-    var camera_perspective_mode: CameraProjectionMode {
-        return CameraProjectionMode(rawValue: self.camera_perspective_mode_raw)!
+    var camera_projection_mode: CameraProjectionMode {
+        return CameraProjectionMode(rawValue: self.camera_projection_mode_raw)!
     }
-    @objc dynamic var camera_perspective_mode_raw = CameraProjectionMode.perspective.rawValue {
+    @objc dynamic var camera_projection_mode_raw = CameraProjectionMode.perspective.rawValue {
         didSet {
             
         }
     }
-    
-    // Transformations
-    var projectionMatrix: matrix_float4x4 = matrix_float4x4()
+   
+    // Free Floating Transformations
     @objc dynamic var rotation: Float = 0
     var rotationAxis: float3 = float3(0.0, 0.0, 1.0)
     @objc dynamic var scale: Float = 2.5
     var translation: (x: Float, y: Float) = (0.0, 0.0)
+    
+    // projection
+    var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     
     // ETC
     var attractor_manager: AttractorManager
@@ -304,6 +306,30 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         /// Respond to drawable size or orientation changes here
         let aspect = Float(size.width) / Float(size.height)
         projectionMatrix = matrix_perspective_right_hand(fovyRadians: radians_from_degrees(65), aspectRatio:aspect, nearZ: 0.1, farZ: 100.0)
+    }
+    
+    // MARK: Fixed Point Mode
+    var yaw_rotation_axis = float3(0,1,0)
+    var roll_rotation_axis = float3(0,0,1)
+    var pitch_rotation_axis = float3(1,0,0)
+    
+    var fixed_point_rotation = matrix_float4x4(diagonal: vector_float4(1))
+    
+    func addRotation(yaw: Float = 0, roll: Float = 0, pitch: Float = 0) {
+        if yaw != 0 {
+            
+        }
+        
+        if roll != 0 {
+            let rotation = matrix4x4_rotation(radians: roll,
+                                              axis: self.roll_rotation_axis)
+            
+            
+        }
+        
+        if pitch != 0 {
+            
+        }
     }
     
     // MARK: Helpers
