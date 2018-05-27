@@ -44,16 +44,38 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
 //    var colorMap: MTLTexture?
 //    var colorMode: Int32 = 1
     
+    // Camera View Mode
+    var camera_viewing_mode: CameraViewingMode {
+        return CameraViewingMode(rawValue: self.camera_viewing_mode_raw)!
+    }
+    @objc dynamic var camera_viewing_mode_raw = CameraViewingMode.free_floating.rawValue {
+        didSet {
+            print("Did Set Viewing Mode: \(self.camera_viewing_mode_raw)")
+        }
+    }
+    
+    // Camera Perspective Mode
+    var camera_perspective_mode: CameraProjectionMode {
+        return CameraProjectionMode(rawValue: self.camera_perspective_mode_raw)!
+    }
+    @objc dynamic var camera_perspective_mode_raw = CameraProjectionMode.perspective.rawValue {
+        didSet {
+            
+        }
+    }
+    
+    // Transformations
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
-    var rotation: Float = 0
+    @objc dynamic var rotation: Float = 0
     var rotationAxis: float3 = float3(0.0, 0.0, 1.0)
-    var scale: Float = 2.5
+    @objc dynamic var scale: Float = 2.5
     var translation: (x: Float, y: Float) = (0.0, 0.0)
     
+    // ETC
     var attractor_manager: AttractorManager
-    
     var rendererDidDraw: (()->())?
     
+    // MARK: Lifecycle
     init(metalKitView: MTKView, attractor: Attractor) throws {
         self.attractor_manager = AttractorManager(attractor: attractor)
         self.device = metalKitView.device!

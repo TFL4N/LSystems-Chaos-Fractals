@@ -19,8 +19,87 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
     @IBOutlet var cameraRotationTextField: NSTextField!
     @IBOutlet var cameraScaleTextField: NSTextField!
     
+    let camera_viewing_mode_controller = NSArrayController(content: [
+        CameraViewingMode.free_floating.rawValue,
+        CameraViewingMode.fixed_towards_origin.rawValue
+        ])
+    
+    let camera_projection_mode_controller = NSArrayController(content: [
+        CameraProjectionMode.orthogonal.rawValue,
+        CameraProjectionMode.perspective.rawValue
+        ])
+    
+    let render_mode_controller = NSArrayController(content: [
+        RenderMode.live.rawValue,
+        RenderMode.static.rawValue
+        ])
+    
+    private var needsBindings = true
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        
+        if self.needsBindings {
+            self.needsBindings = false
+            
+            let renderer = self.document!.graphics_view_cltr.renderer!
+            
+            // Camera
+            //////////////
+            // Viewing Mode
+            self.cameraViewingModeButton
+                .bind(.content,
+                      to: self.camera_viewing_mode_controller,
+                      withKeyPath: "arrangedObjects",
+                      options: nil)
+            self.cameraViewingModeButton
+                .bind(.selectedObject,
+                      to: renderer,
+                      withKeyPath: "camera_viewing_mode",
+                      options: nil)
+            
+            // Projection
+            self.cameraProjectionModeButton
+                .bind(.content,
+                      to: self.camera_projection_mode_controller,
+                      withKeyPath: "arrangedObjects",
+                      options: nil)
+            self.cameraProjectionModeButton
+                .bind(.selectedObject,
+                  to: renderer,
+                  withKeyPath: "camera_projection_mode",
+                  options: nil)
+            
+            // transformations
+            self.cameraRotationTextField
+                .bind(.value,
+                      to: renderer,
+                      withKeyPath: "rotation",
+                      options: nil)
+            
+            self.cameraScaleTextField
+                .bind(.value,
+                      to: renderer,
+                      withKeyPath: "scale",
+                      options: nil)
+            
+            // Rendering
+            /////////////
+            self.renderModeButton
+                .bind(.content,
+                      to: self.document!.graphics_view_cltr,
+                      withKeyPath: "render_mode",
+                      options: nil)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        self.cameraScaleTextField.formatter = formatter
         
         // Render Settings
         self.renderModeButton.addItems(withTitles:[
@@ -29,10 +108,10 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
             ])
         
         // Camera Settings
-        self.cameraViewingModeButton.addItems(withTitles:[
-            CameraViewingMode.free_floating.rawValue,
-            CameraViewingMode.fixed_towards_origin.rawValue
-            ])
+//        self.cameraViewingModeButton.addItems(withTitles:[
+//            CameraViewingMode.free_floating.rawValue,
+//            CameraViewingMode.fixed_towards_origin.rawValue
+//            ])
         self.cameraProjectionModeButton.addItems(withTitles:[
             CameraProjectionMode.perspective.rawValue,
             CameraProjectionMode.orthogonal.rawValue

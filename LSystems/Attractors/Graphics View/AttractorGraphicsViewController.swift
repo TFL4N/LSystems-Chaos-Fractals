@@ -11,11 +11,6 @@ import Cocoa
 import MetalKit
 import AVFoundation
 
-enum RendererMode: String {
-    case live
-    case videoCapture
-}
-
 typealias FrameId = UInt
 typealias FrameInterval = UInt
 
@@ -239,7 +234,7 @@ class AttractorGraphicsViewController: NSViewController {
         
         // Additional Configuration
         self.mtkView.delegate = self.renderer
-        self.rendererMode = .videoCapture
+        self.render_mode = .live
         
         // Add Gestures
         /////////////////
@@ -287,7 +282,7 @@ class AttractorGraphicsViewController: NSViewController {
         }
     }
     
-    func handleDidDraw() {
+    func handleDidDraw_VideoCapture() {
         switch self.videoCaptureSettings.status {
         case .error, .done:
             return
@@ -317,16 +312,30 @@ class AttractorGraphicsViewController: NSViewController {
 
     
     // MARK: Renderer Mode
-    var rendererMode: RendererMode = .videoCapture {
+    var render_mode: RenderMode {
+        get {
+            return RenderMode(rawValue: self.render_mode_raw)!
+        }
+        
+        set {
+            self.render_mode_raw = newValue.rawValue
+        }
+    }
+    @objc dynamic var render_mode_raw = RenderMode.live.rawValue {
         didSet {
-            switch self.rendererMode {
-            case .videoCapture:
+            switch self.render_mode {
+            case .video_capture:
                 self.mtkView?.isPaused = true
                 self.mtkView?.enableSetNeedsDisplay = false
-                self.renderer?.rendererDidDraw = self.handleDidDraw
+                self.renderer?.rendererDidDraw = self.handleDidDraw_VideoCapture
                 
             case .live:
                 self.mtkView?.isPaused = false
+                self.mtkView?.enableSetNeedsDisplay = false
+                self.renderer?.rendererDidDraw = nil
+                
+            case .static:
+                self.mtkView?.isPaused = true
                 self.mtkView?.enableSetNeedsDisplay = false
                 self.renderer?.rendererDidDraw = nil
             }
@@ -344,7 +353,7 @@ class AttractorGraphicsViewController: NSViewController {
     var lastRotationValue: CGFloat = 0.0
     
     @objc func handlePinchGesture(_ gesture: NSMagnificationGestureRecognizer) {
-        guard self.rendererMode != .videoCapture else {
+        guard self.render_mode == .live else {
             return
         }
         
@@ -363,7 +372,7 @@ class AttractorGraphicsViewController: NSViewController {
     }
     
     @objc func handlePanGesture(_ gesture: NSPanGestureRecognizer) {
-        guard self.rendererMode != .videoCapture else {
+        guard self.render_mode == .live else {
             return
         }
         
@@ -384,7 +393,7 @@ class AttractorGraphicsViewController: NSViewController {
     }
     
     @objc func handleRotationGesture(_ gesture: NSRotationGestureRecognizer) {
-        guard self.rendererMode != .videoCapture else {
+        guard self.render_mode == .live else {
             return
         }
         

@@ -29,6 +29,10 @@ class AttractorDocument: NSDocument {
     var attractor: Attractor = PickoverAttractor()
     
     weak var graphics_window_ctlr: NSWindowController!
+    var graphics_view_cltr: AttractorGraphicsViewController! {
+        return self.graphics_window_ctlr.contentViewController as? AttractorGraphicsViewController
+    }
+    
     weak var info_panel_window_ctlr: NSWindowController!
     
     override init() {
