@@ -229,11 +229,27 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
             self.lastRotationValue = 0.0
         case .changed, .ended:
             let new_rotation = self.renderer.rotation + Float(gesture.rotation - self.lastRotationValue)
-            self.renderer.rotation = new_rotation
+            
+            switch self.renderer.camera_viewing_mode {
+            case .free_floating:
+                self.renderer.rotation = new_rotation
+            case .fixed_towards_origin:
+                self.renderer.addRotation(roll: new_rotation)
+            }
             
             self.lastRotationValue = gesture.rotation
         default:
             break
+        }
+    }
+    
+    override func scrollWheel(with event: NSEvent) {
+        if self.renderer.camera_viewing_mode == .fixed_towards_origin
+            && self.render_mode == .live {
+            let factor: CGFloat = 0.001
+            
+            self.renderer.addRotation(yaw: Float(event.scrollingDeltaX * factor),
+                                      pitch: Float(event.scrollingDeltaY * factor))
         }
     }
 }

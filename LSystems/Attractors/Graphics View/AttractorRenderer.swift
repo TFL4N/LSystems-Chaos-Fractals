@@ -55,7 +55,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         return CameraViewingMode(rawValue: self.camera_viewing_mode_raw)!
     }
     
-    @objc dynamic var camera_viewing_mode_raw = CameraViewingMode.free_floating.rawValue {
+    @objc dynamic var camera_viewing_mode_raw = CameraViewingMode.fixed_towards_origin.rawValue {
         didSet {
             print("Did Set Viewing Mode: \(self.camera_viewing_mode_raw)")
         }
@@ -232,13 +232,23 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         
         uniforms[0].projectionMatrix = projectionMatrix
         
-        let rotationMatrix = matrix4x4_rotation(radians: rotation, axis: self.rotationAxis)
-        let scaleMatrix = matrix4x4_scaling(self.scale)
-        let translationMatrix = matrix4x4_translation(self.translation.x, self.translation.y, 0.0)
-        
-        let modelMatrix = simd_mul(simd_mul(scaleMatrix, rotationMatrix), translationMatrix)
-        let viewMatrix = matrix4x4_translation(0.0, 0.0, -8.0)
-        uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
+        switch self.camera_viewing_mode {
+        case .free_floating:
+            let rotationMatrix = matrix4x4_rotation(radians: rotation, axis: self.rotationAxis)
+            let scaleMatrix = matrix4x4_scaling(self.scale)
+            let translationMatrix = matrix4x4_translation(self.translation.x, self.translation.y, 0.0)
+            
+            let modelMatrix = simd_mul(simd_mul(scaleMatrix, rotationMatrix), translationMatrix)
+            let viewMatrix = matrix4x4_translation(0.0, 0.0, -8.0)
+            uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
+        case .fixed_towards_origin:
+            let scaleMatrix = matrix4x4_scaling(self.scale)
+            
+            
+            let modelMatrix = scaleMatrix * self.fixed_point_rotation
+            let viewMatrix = matrix4x4_translation(0.0, 0.0, -8.0)
+            uniforms[0].modelViewMatrix = viewMatrix * modelMatrix
+        }
     }
     
     func draw(in view: MTKView) {
@@ -322,26 +332,49 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     }
     
     // MARK: Fixed Point Mode
-    var yaw_rotation_axis = float3(0,1,0)
-    var roll_rotation_axis = float3(0,0,1)
-    var pitch_rotation_axis = float3(1,0,0)
+    var yaw_rotation_axis = float4(0,1,0,1)
+    var roll_rotation_axis = float4(0,0,1,1)
+    var pitch_rotation_axis = float4(1,0,0,1)
+    
+    var locked_rotational_axes = false
     
     var fixed_point_rotation = matrix_float4x4(diagonal: vector_float4(1))
     
     func addRotation(yaw: Float = 0, roll: Float = 0, pitch: Float = 0) {
         if yaw != 0 {
+            let rotation = matrix4x4_rotation(radians: yaw,
+                                              axis: self.yaw_rotation_axis)
             
+            self.fixed_point_rotation = rotation * self.fixed_point_rotation
+            
+            if self.locked_rotational_axes {
+                self.roll_rotation_axis = rotation * self.yaw_rotation_axis
+                self.pitch_rotation_axis = rotation * self.pitch_rotation_axis
+            }
         }
         
         if roll != 0 {
             let rotation = matrix4x4_rotation(radians: roll,
                                               axis: self.roll_rotation_axis)
             
+            self.fixed_point_rotation = rotation * self.fixed_point_rotation
             
+            if self.locked_rotational_axes {
+                self.yaw_rotation_axis = rotation * self.yaw_rotation_axis
+                self.pitch_rotation_axis = rotation * self.pitch_rotation_axis
+            }
         }
         
         if pitch != 0 {
+            let rotation = matrix4x4_rotation(radians: pitch,
+                                              axis: self.pitch_rotation_axis)
             
+            self.fixed_point_rotation = rotation * self.fixed_point_rotation
+            
+            if self.locked_rotational_axes {
+                self.yaw_rotation_axis = rotation * self.yaw_rotation_axis
+                self.roll_rotation_axis = rotation * self.pitch_rotation_axis
+            }
         }
     }
     
