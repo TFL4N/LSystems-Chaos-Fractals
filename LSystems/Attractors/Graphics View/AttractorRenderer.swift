@@ -37,6 +37,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
 //    var dynamicVertexBuffer: [(buffer: MTLBuffer, count: Int)]
     var vertexBuffer: MTLBuffer!
     var vertexCount: Int!
+    let bufferLock = ReadWriteLock()
     
     var colorBuffer: MTLBuffer!
     
@@ -268,7 +269,9 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                     renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: A_BufferIndex.uniforms.rawValue)
                     
                     // set vertex buffer
-                    renderEncoder.setVertexBuffer(self.vertexBuffer, offset: 0, index: A_BufferIndex.vertexPositions.rawValue)
+                    self.bufferLock.withReadLock { () -> () in
+                        renderEncoder.setVertexBuffer(self.vertexBuffer, offset: 0, index: A_BufferIndex.vertexPositions.rawValue)
+                    }
                     
                     // set color buffer
                     renderEncoder.setVertexBuffer(self.colorBuffer, offset: 0, index: A_BufferIndex.vertexColors.rawValue)
