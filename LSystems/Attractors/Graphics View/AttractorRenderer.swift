@@ -10,6 +10,11 @@ import Metal
 import MetalKit
 import simd
 
+protocol AttractorRendererDelegate {
+    var attractor_manager: AttractorManager! { get }
+    func rendererDidDraw()
+}
+
 class AttractorRenderer: NSObject, MTKViewDelegate {
     // MARK: Class Vars
     // The 256 byte aligned size of our uniform structure
@@ -49,6 +54,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     var camera_viewing_mode: CameraViewingMode {
         return CameraViewingMode(rawValue: self.camera_viewing_mode_raw)!
     }
+    
     @objc dynamic var camera_viewing_mode_raw = CameraViewingMode.free_floating.rawValue {
         didSet {
             print("Did Set Viewing Mode: \(self.camera_viewing_mode_raw)")
@@ -75,12 +81,11 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     
     // ETC
-    var attractor_manager: AttractorManager
-    var rendererDidDraw: (()->())?
+    var delegate: AttractorRendererDelegate
     
     // MARK: Lifecycle
-    init(metalKitView: MTKView, attractor: Attractor) throws {
-        self.attractor_manager = AttractorManager(attractor: attractor)
+    init(metalKitView: MTKView, delegate: AttractorRendererDelegate) throws {
+        self.delegate = delegate
         self.device = metalKitView.device!
         self.commandQueue = self.device.makeCommandQueue()!
         
@@ -135,18 +140,24 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     }
     
     func updateVertexBuffer() {
-        self.attractor_manager.buildAttractorVertexDataAtCurrentFrame()
-        let vertices = self.attractor_manager.vertex_data!
-        
-        let length = vertices.count * MemoryLayout<Float>.stride
-        self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
-        self.vertexCount = vertices.count
-        
-        // color
-        let colors = Array<Float>(repeating: 0.0, count: self.vertexCount / 3 * 4)
-        let color_length = colors.count * MemoryLayout<Float>.stride
-        
-        self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
+        if let manager = self.delegate.attractor_manager {
+            manager.buildAttractorVertexDataAtCurrentFrame()
+            let vertices = manager.vertex_data!
+            
+            let length = vertices.count * MemoryLayout<Float>.stride
+            self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
+            self.vertexCount = vertices.count
+            
+            // color
+            let colors = Array<Float>(repeating: 0.0, count: self.vertexCount / 3 * 4)
+            let color_length = colors.count * MemoryLayout<Float>.stride
+            
+            self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
+        } else {
+            self.vertexBuffer = nil
+            self.vertexCount = nil
+            self.colorBuffer = nil
+        }
     }
     
     class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
@@ -231,14 +242,14 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
-        /// Per frame updates hare
+
         
         _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         
         if let commandBuffer = commandQueue.makeCommandBuffer() {
             let semaphore = inFlightSemaphore
             commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
-                self.rendererDidDraw?()
+                self.delegate.rendererDidDraw()
                 semaphore.signal()
             }
             
@@ -248,9 +259,8 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
             
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
-            let renderPassDescriptor = view.currentRenderPassDescriptor
-            
-            if let renderPassDescriptor = renderPassDescriptor {
+            if let renderPassDescriptor = view.currentRenderPassDescriptor,
+                self.vertexBuffer != nil {
                 renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 1.0, 1.0, 1.0)
                 
                 /// Final pass rendering code here

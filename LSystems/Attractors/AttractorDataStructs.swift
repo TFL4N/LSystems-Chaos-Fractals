@@ -8,6 +8,12 @@
 
 import Foundation
 
+extension NSCoding {
+    func deepCopy() -> Self {
+        return NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: self)) as! Self
+    }
+}
+
 class Attractor: NSObject, NSCoding {
     let parameters: [Parameter]
     
@@ -34,6 +40,8 @@ class Attractor: NSObject, NSCoding {
         
         coder.encode(self.parameters, forKey: "attractor_parameters")
     }
+    
+    
     
     func buildVertexArray() -> [Float] {
         return self.buildVertexArray(atFrame: 0)

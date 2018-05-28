@@ -26,7 +26,7 @@ enum CameraProjectionMode: String {
 
 class AttractorDocument: NSDocument {
 
-    var attractor: Attractor = PickoverAttractor()
+    var attractor_manager: AttractorManager! = AttractorManager(attractor: PickoverAttractor())
     
     weak var graphics_window_ctlr: NSWindowController!
     var graphics_view_cltr: AttractorGraphicsViewController! {
@@ -52,17 +52,12 @@ class AttractorDocument: NSDocument {
     }
     
     func showGraphicsWindowController() {
-        // deep copy attractor
-        var new_attractor = NSKeyedUnarchiver.unarchiveObject(with: NSKeyedArchiver.archivedData(withRootObject: self.attractor)) as! Attractor
-        self.adjustAttractor(&new_attractor)
-        
         // create new graphics window
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
         
         self.graphics_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Graphics Window Controller")) as! NSWindowController
         
         let graphics_cntlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Attractor Graphics Controller")) as! AttractorGraphicsViewController
-        graphics_cntlr.attractor = new_attractor
         
         self.graphics_window_ctlr.contentViewController = graphics_cntlr
         self.graphics_window_ctlr.shouldCloseDocument = false
@@ -86,7 +81,7 @@ class AttractorDocument: NSDocument {
         // You can also choose to override fileWrapperOfType:error:, writeToURL:ofType:error:, or writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
         
         let dict: [String: Any] = [
-            "attractor": self.attractor
+            "attractor": self.attractor_manager.attractor
         ]
         
         let data = NSMutableData()
@@ -105,7 +100,8 @@ class AttractorDocument: NSDocument {
         // If you override either of these, you should also override -isEntireFileLoaded to return false if the contents are lazily loaded.
         
         let dict = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
-        self.attractor = dict["attractor"] as! Attractor
+        let attractor = dict["attractor"] as! Attractor
+        self.attractor_manager = AttractorManager(attractor: attractor)
     }
 
     //

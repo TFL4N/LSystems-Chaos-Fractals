@@ -10,12 +10,9 @@
 import Cocoa
 import MetalKit
 
-class AttractorGraphicsViewController: NSViewController {
-    
+class AttractorGraphicsViewController: AttractorDocumentViewController, AttractorRendererDelegate {
     var renderer: AttractorRenderer!
     var mtkView: MTKView!
-    
-    var attractor: Attractor!
     
     var pinchGesture: NSMagnificationGestureRecognizer!
     var panGesture: NSPanGestureRecognizer!
@@ -50,7 +47,7 @@ class AttractorGraphicsViewController: NSViewController {
         
         // Create the Renderer
         do {
-            self.renderer = try AttractorRenderer(metalKitView: self.mtkView, attractor: self.attractor)
+            self.renderer = try AttractorRenderer(metalKitView: self.mtkView, delegate: self)
         } catch {
             print("Renderer cannot be initialized: \(error)")
             return
@@ -71,6 +68,13 @@ class AttractorGraphicsViewController: NSViewController {
         self.mtkView.addGestureRecognizer(self.pinchGesture)
         self.mtkView.addGestureRecognizer(self.panGesture)
         self.mtkView.addGestureRecognizer(self.rotateGesture)
+    }
+    
+    // MARK: Attractor Renderer Delegate
+    func rendererDidDraw() {
+        if self.render_mode == .video_capture {
+            self.handleDidDraw_VideoCapture()
+        }
     }
     
     // MARK: Video Capture
@@ -97,13 +101,13 @@ class AttractorGraphicsViewController: NSViewController {
     }
     
     func handleCaptureImage() {
-        let file_name = String(format: "frame%05i.png", self.renderer.attractor_manager.current_frame)
+        let file_name = String(format: "frame%05i.png", self.attractor_manager.current_frame)
         let url = URL(fileURLWithPath: "/Users/SpaiceMaine/GoodKarmaCoding/LSystems Documents/capture/\(file_name)")
         self.captureImage(destinationURL: url)
         
-        self.renderer.attractor_manager.current_frame += 1
+        self.attractor_manager.current_frame += 1
         
-        if self.renderer.attractor_manager.current_frame < self.videoCaptureSettings.frame_count {
+        if self.attractor_manager.current_frame < self.videoCaptureSettings.frame_count {
             self.mtkView.draw()
         }
     }
@@ -123,12 +127,12 @@ class AttractorGraphicsViewController: NSViewController {
         case .capturing:
             // append frame
             self.videoCaptureSettings.appendFrame(
-                self.renderer.attractor_manager.current_frame,
+                self.attractor_manager.current_frame,
                 texture: self.mtkView.currentDrawable!.texture)
             
-            self.renderer.attractor_manager.current_frame += 1
+            self.attractor_manager.current_frame += 1
             
-            if self.renderer.attractor_manager.current_frame < self.videoCaptureSettings.frame_count {
+            if self.attractor_manager.current_frame < self.videoCaptureSettings.frame_count {
                 self.mtkView.draw()
             } else {
                 self.videoCaptureSettings.finishCapturingVideo()
@@ -153,17 +157,14 @@ class AttractorGraphicsViewController: NSViewController {
             case .video_capture:
                 self.mtkView?.isPaused = true
                 self.mtkView?.enableSetNeedsDisplay = false
-                self.renderer?.rendererDidDraw = self.handleDidDraw_VideoCapture
                 
             case .live:
                 self.mtkView?.isPaused = false
                 self.mtkView?.enableSetNeedsDisplay = false
-                self.renderer?.rendererDidDraw = nil
                 
             case .static:
                 self.mtkView?.isPaused = true
                 self.mtkView?.enableSetNeedsDisplay = false
-                self.renderer?.rendererDidDraw = nil
             }
         }
     }

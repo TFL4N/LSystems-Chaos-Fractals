@@ -13,8 +13,8 @@ class AttractorDocumentViewController: NSViewController {
         return self.view.window?.windowController?.document as? AttractorDocument
     }
     
-    var attractor: Attractor! {
-        return self.document?.attractor
+    var attractor_manager: AttractorManager! {
+        return self.document?.attractor_manager
     }
 }
 
@@ -46,7 +46,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
     }
     
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return self.attractor?.parameters.count ?? 0
+        return self.attractor_manager?.attractor.parameters.count ?? 0
     }
     
     // MARK: TableView Delegate
@@ -62,7 +62,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
             }
             
             // fill with data
-            let param = self.attractor.parameters[row]
+            let param = self.attractor_manager.attractor.parameters[row]
             let param_cell = cell as! TextFieldCellView
             param_cell.mainTextField.isEditable = false
             param_cell.mainTextField.stringValue = param.name
@@ -75,7 +75,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
             }
             
             // fill with data
-            let value = self.attractor.parameters[row].value
+            let value = self.attractor_manager.attractor.parameters[row].value
             let value_cell = cell as! ValueSliderCellView
             value_cell.value = value
             
