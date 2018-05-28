@@ -57,7 +57,7 @@ class Attractor: NSObject, NSCoding {
 class Value: NSObject, NSCoding {
     let type: ValueType
     
-    private var value_store: Any?
+    @objc dynamic private var value_store: Any?
     var value: Any? {
         get {
             switch self.type {
@@ -69,21 +69,30 @@ class Value: NSObject, NSCoding {
         }
         
         set {
+            guard let new_val = newValue else {
+                self.value_store = nil
+                return
+            }
+            
             switch self.type {
             case .float:
-                if let fl = newValue as? Float {
+                if let fl = new_val as? Float {
                     self.value_store = fl
-                } else if let str = newValue as? String {
+                } else if let i = new_val as? Int {
+                    self.value_store = Float(i)
+                } else if let str = new_val as? String {
                     self.value_store = Float(str)
-                } else if let fl = newValue as? NSNumber {
+                } else if let fl = new_val as? NSNumber {
                     self.value_store = fl.floatValue
                 }
             case .integer:
-                if let i = newValue as? Int {
+                if let i = new_val as? Int {
                     self.value_store = i
-                } else if let str = newValue as? String {
+                } else if let fl = new_val as? Float {
+                    self.value_store = Int(fl)
+                } else if let str = new_val as? String {
                     self.value_store = Int(str)
-                } else if let n = newValue as? NSNumber {
+                } else if let n = new_val as? NSNumber {
                     self.value_store = n.intValue
                 }
             }
@@ -91,11 +100,43 @@ class Value: NSObject, NSCoding {
     }
     
     var floatValue: Float? {
-        return self.value as? Float
+        get {
+            return self.value as? Float
+        }
+        
+        set {
+            self.value = newValue
+        }
     }
     
     var integerValue: Int? {
-        return self.value as? Int
+        get {
+            return self.value as? Int
+        }
+        
+        set {
+            self.value = newValue
+        }
+    }
+    
+    @objc dynamic var numberValue: NSNumber? {
+        get {
+            switch self.type {
+            case .float:
+                return NSNumber(value: self.floatValue!)
+            case .integer:
+                return NSNumber(value: self.integerValue!)
+            }
+        }
+        
+        set {
+            self.value = newValue
+        }
+    }
+    
+    
+    @objc dynamic class func keyPathsForValuesAffectingNumberValue() -> Set<String> {
+        return ["value_store"]
     }
     
     var stringValue: String? {

@@ -68,18 +68,24 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
             param_cell.mainTextField.stringValue = param.name
         } else if tableColumn == self.parametersTableView.tableColumns[1] {
             // create cell
-            cell = tableView.makeView(withIdentifier: CellID.ParameterName, owner: nil) as? TextFieldCellView
+            cell = tableView.makeView(withIdentifier: CellID.ParameterValue, owner: nil) as? TextFieldCellView
             if cell == nil {
-                cell = TextFieldCellView()
+                cell = ValueSliderCellView()
                 cell!.identifier = CellID.ParameterValue
             }
             
             // fill with data
-            let param = self.attractor.parameters[row]
-            let param_cell = cell as! TextFieldCellView
-            param_cell.mainTextField.stringValue = param.value!.stringValue ?? ""
-            param_cell.handler = { (p_cell) in
-                param.value!.value = p_cell.mainTextField.stringValue
+            let value = self.attractor.parameters[row].value
+            let value_cell = cell as! ValueSliderCellView
+            value_cell.value = value
+            
+            if let value = value {
+                switch value.type {
+                case .float:
+                    value_cell.valueSlider.multiplier = 0.01
+                case .integer:
+                    value_cell.valueSlider.multiplier = 5
+                }
             }
         }
         
