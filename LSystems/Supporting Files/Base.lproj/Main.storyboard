@@ -730,8 +730,8 @@
                         <tabViewItem id="xM1-GR-S9z"/>
                     </tabViewItems>
                     <tabView key="tabView" type="noTabsNoBorder" id="ZR6-V2-wPO">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <rect key="frame" x="0.0" y="0.0" width="244" height="204"/>
+                        <autoresizingMask key="autoresizingMask" heightSizable="YES"/>
                         <font key="font" metaFont="message"/>
                         <connections>
                             <outlet property="delegate" destination="wCH-jc-akD" id="WrO-TL-3nZ"/>
@@ -745,7 +745,7 @@
                 </tabViewController>
                 <customObject id="kPi-ju-KJP" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="877" y="874"/>
+            <point key="canvasLocation" x="774" y="826"/>
         </scene>
         <!--Capturing-->
         <scene sceneID="YPo-CC-t2g">
@@ -890,9 +890,9 @@
                 <viewController title="Rendering" id="3v3-ta-aM8" customClass="RenderOptionsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="vT4-n7-1fh">
                         <rect key="frame" x="0.0" y="0.0" width="489" height="284"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" heightSizable="YES"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ELq-ai-2OP">
+                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ELq-ai-2OP">
                                 <rect key="frame" x="20" y="20" width="449" height="264"/>
                                 <subviews>
                                     <box title="Render Mode" translatesAutoresizingMaskIntoConstraints="NO" id="VJr-sX-GHf">
@@ -1127,7 +1127,7 @@
                 </viewController>
                 <customObject id="JDT-K4-1u0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1634.5" y="1023.5"/>
+            <point key="canvasLocation" x="1634.5" y="1023"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="cGB-fg-nJH">
