@@ -36,12 +36,6 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
     
     private var needsBindings = true
     
-    @objc dynamic var foo: Float {
-        get {
-            return 1
-        }
-
-    }
     
     override func viewWillAppear() {
         super.viewWillAppear()
@@ -90,19 +84,24 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
                       withKeyPath: "scale",
                       options: nil)
             
-            self.cameraTranslationTextField
-                .bind(.value,
-                      to: self,
-                      withKeyPath: "foo",
-                      options: nil)
+//            self.cameraTranslationTextField
+//                .bind(.value,
+//                      to: self,
+//                      withKeyPath: "foo",
+//                      options: nil)
             
             // Rendering
             /////////////
-//            self.renderModeButton
-//                .bind(.content,
-//                      to: self.document!.graphics_view_cltr,
-//                      withKeyPath: "render_mode_raw",
-//                      options: nil)
+            self.renderModeButton
+                .bind(.content,
+                      to: self.render_mode_controller,
+                      withKeyPath: "arrangedObjects",
+                      options: nil)
+            self.renderModeButton
+                .bind(.selectedObject,
+                      to: self.document!.graphics_view_cltr!,
+                      withKeyPath: "render_mode_raw",
+                      options: nil)
         }
     }
     
@@ -113,22 +112,6 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
         formatter.numberStyle = .decimal
         
         self.cameraScaleTextField.formatter = formatter
-        
-        // Render Settings
-        self.renderModeButton.addItems(withTitles:[
-            RenderMode.live.rawValue,
-            RenderMode.static.rawValue
-            ])
-        
-        // Camera Settings
-//        self.cameraViewingModeButton.addItems(withTitles:[
-//            CameraViewingMode.free_floating.rawValue,
-//            CameraViewingMode.fixed_towards_origin.rawValue
-//            ])
-        self.cameraProjectionModeButton.addItems(withTitles:[
-            CameraProjectionMode.perspective.rawValue,
-            CameraProjectionMode.orthogonal.rawValue
-            ])
     }
    
     override func controlTextDidEndEditing(_ notification: Notification) {
@@ -158,7 +141,7 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
     }
     
     @IBAction func handleRenderRefreshPress(_ sender: AnyObject) {
-        
+        self.document?.graphics_view_cltr?.mtkView.draw()
     }
     
     // MARK: Camera Settings
