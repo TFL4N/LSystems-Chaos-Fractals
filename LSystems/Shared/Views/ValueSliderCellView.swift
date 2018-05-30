@@ -21,12 +21,17 @@ class ValueSliderCellView: NSTableCellView {
         didSet {
             self.valueSlider.value = self.value
             
-            guard let new_val = self.value else { return }
+            self.mainTextField.formatter = self.value?.createNumberFormatter()
             
-            self.mainTextField.bind(.value,
-                                    to: new_val,
-                                    withKeyPath: "numberValue",
-                                    options: nil)
+            if let new_val = self.value {
+                self.mainTextField.bind(.value,
+                                        to: new_val,
+                                        withKeyPath: "numberValue",
+                                        options: nil)
+
+            } else {
+                self.mainTextField.stringValue = ""
+            }
         }
     }
     

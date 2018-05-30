@@ -90,8 +90,6 @@ class Value: NSObject, NSCoding {
                     self.value_store = Float(i)
                 } else if let str = new_val as? String {
                     self.value_store = Float(str)
-                } else if let fl = new_val as? NSNumber {
-                    self.value_store = fl.floatValue
                 }
             case .integer:
                 if let i = new_val as? Int {
@@ -100,9 +98,7 @@ class Value: NSObject, NSCoding {
                     self.value_store = Int(fl)
                 } else if let str = new_val as? String {
                     self.value_store = Int(str)
-                } else if let n = new_val as? NSNumber {
-                    self.value_store = n.intValue
-                }
+                } 
             }
         }
     }
@@ -177,6 +173,24 @@ class Value: NSObject, NSCoding {
         
         try! coder.encodeEncodable(self.type, forKey: "value_type")
         coder.encode(self.value, forKey: "value_value")
+    }
+    
+    func createNumberFormatter() -> Formatter {
+        let formatter = NumberFormatter()
+        
+        switch self.type {
+        case .float:
+            formatter.allowsFloats = true
+            formatter.generatesDecimalNumbers = true
+            formatter.alwaysShowsDecimalSeparator = false
+            formatter.numberStyle = .decimal
+        case .integer:
+            formatter.allowsFloats = false
+            formatter.generatesDecimalNumbers = false
+            formatter.maximumFractionDigits = 0
+        }
+        
+        return formatter
     }
 }
 

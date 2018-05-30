@@ -62,6 +62,7 @@ class PickoverAttractor: Attractor {
         let C = self.parameter(withName: "C")!.value(atFrame: atFrame)!.floatValue!
         let D = self.parameter(withName: "D")!.value(atFrame: atFrame)!.floatValue!
         
+//        print("iters: \(max_iters)")
 //        print("A: \(A), B: \(B), C: \(C), D: \(D)")
         
         var x: Float = 0
