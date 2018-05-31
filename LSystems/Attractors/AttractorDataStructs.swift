@@ -14,11 +14,12 @@ extension NSCoding {
     }
 }
 
-typealias BufferTuple = (vertex: BufferItem, main_color: BufferItem)
-
 class Attractor: NSObject, NSCoding {
     let parameters: [Parameter]
     
+    @objc dynamic var didChange = true
+    
+    static let observation_key_paths = ["value", "value.value"]
     override init() {
         self.parameters = []
         super.init()
@@ -27,6 +28,13 @@ class Attractor: NSObject, NSCoding {
     init?(parameters: [Parameter]) {
         self.parameters = parameters
         super.init()
+        
+        // Observation
+        for p in self.parameters {
+            for kp in Attractor.observation_key_paths {
+                p.addObserver(self, forKeyPath: kp, options: .new, context: nil)
+            }
+        }
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
@@ -37,13 +45,25 @@ class Attractor: NSObject, NSCoding {
         self.init(parameters: parameters)
     }
     
+    deinit {
+        for p in self.parameters {
+            for kp in Attractor.observation_key_paths {
+                p.removeObserver(self, forKeyPath: kp)
+            }
+        }
+    }
+    
     func encode(with aCoder: NSCoder) {
         let coder = aCoder as! NSKeyedArchiver
         
         coder.encode(self.parameters, forKey: "attractor_parameters")
     }
     
-    func buildVertexData(atFrame: FrameId = 0, bufferPool: BufferPool) -> [BufferTuple] {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        self.didChange = true
+    }
+    
+    func buildVertexData(atFrame: FrameId = 0, bufferPool: BufferPool) -> [AttractorBuffer] {
         return []
     }
     
@@ -62,7 +82,7 @@ class Value: NSObject, NSCoding {
     let type: ValueType
     
     @objc dynamic private var value_store: Any?
-    var value: Any? {
+    @objc dynamic var value: Any? {
         get {
             switch self.type {
             case .float:
@@ -197,7 +217,7 @@ enum ValueType: String, Codable {
 
 class Parameter: NSObject, NSCoding {
     let name: String
-    var value: Value?
+    @objc dynamic var value: Value?
     var animation: AnimationSequence?
     
     init(name: String, value: Value?) {

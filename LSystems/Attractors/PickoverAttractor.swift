@@ -46,7 +46,7 @@ class PickoverAttractor: Attractor {
         self.init(parameters: params)
     }
     
-    override func buildVertexData(atFrame: FrameId, bufferPool: BufferPool) -> [BufferTuple] {
+    override func buildVertexData(atFrame: FrameId, bufferPool: BufferPool) -> [AttractorBuffer] {
         // iterations
         let max_iters = self.parameter(withName: "iterations")!.value!.integerValue!
         let skip_iters = self.parameter(withName: "skip iterations")!.value!.integerValue!
@@ -59,7 +59,7 @@ class PickoverAttractor: Attractor {
         var current_main_colors = [Float]()
         current_main_colors.reserveCapacity(vertex_count_buffer_limit * 4)
         
-        var output_buffers = [BufferTuple]()
+        var output_buffers = [AttractorBuffer]()
         var current_vertex_index = 0
         
         let updateOutputBuffer = {
@@ -72,7 +72,8 @@ class PickoverAttractor: Attractor {
             main_color_buffer.setData(current_main_colors)
             main_color_buffer.count = current_vertex_index
             
-            output_buffers.append((vertex: vertex_buffer, main_color: main_color_buffer))
+            let attractor_buffer = AttractorBuffer(vertices: vertex_buffer, main_colors: main_color_buffer)
+            output_buffers.append(attractor_buffer)
             
             current_vertices = []
             current_main_colors = []

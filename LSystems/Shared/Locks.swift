@@ -22,11 +22,23 @@ final class ReadWriteLock {
         assert(status == 0)
     }
     
+    public func unlock() {
+        pthread_rwlock_unlock(&lock)
+    }
+    
+    public func readLock() {
+        pthread_rwlock_rdlock(&lock)
+    }
+    
     @discardableResult
     public func withReadLock<Result>(_ body: () throws -> Result) rethrows -> Result {
         pthread_rwlock_rdlock(&lock)
         defer { pthread_rwlock_unlock(&lock) }
         return try body()
+    }
+    
+    public func writeLock() {
+        pthread_rwlock_wrlock(&lock)
     }
     
     @discardableResult

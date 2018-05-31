@@ -9,18 +9,64 @@
 import Foundation
 import Metal
 
-class BufferItem {
+
+class AttractorBuffer {
+    let vertex_buffer: BufferItem
+    let main_color_buffer: BufferItem
+    
+    init(vertices: BufferItem, main_colors: BufferItem) {
+        self.vertex_buffer = vertices
+        self.main_color_buffer = main_colors
+    }
+    
+    func retain() {
+        self.vertex_buffer.retain()
+        self.main_color_buffer.retain()
+    }
+    
+    func release() {
+        self.vertex_buffer.release()
+        self.main_color_buffer.release()
+    }
+}
+
+class BufferItem: Equatable {
     let buffer: MTLBuffer
     var count: Int = 0
     
-    init(buffer: MTLBuffer) {
+    unowned let buffer_pool: BufferPool
+    private(set) var retainCount = 0
+    
+    init(buffer: MTLBuffer, bufferPool: BufferPool) {
         self.buffer = buffer
+        self.buffer_pool = bufferPool
+    }
+    
+    static func == (lhs: BufferItem, rhs: BufferItem) -> Bool {
+        return lhs === rhs
     }
     
     func setData(_ data: [Float]) {
         self.buffer.contents()
             .copyMemory(from: data,
                         byteCount: data.count * MemoryLayout<Float>.stride)
+    }
+    
+    func retain() {
+        self.retainCount += 1
+    }
+    
+    func release() {
+        self.retainCount -= 1
+        
+        if self.retainCount <= 0 {
+            self.buffer_pool.recycleBuffer(self)
+        }
+    }
+    
+    func recycle() {
+        self.count = 0
+        self.retainCount = 0
     }
 }
 
@@ -34,36 +80,45 @@ class BufferPool {
     private var clean_buffers = BufferArray()
     private var dirty_buffers = BufferArray()
     
+    private var clean_buffers_lock = ReadWriteLock()
+    private var dirty_buffers_lock = ReadWriteLock()
+    
+    private var recycler_timer: Timer? = nil
+    
     init(device: MTLDevice) {
         self.device = device
+        self.recycler_timer = Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(handleRecyclerTimer(_:)), userInfo: nil, repeats: true)
+    }
+    
+    deinit {
+        self.recycler_timer?.invalidate()
+        self.recycler_timer = nil
     }
     
     private func createBuffer() -> BufferItem {
         let buffer = device.makeBuffer(length: BufferPool.max_buffer_length, options: [])!
         
-        return BufferItem(buffer: buffer)
+        return BufferItem(buffer: buffer, bufferPool: self)
     }
     
-    func runCleanBuffersOperation<Result>(_ block: (inout BufferArray)->Result) -> Result {
-        objc_sync_enter(self.clean_buffers)
-        defer {
-            objc_sync_exit(self.clean_buffers)
-        }
-        
-        return block(&self.clean_buffers)
+    func readCleanBuffersOperation<Result>(_ block: (BufferArray)->Result) -> Result {
+        return self.clean_buffers_lock.withReadLock { block(self.clean_buffers) }
     }
     
-    func runDirtyBuffersOperation<Result>(_ block: (inout BufferArray)->Result) -> Result {
-        objc_sync_enter(self.dirty_buffers)
-        defer {
-            objc_sync_exit(self.dirty_buffers)
-        }
-        
-        return block(&self.dirty_buffers)
+    func writeCleanBuffersOperation<Result>(_ block: (inout BufferArray)->Result) -> Result {
+        return self.clean_buffers_lock.withWriteLock { block(&self.clean_buffers) }
+    }
+    
+    func readDirtyBuffersOperation<Result>(_ block: (BufferArray)->Result) -> Result {
+        return self.dirty_buffers_lock.withReadLock { block(self.dirty_buffers) }
+    }
+    
+    func writeDirtyBuffersOperation<Result>(_ block: (inout BufferArray)->Result) -> Result {
+        return self.dirty_buffers_lock.withWriteLock { block(&self.dirty_buffers) }
     }
     
     func getBuffer() -> BufferItem {
-        let buffer = self.runCleanBuffersOperation { (buffers) -> BufferItem? in
+        let buffer = self.writeCleanBuffersOperation { (buffers) -> BufferItem? in
             if buffers.isEmpty {
                 return nil
             } else {
@@ -71,18 +126,48 @@ class BufferPool {
             }
         } ?? self.createBuffer()
         
-        self.runDirtyBuffersOperation { (buffers) -> Void in
+        buffer.retain()
+        
+        self.writeDirtyBuffersOperation { (buffers) -> Void in
             buffers.append(buffer)
         }
         
         return buffer
     }
     
-    func releaseBuffer(_ buffer: BufferItem) {
-        buffer.count = 0
-        
-        self.runCleanBuffersOperation { (buffers) -> Void in
-            buffers.append(buffer)
+    func recycleBuffer(_ buffer: BufferItem) {
+        self.writeDirtyBuffersOperation { ( buffers ) in
+            if let idx = buffers.index(of: buffer) {
+                buffers.remove(at: idx)
+                
+                buffer.recycle()
+                
+                self.writeCleanBuffersOperation { (clean_buffers) in
+                    clean_buffers.append(buffer)
+                }
+            }
+        }
+    }
+    
+    @objc private func handleRecyclerTimer(_ timer: Timer) {
+        self.writeDirtyBuffersOperation { (buffers) in
+            var recyclable_buffers = [(Int,BufferItem)]()
+            
+            for (i, buf) in buffers.reversed().enumerated() {
+                if buf.retainCount <= 0 {
+                   recyclable_buffers.append((i, buf))
+                }
+            }
+            
+            let count = buffers.count
+            for buf in recyclable_buffers {
+                buffers.remove(at: count - buf.0 - 1)
+                buf.1.recycle()
+                
+                self.writeCleanBuffersOperation { (clean_buffers) in
+                    clean_buffers.append(buf.1)
+                }
+            }
         }
     }
 }

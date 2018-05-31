@@ -231,19 +231,30 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
-
         
         _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         
         if let commandBuffer = commandQueue.makeCommandBuffer() {
             let semaphore = inFlightSemaphore
-            commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+            
+            self.updateVertexBuffer()
+            let data_buffer = self.delegate.attractor_manager.current_buffers ?? []
+            for buf in data_buffer {
+                buf.retain()
+            }
+            
+            commandBuffer.addCompletedHandler { (_ commandBuffer) in
                 self.delegate.rendererDidDraw()
+                
+                for buf in data_buffer {
+                    buf.release()
+                }
+                
                 semaphore.signal()
             }
             
+            /// Update State
             self.updateDynamicBufferState()
-            self.updateVertexBuffer()
             self.updateGameState()
             
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
@@ -257,7 +268,6 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                     
                     renderEncoder.pushDebugGroup("Draw Attractor")
                     
-                    let data_buffer = self.delegate.attractor_manager.current_buffers ?? []
                     for buffers in data_buffer {
                         renderEncoder.setCullMode(.back)
                         renderEncoder.setFrontFacing(.counterClockwise)
@@ -269,12 +279,12 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                         renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: A_BufferIndex.uniforms.rawValue)
                         
                         // set vertex buffer
-                        renderEncoder.setVertexBuffer(buffers.vertex.buffer,
+                        renderEncoder.setVertexBuffer(buffers.vertex_buffer.buffer,
                                                       offset: 0,
                                                       index: A_BufferIndex.vertexPositions.rawValue)
                         
                         // set color buffer
-                        renderEncoder.setVertexBuffer(buffers.main_color.buffer,
+                        renderEncoder.setVertexBuffer(buffers.main_color_buffer.buffer,
                                                       offset: 0,
                                                       index: A_BufferIndex.vertexColors.rawValue)
                         
@@ -285,7 +295,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                         // draw vertices
                         renderEncoder.drawPrimitives(type: .point,
                                                      vertexStart: 0,
-                                                     vertexCount: buffers.vertex.count)
+                                                     vertexCount: buffers.vertex_buffer.count)
                     }
                     
                     // end encoding
