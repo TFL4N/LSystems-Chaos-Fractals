@@ -14,6 +14,8 @@ extension NSCoding {
     }
 }
 
+typealias BufferTuple = (vertex: BufferItem, main_color: BufferItem)
+
 class Attractor: NSObject, NSCoding {
     let parameters: [Parameter]
     
@@ -41,13 +43,7 @@ class Attractor: NSObject, NSCoding {
         coder.encode(self.parameters, forKey: "attractor_parameters")
     }
     
-    
-    
-    func buildVertexArray() -> [Float] {
-        return self.buildVertexArray(atFrame: 0)
-    }
-    
-    func buildVertexArray(atFrame: FrameId) -> [Float] {
+    func buildVertexData(atFrame: FrameId = 0, bufferPool: BufferPool) -> [BufferTuple] {
         return []
     }
     

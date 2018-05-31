@@ -38,17 +38,8 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     var uniformBufferOffset = 0
     var uniformBufferIndex = 0
     var uniforms: UnsafeMutablePointer<A_Uniforms>
-    
-//    var dynamicVertexBuffer: [(buffer: MTLBuffer, count: Int)]
-    var vertexBuffer: MTLBuffer!
-    var vertexCount: Int!
-    let bufferLock = ReadWriteLock()
-    
-    var colorBuffer: MTLBuffer!
-    
-//    var texCoordsBuffer: MTLBuffer
-//    var colorMap: MTLTexture?
-//    var colorMode: Int32 = 1
+
+    var buffer_pool: BufferPool
     
     // Camera View Mode
     var camera_viewing_mode: CameraViewingMode {
@@ -92,6 +83,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         //
         // Build Buffers
         //
+        self.buffer_pool = BufferPool(device: self.device)
         
         // Build Uniform Buffer
         let uniformBufferSize = AttractorRenderer.alignedUniformsSize * AttractorRenderer.maxBuffersInFlight
@@ -141,22 +133,9 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     
     func updateVertexBuffer() {
         if let manager = self.delegate.attractor_manager {
-            manager.buildAttractorVertexDataAtCurrentFrame()
-            let vertices = manager.vertex_data!
-            
-            let length = vertices.count * MemoryLayout<Float>.stride
-            self.vertexBuffer = self.device.makeBuffer(bytes: vertices, length: length, options: [])!
-            self.vertexCount = vertices.count
-            
-            // color
-            let colors = Array<Float>(repeating: 0.0, count: self.vertexCount / 3 * 4)
-            let color_length = colors.count * MemoryLayout<Float>.stride
-            
-            self.colorBuffer = self.device.makeBuffer(bytes: colors, length: color_length, options: [])!
+            manager.buildAttractorVertexDataAtCurrentFrame(bufferPool: self.buffer_pool)
         } else {
-            self.vertexBuffer = nil
-            self.vertexCount = nil
-            self.colorBuffer = nil
+            
         }
     }
     
@@ -269,46 +248,45 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
             
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
-            if let renderPassDescriptor = view.currentRenderPassDescriptor,
-                self.vertexBuffer != nil {
+            if let renderPassDescriptor = view.currentRenderPassDescriptor {
                 renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1.0, 1.0, 1.0, 1.0)
                 
                 /// Final pass rendering code here
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                     renderEncoder.label = "Primary Render Encoder"
                     
-                    renderEncoder.pushDebugGroup("Draw Box")
+                    renderEncoder.pushDebugGroup("Draw Attractor")
                     
-                    renderEncoder.setCullMode(.back)
-                    renderEncoder.setFrontFacing(.counterClockwise)
-                    renderEncoder.setRenderPipelineState(pipelineState)
-                    renderEncoder.setDepthStencilState(depthState)
-                    
-                    // set uniform buffer
-                    renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: A_BufferIndex.uniforms.rawValue)
-                    renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: A_BufferIndex.uniforms.rawValue)
-                    
-                    // set vertex buffer
-                    self.bufferLock.withReadLock { () -> () in
-                        renderEncoder.setVertexBuffer(self.vertexBuffer, offset: 0, index: A_BufferIndex.vertexPositions.rawValue)
+                    let data_buffer = self.delegate.attractor_manager.current_buffers ?? []
+                    for buffers in data_buffer {
+                        renderEncoder.setCullMode(.back)
+                        renderEncoder.setFrontFacing(.counterClockwise)
+                        renderEncoder.setRenderPipelineState(pipelineState)
+                        renderEncoder.setDepthStencilState(depthState)
+                        
+                        // set uniform buffer
+                        renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: A_BufferIndex.uniforms.rawValue)
+                        renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: A_BufferIndex.uniforms.rawValue)
+                        
+                        // set vertex buffer
+                        renderEncoder.setVertexBuffer(buffers.vertex.buffer,
+                                                      offset: 0,
+                                                      index: A_BufferIndex.vertexPositions.rawValue)
+                        
+                        // set color buffer
+                        renderEncoder.setVertexBuffer(buffers.main_color.buffer,
+                                                      offset: 0,
+                                                      index: A_BufferIndex.vertexColors.rawValue)
+                        
+                        
+                        //                    // set color mode
+                        //                    renderEncoder.setFragmentBytes(&self.colorMode, length: MemoryLayout.size(ofValue: self.colorMode), index: A_BufferIndex.colorMode.rawValue)
+                        
+                        // draw vertices
+                        renderEncoder.drawPrimitives(type: .point,
+                                                     vertexStart: 0,
+                                                     vertexCount: buffers.vertex.count)
                     }
-                    
-                    // set color buffer
-                    renderEncoder.setVertexBuffer(self.colorBuffer, offset: 0, index: A_BufferIndex.vertexColors.rawValue)
-                    
-//                    // set tex coords buffer
-//                    renderEncoder.setVertexBuffer(self.texCoordsBuffer, offset: 0, index: A_BufferIndex.texCoord.rawValue)
-                    
-//                    // set texture
-//                    if let colorMap = self.colorMap {
-//                        renderEncoder.setFragmentTexture(colorMap, index: A_TextureIndex.color.rawValue)
-//                    }
-                    
-//                    // set color mode
-//                    renderEncoder.setFragmentBytes(&self.colorMode, length: MemoryLayout.size(ofValue: self.colorMode), index: A_BufferIndex.colorMode.rawValue)
-                    
-                    // draw vertices
-                    renderEncoder.drawPrimitives(type: .point, vertexStart: 0, vertexCount: self.vertexCount)
                     
                     // end encoding
                     renderEncoder.popDebugGroup()

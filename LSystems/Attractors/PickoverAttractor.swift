@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 class PickoverAttractor: Attractor {
     override init() {
         let params = [
@@ -47,14 +46,39 @@ class PickoverAttractor: Attractor {
         self.init(parameters: params)
     }
     
-    override func buildVertexArray(atFrame: FrameId) -> [Float] {
+    override func buildVertexData(atFrame: FrameId, bufferPool: BufferPool) -> [BufferTuple] {
         // iterations
         let max_iters = self.parameter(withName: "iterations")!.value!.integerValue!
         let skip_iters = self.parameter(withName: "skip iterations")!.value!.integerValue!
         
         // vertex array
-        var output = [Float]()
-        output.reserveCapacity((max_iters-skip_iters)*3)
+        let vertex_count_buffer_limit = BufferPool.max_float_vertices_per_buffer
+        var current_vertices = [Float]()
+        current_vertices.reserveCapacity(vertex_count_buffer_limit * 3)
+        
+        var current_main_colors = [Float]()
+        current_main_colors.reserveCapacity(vertex_count_buffer_limit * 4)
+        
+        var output_buffers = [BufferTuple]()
+        var current_vertex_index = 0
+        
+        let updateOutputBuffer = {
+            let vertex_buffer = bufferPool.getBuffer()
+            let main_color_buffer = bufferPool.getBuffer()
+            
+            vertex_buffer.setData(current_vertices)
+            vertex_buffer.count = current_vertex_index
+            
+            main_color_buffer.setData(current_main_colors)
+            main_color_buffer.count = current_vertex_index
+            
+            output_buffers.append((vertex: vertex_buffer, main_color: main_color_buffer))
+            
+            current_vertices = []
+            current_main_colors = []
+            
+            current_vertex_index = 0
+        }
         
         // seeds
         let A = self.parameter(withName: "A")!.value(atFrame: atFrame)!.floatValue!
@@ -62,7 +86,6 @@ class PickoverAttractor: Attractor {
         let C = self.parameter(withName: "C")!.value(atFrame: atFrame)!.floatValue!
         let D = self.parameter(withName: "D")!.value(atFrame: atFrame)!.floatValue!
         
-//        print("iters: \(max_iters)")
 //        print("A: \(A), B: \(B), C: \(C), D: \(D)")
         
         var x: Float = 0
@@ -74,6 +97,7 @@ class PickoverAttractor: Attractor {
         while iteration < max_iters {
             iteration += 1
             
+            // generate vertex
             let new_x: Float = sin(A*y) + z*cos(B*x)
             let new_y: Float = z*sin(C*x) - cos(D*y)
             let new_z: Float = sin(x)
@@ -82,13 +106,37 @@ class PickoverAttractor: Attractor {
             y = new_y
             z = new_z
             
+            // generate main color
+            let main_red: Float = 0.0
+            let main_green: Float = 0.0
+            let main_blue: Float = 0.0
+            let main_alpha: Float = 1.0
+            
             if iteration > skip_iters {
-                output.append(x)
-                output.append(y)
-                output.append(z)
+                current_vertex_index += 1
+                if current_vertex_index <= vertex_count_buffer_limit {
+                    // vertex
+                    current_vertices.append(contentsOf: [
+                        x, y, z
+                        ])
+                    
+                    // bgra
+                    current_main_colors.append(contentsOf: [
+                        main_blue,
+                        main_green,
+                        main_red,
+                        main_alpha
+                        ])
+                } else {
+                    updateOutputBuffer()
+                }
             }
         }
         
-        return output
+        if !current_vertices.isEmpty {
+            updateOutputBuffer()
+        }
+        
+        return output_buffers
     }
 }
