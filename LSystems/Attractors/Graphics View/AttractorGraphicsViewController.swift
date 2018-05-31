@@ -57,7 +57,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         
         // Additional Configuration
         self.mtkView.delegate = self.renderer
-        self.render_mode = .live
+        self.render_mode = RenderMode(rawValue: self.render_mode_raw)!
         
         // Add Gestures
         /////////////////
@@ -151,7 +151,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         }
     }
     
-    @objc dynamic var render_mode_raw = RenderMode.live.rawValue {
+    @objc dynamic var render_mode_raw = RenderMode.static.rawValue {
         didSet {
             switch self.render_mode {
             case .video_capture:

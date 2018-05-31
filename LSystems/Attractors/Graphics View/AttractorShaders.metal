@@ -43,7 +43,9 @@ vertex ColorInOut attractorVertexShader(Vertex in [[stage_in]],
 fragment float4 attractorFragmentShader(ColorInOut in [[stage_in]],
                                constant A_Uniforms & uniforms [[ buffer(A_BufferIndexUniforms) ]])
 {
-    float4 color = float4(float3(0.0), float(1.0));
+//    float4 color = float4(0.4751, 0.3946, 1.0, 1.0);
+    float4 color = in.color;
+    
     return color;
 }
 

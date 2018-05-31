@@ -59,6 +59,19 @@ class PickoverAttractor: Attractor {
         var current_main_colors = [Float]()
         current_main_colors.reserveCapacity(vertex_count_buffer_limit * 4)
         
+        // color array
+        let main_color_interpolator = LinearInterpolator()
+        let from_color = LabColor(l: Value(type: .float, value: 76.0),
+                                  a: Value(type: .float, value: -97.5),
+                                  b: Value(type: .float, value: 68.5),
+                                  alpha: Value(type: .float, value: 1.0))
+        let to_color = LabColor(l: Value(type: .float, value: 52.0),
+                                  a: Value(type: .float, value: 83.5),
+                                  b: Value(type: .float, value: -100.0),
+                                  alpha: Value(type: .float, value: 1.0))
+        
+        
+        // output buffer
         var output_buffers = [AttractorBuffer]()
         var current_vertex_index = 0
         
@@ -108,10 +121,18 @@ class PickoverAttractor: Attractor {
             z = new_z
             
             // generate main color
-            let main_red: Float = 0.0
-            let main_green: Float = 0.0
-            let main_blue: Float = 0.0
-            let main_alpha: Float = 1.0
+            let mu = Float(iteration) / Float(max_iters)
+            let lab_color = from_color.interpolate(main_color_interpolator,
+                                                   at: mu,
+                                                   toColor: to_color)
+            let rgb_color = lab_color.getRGBComponents()
+            
+//            print(rgb_color)
+            
+            let main_red: Float = Float(rgb_color.r)
+            let main_green: Float = Float(rgb_color.g)
+            let main_blue: Float = Float(rgb_color.b)
+            let main_alpha: Float = Float(rgb_color.a)
             
             if iteration > skip_iters {
                 current_vertex_index += 1
@@ -121,11 +142,11 @@ class PickoverAttractor: Attractor {
                         x, y, z
                         ])
                     
-                    // bgra
+                    // rgba
                     current_main_colors.append(contentsOf: [
-                        main_blue,
-                        main_green,
                         main_red,
+                        main_green,
+                        main_blue,
                         main_alpha
                         ])
                 } else {

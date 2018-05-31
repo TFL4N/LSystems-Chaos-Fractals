@@ -298,6 +298,45 @@ class AnimationSequence {
     }
 }
 
+class LabColor {
+    var l: Value
+    var a: Value
+    var b: Value
+    var alpha: Value
+    
+    init(l: Value, a: Value, b: Value, alpha: Value) {
+        self.l = l
+        self.a = a
+        self.b = b
+        self.alpha = alpha
+    }
+    
+    func interpolate(_ i: Interpolator, at: Float, toColor: LabColor) -> LabColor {
+        let l = i.interpolate(at: at, fromValue: self.l, toValue: toColor.l)
+        let a = i.interpolate(at: at, fromValue: self.a, toValue: toColor.a)
+        let b = i.interpolate(at: at, fromValue: self.b, toValue: toColor.b)
+        let alpha = i.interpolate(at: at, fromValue: self.alpha, toValue: toColor.alpha)
+        
+        return LabColor(l: l, a: a, b: b, alpha: alpha)
+    }
+    
+    func getRGBComponents() -> (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
+        let lab_comps = [CGFloat(self.l.floatValue!),
+                         CGFloat(self.a.floatValue!),
+                         CGFloat(self.b.floatValue!),
+                         CGFloat(self.alpha.floatValue!)]
+        let lab_color_space = CGColorSpace(name: CGColorSpace.genericLab)!
+        let lab_color = CGColor(colorSpace: lab_color_space, components: lab_comps)!
+        
+        let rgb_color_space = CGColorSpaceCreateDeviceRGB()
+        let rgb_color = lab_color.converted(to: rgb_color_space, intent: .absoluteColorimetric, options: nil)!
+        
+        let rgb_comps = rgb_color.components!
+        
+        return (r: rgb_comps[0], g: rgb_comps[1], b: rgb_comps[2], a: rgb_comps[3])
+    }
+}
+
 protocol Interpolator {
     // @param at: the current position, represented on the scale 0.0 -> 1.0
     func interpolate(at: Float, fromValue: Value, toValue: Value) -> Value
