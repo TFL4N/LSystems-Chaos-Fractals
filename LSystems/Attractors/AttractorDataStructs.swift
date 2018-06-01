@@ -104,6 +104,8 @@ class Value: NSObject, NSCoding {
                     self.value_store = fl
                 } else if let i = new_val as? Int {
                     self.value_store = Float(i)
+                } else if let n = new_val as? NSNumber {
+                    self.value_store = n.floatValue
                 } else if let str = new_val as? String {
                     self.value_store = Float(str)
                 }
@@ -112,6 +114,8 @@ class Value: NSObject, NSCoding {
                     self.value_store = i
                 } else if let fl = new_val as? Float {
                     self.value_store = Int(fl)
+                } else if let n = new_val as? NSNumber {
+                    self.value_store = n.intValue
                 } else if let str = new_val as? String {
                     self.value_store = Int(str)
                 } 
@@ -198,12 +202,16 @@ class Value: NSObject, NSCoding {
         case .float:
             formatter.allowsFloats = true
             formatter.generatesDecimalNumbers = true
-            formatter.alwaysShowsDecimalSeparator = false
+            formatter.alwaysShowsDecimalSeparator = true
+            formatter.minimumFractionDigits = 1
+            formatter.maximumFractionDigits = 5
             formatter.numberStyle = .decimal
         case .integer:
             formatter.allowsFloats = false
             formatter.generatesDecimalNumbers = false
             formatter.maximumFractionDigits = 0
+            formatter.usesGroupingSeparator = true
+            formatter.groupingSize = 3
         }
         
         return formatter

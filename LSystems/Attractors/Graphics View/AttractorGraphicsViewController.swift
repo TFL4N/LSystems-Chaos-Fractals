@@ -151,7 +151,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         }
     }
     
-    @objc dynamic var render_mode_raw = RenderMode.static.rawValue {
+    @objc dynamic var render_mode_raw = RenderMode.live.rawValue {
         didSet {
             switch self.render_mode {
             case .video_capture:

@@ -67,7 +67,7 @@ class AttractorManager: NSObject {
     }
     
     private func handleAttractorDidChange() {
-        
+        print("Handle Did Change")
     }
     
     func buildAttractorVertexDataAtCurrentFrame(bufferPool: BufferPool) {
@@ -75,11 +75,10 @@ class AttractorManager: NSObject {
     }
     
     func buildAttractorVertexData(atFrame: FrameId, bufferPool: BufferPool, force: Bool = false) {
-//        if self.attractor.didChange || force {
-        self.current_buffers = self.attractor.buildVertexData(atFrame: atFrame, bufferPool: bufferPool)
-        self.attractor.didChange = false
-//        } else {
-//            return self.current_buffers
-//        }
+        if self.attractor.didChange || force {
+            print("Build Buffers")
+            self.current_buffers = self.attractor.buildVertexData(atFrame: atFrame, bufferPool: bufferPool)
+            self.attractor.didChange = false
+        }
     }
 }
