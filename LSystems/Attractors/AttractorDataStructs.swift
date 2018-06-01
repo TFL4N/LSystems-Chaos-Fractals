@@ -14,6 +14,24 @@ extension NSCoding {
     }
 }
 
+class AttractorOperation: Operation {
+    let frame_id: FrameId
+    let buffer_pool: BufferPool
+    let attractor: Attractor
+    
+    var data_buffers: [AttractorBuffer]? = nil
+    
+    @objc dynamic var progress: Float = 0.0
+    
+    required init(_ attractor: Attractor, frameId: FrameId, bufferPool: BufferPool) {
+        self.attractor = attractor
+        self.frame_id = frameId
+        self.buffer_pool = bufferPool
+
+        super.init()
+    }
+}
+
 class Attractor: NSObject, NSCoding {
     let parameters: [Parameter]
     
@@ -63,10 +81,6 @@ class Attractor: NSObject, NSCoding {
         self.didChange = true
     }
     
-    func buildVertexData(atFrame: FrameId = 0, bufferPool: BufferPool) -> [AttractorBuffer] {
-        return []
-    }
-    
     func parameter(withName name: String) -> Parameter? {
         if let idx = self.parameters.index(where: { (p) -> Bool in
             p.name == name
@@ -75,6 +89,13 @@ class Attractor: NSObject, NSCoding {
         }
         
         return nil
+    }
+    
+    func buildOperationData(atFrame: FrameId = 0, bufferPool: BufferPool) -> AttractorOperation {
+        let attractor_copy = self.deepCopy()
+        return AttractorOperation(attractor_copy,
+                                  frameId: atFrame,
+                                  bufferPool: bufferPool)
     }
 }
 

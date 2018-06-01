@@ -10,6 +10,14 @@ import Foundation
 
 class AttractorManager: NSObject {
     let attractor: Attractor
+    lazy var operation_queue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.name = "Attractor Factory Queue"
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .userInitiated
+        
+        return queue
+    }()
     
     var current_frame: FrameId = 0
 
@@ -76,9 +84,17 @@ class AttractorManager: NSObject {
     
     func buildAttractorVertexData(atFrame: FrameId, bufferPool: BufferPool, force: Bool = false) {
         if self.attractor.didChange || force {
-            print("Build Buffers")
-            self.current_buffers = self.attractor.buildVertexData(atFrame: atFrame, bufferPool: bufferPool)
             self.attractor.didChange = false
+            
+            let operation = self.attractor.buildOperationData(atFrame: atFrame, bufferPool: bufferPool)
+            operation.completionBlock = {
+                if let buffers = operation.data_buffers {
+                    self.current_buffers = buffers
+                }
+            }
+            
+            self.operation_queue.cancelAllOperations()
+            self.operation_queue.addOperation(operation)
         }
     }
 }

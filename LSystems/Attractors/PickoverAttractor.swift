@@ -46,10 +46,23 @@ class PickoverAttractor: Attractor {
         self.init(parameters: params)
     }
     
-    override func buildVertexData(atFrame: FrameId, bufferPool: BufferPool) -> [AttractorBuffer] {
+    override func buildOperationData(atFrame: FrameId = 0, bufferPool: BufferPool) -> AttractorOperation {
+        let attractor_copy = self.deepCopy()
+        return PickoverAttractorOperation(attractor_copy,
+                                  frameId: atFrame,
+                                  bufferPool: bufferPool)
+    }
+}
+
+class PickoverAttractorOperation: AttractorOperation {
+    override func main() {
+        guard !self.isCancelled else {
+            return
+        }
+        
         // iterations
-        let max_iters = self.parameter(withName: "iterations")!.value!.integerValue!
-        let skip_iters = self.parameter(withName: "skip iterations")!.value!.integerValue!
+        let max_iters = self.attractor.parameter(withName: "iterations")!.value!.integerValue!
+        let skip_iters = self.attractor.parameter(withName: "skip iterations")!.value!.integerValue!
         
         // vertex array
         let vertex_count_buffer_limit = BufferPool.max_float_vertices_per_buffer
@@ -66,9 +79,9 @@ class PickoverAttractor: Attractor {
                                   b: Value(type: .float, value: 68.5),
                                   alpha: Value(type: .float, value: 1.0))
         let to_color = LabColor(l: Value(type: .float, value: 52.0),
-                                  a: Value(type: .float, value: 83.5),
-                                  b: Value(type: .float, value: -100.0),
-                                  alpha: Value(type: .float, value: 1.0))
+                                a: Value(type: .float, value: 83.5),
+                                b: Value(type: .float, value: -100.0),
+                                alpha: Value(type: .float, value: 1.0))
         
         
         // output buffer
@@ -76,8 +89,8 @@ class PickoverAttractor: Attractor {
         var current_vertex_index = 0
         
         let updateOutputBuffer = {
-            let vertex_buffer = bufferPool.getBuffer()
-            let main_color_buffer = bufferPool.getBuffer()
+            let vertex_buffer = self.buffer_pool.getBuffer()
+            let main_color_buffer = self.buffer_pool.getBuffer()
             
             vertex_buffer.setData(current_vertices)
             vertex_buffer.count = current_vertex_index
@@ -94,13 +107,19 @@ class PickoverAttractor: Attractor {
             current_vertex_index = 0
         }
         
-        // seeds
-        let A = self.parameter(withName: "A")!.value(atFrame: atFrame)!.floatValue!
-        let B = self.parameter(withName: "B")!.value(atFrame: atFrame)!.floatValue!
-        let C = self.parameter(withName: "C")!.value(atFrame: atFrame)!.floatValue!
-        let D = self.parameter(withName: "D")!.value(atFrame: atFrame)!.floatValue!
+        let releaseBuffers = {
+            for buff in output_buffers {
+                buff.release()
+            }
+        }
         
-//        print("A: \(A), B: \(B), C: \(C), D: \(D)")
+        // seeds
+        let A = self.attractor.parameter(withName: "A")!.value(atFrame: self.frame_id)!.floatValue!
+        let B = self.attractor.parameter(withName: "B")!.value(atFrame: self.frame_id)!.floatValue!
+        let C = self.attractor.parameter(withName: "C")!.value(atFrame: self.frame_id)!.floatValue!
+        let D = self.attractor.parameter(withName: "D")!.value(atFrame: self.frame_id)!.floatValue!
+        
+        //        print("A: \(A), B: \(B), C: \(C), D: \(D)")
         
         var x: Float = 0
         var y: Float = 0
@@ -109,6 +128,11 @@ class PickoverAttractor: Attractor {
         // produce data
         var iteration = 0
         while iteration < max_iters {
+            guard !self.isCancelled else {
+                releaseBuffers()
+                return
+            }
+            
             iteration += 1
             
             // generate vertex
@@ -127,7 +151,7 @@ class PickoverAttractor: Attractor {
                                                    toColor: to_color)
             let rgb_color = lab_color.getRGBComponents()
             
-//            print(rgb_color)
+            //            print(rgb_color)
             
             let main_red: Float = Float(rgb_color.r)
             let main_green: Float = Float(rgb_color.g)
@@ -153,12 +177,20 @@ class PickoverAttractor: Attractor {
                     updateOutputBuffer()
                 }
             }
-        }
+            
+            // update progress
+            self.progress = mu
+        } // while
         
         if !current_vertices.isEmpty {
             updateOutputBuffer()
         }
         
-        return output_buffers
+        guard !self.isCancelled else {
+            releaseBuffers()
+            return
+        }
+        
+        self.data_buffers = output_buffers
     }
 }
