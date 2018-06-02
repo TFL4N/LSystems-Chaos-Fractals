@@ -78,19 +78,23 @@ class AttractorManager: NSObject {
         print("Handle Did Change")
     }
     
-    func buildAttractorVertexDataAtCurrentFrame(bufferPool: BufferPool) {
-        self.buildAttractorVertexData(atFrame: self.current_frame, bufferPool: bufferPool)
+    func buildAttractorVertexDataAtCurrentFrame(bufferPool: BufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
+        self.buildAttractorVertexData(atFrame: self.current_frame, bufferPool: bufferPool, progressHandler: progressHandler, didStartHandler: didStartHandler, didFinishHandler: didFinishHandler, force: force)
     }
     
-    func buildAttractorVertexData(atFrame: FrameId, bufferPool: BufferPool, force: Bool = false) {
+    func buildAttractorVertexData(atFrame: FrameId, bufferPool: BufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
         if self.attractor.didChange || force {
             self.attractor.didChange = false
             
             let operation = self.attractor.buildOperationData(atFrame: atFrame, bufferPool: bufferPool)
+            operation.did_start_handler = didStartHandler
+            operation.progress_handler = progressHandler
             operation.completionBlock = {
                 if let buffers = operation.data_buffers {
                     self.current_buffers = buffers
                 }
+                
+                didFinishHandler?(operation.isCancelled)
             }
             
             self.operation_queue.cancelAllOperations()

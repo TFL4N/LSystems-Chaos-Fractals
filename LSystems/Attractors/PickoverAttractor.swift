@@ -60,6 +60,8 @@ class PickoverAttractorOperation: AttractorOperation {
             return
         }
         
+        self.did_start_handler?()
+        
         // iterations
         let max_iters = self.attractor.parameter(withName: "iterations")!.value!.integerValue!
         let skip_iters = self.attractor.parameter(withName: "skip iterations")!.value!.integerValue!

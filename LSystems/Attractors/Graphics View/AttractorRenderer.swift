@@ -13,6 +13,9 @@ import simd
 protocol AttractorRendererDelegate {
     var attractor_manager: AttractorManager! { get }
     func rendererDidDraw()
+    func dataBuildProgress(_: Float)
+    func dataBuildDidStart()
+    func dataBuildDidFinished(wasCancelled: Bool)
 }
 
 class AttractorRenderer: NSObject, MTKViewDelegate {
@@ -133,7 +136,17 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     
     func updateVertexBuffer() {
         if let manager = self.delegate.attractor_manager {
-            manager.buildAttractorVertexDataAtCurrentFrame(bufferPool: self.buffer_pool)
+            manager.buildAttractorVertexDataAtCurrentFrame(
+                bufferPool: self.buffer_pool,
+                progressHandler: { (progress) in
+                    self.delegate.dataBuildProgress(progress)
+            },
+                didStartHandler: {
+                    self.delegate.dataBuildDidStart()
+            },
+                didFinishHandler: { (cancelled) in
+                    self.delegate.dataBuildDidFinished(wasCancelled: cancelled)
+            })
         } else {
             
         }

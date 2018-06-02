@@ -15,13 +15,23 @@ extension NSCoding {
 }
 
 class AttractorOperation: Operation {
+    typealias ProgressHandler = (Float)->()
+    typealias DidStartHandler = ()->()
+    
     let frame_id: FrameId
     let buffer_pool: BufferPool
     let attractor: Attractor
     
     var data_buffers: [AttractorBuffer]? = nil
     
-    @objc dynamic var progress: Float = 0.0
+    var progress_handler: ProgressHandler? = nil
+    var did_start_handler: DidStartHandler? = nil
+    
+    @objc dynamic var progress: Float = 0.0 {
+        didSet {
+            progress_handler?(self.progress)
+        }
+    }
     
     required init(_ attractor: Attractor, frameId: FrameId, bufferPool: BufferPool) {
         self.attractor = attractor
