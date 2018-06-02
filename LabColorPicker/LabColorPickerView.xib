@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="LabColorPicker" customModule="L_Systems" customModuleProvider="target">
+            <connections>
+                <outlet property="a_color_slider" destination="jn9-Hu-Gea" id="xJE-0k-vx4"/>
+                <outlet property="a_color_textfield" destination="I9X-bD-IcY" id="dbV-Jq-KQW"/>
+                <outlet property="b_color_slider" destination="NDV-ir-kgu" id="TUI-Ms-kSs"/>
+                <outlet property="b_color_textfield" destination="hmG-CB-3Gr" id="e2B-W7-icL"/>
+                <outlet property="l_color_slider" destination="i5m-Eo-jtp" id="PBi-dc-oCz"/>
+                <outlet property="l_color_textfield" destination="vrS-Gr-CNP" id="gBw-BK-ydu"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="653" height="233"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jsW-D8-rrd">
+                    <rect key="frame" x="0.0" y="0.0" width="653" height="226"/>
+                    <subviews>
+                        <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VO0-dJ-60j">
+                            <rect key="frame" x="0.0" y="156" width="653" height="70"/>
+                            <subviews>
+                                <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="i5m-Eo-jtp" customClass="LColorSlider" customModule="LabColorPicker">
+                                    <rect key="frame" x="0.0" y="10" width="570" height="50"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="50" id="dis-sG-unJ"/>
+                                    </constraints>
+                                </customView>
+                                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vrS-Gr-CNP">
+                                    <rect key="frame" x="578" y="24" width="75" height="22"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="22" id="jcV-Am-9so"/>
+                                        <constraint firstAttribute="width" constant="75" id="rsQ-IR-hI9"/>
+                                    </constraints>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="nDU-vO-ZYF">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="i5m-Eo-jtp" secondAttribute="bottom" constant="10" id="AN1-Zz-Rwo"/>
+                                <constraint firstItem="i5m-Eo-jtp" firstAttribute="top" secondItem="VO0-dJ-60j" secondAttribute="top" constant="10" id="e9L-gZ-1KJ"/>
+                            </constraints>
+                            <visibilityPriorities>
+                                <integer value="1000"/>
+                                <integer value="1000"/>
+                            </visibilityPriorities>
+                            <customSpacing>
+                                <real value="3.4028234663852886e+38"/>
+                                <real value="3.4028234663852886e+38"/>
+                            </customSpacing>
+                        </stackView>
+                        <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n3n-IL-cIa">
+                            <rect key="frame" x="0.0" y="78" width="653" height="70"/>
+                            <subviews>
+                                <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="jn9-Hu-Gea" customClass="AColorSlider" customModule="LabColorPicker">
+                                    <rect key="frame" x="0.0" y="10" width="570" height="50"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="50" id="Ymn-X6-WR6"/>
+                                    </constraints>
+                                </customView>
+                                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="I9X-bD-IcY">
+                                    <rect key="frame" x="578" y="24" width="75" height="22"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="75" id="3PI-x6-QE7"/>
+                                        <constraint firstAttribute="height" constant="22" id="ekD-38-21A"/>
+                                    </constraints>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="evq-tA-maj">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="jn9-Hu-Gea" firstAttribute="top" secondItem="n3n-IL-cIa" secondAttribute="top" constant="10" id="BT4-9E-woG"/>
+                                <constraint firstAttribute="bottom" secondItem="jn9-Hu-Gea" secondAttribute="bottom" constant="10" id="IY6-7O-23g"/>
+                            </constraints>
+                            <visibilityPriorities>
+                                <integer value="1000"/>
+                                <integer value="1000"/>
+                            </visibilityPriorities>
+                            <customSpacing>
+                                <real value="3.4028234663852886e+38"/>
+                                <real value="3.4028234663852886e+38"/>
+                            </customSpacing>
+                        </stackView>
+                        <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IeI-av-oCo">
+                            <rect key="frame" x="0.0" y="0.0" width="653" height="70"/>
+                            <subviews>
+                                <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="NDV-ir-kgu" customClass="BColorSlider" customModule="LabColorPicker">
+                                    <rect key="frame" x="0.0" y="10" width="570" height="50"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="50" id="Rox-VE-ONN"/>
+                                    </constraints>
+                                </customView>
+                                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hmG-CB-3Gr">
+                                    <rect key="frame" x="578" y="24" width="75" height="22"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="75" id="lPt-lb-O5a"/>
+                                        <constraint firstAttribute="height" constant="22" id="wB3-wb-ygI"/>
+                                    </constraints>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="N1y-tL-Xm5">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="NDV-ir-kgu" secondAttribute="bottom" constant="10" id="Pxc-5X-hNE"/>
+                                <constraint firstItem="NDV-ir-kgu" firstAttribute="top" secondItem="IeI-av-oCo" secondAttribute="top" constant="10" id="dZn-iP-0LR"/>
+                            </constraints>
+                            <visibilityPriorities>
+                                <integer value="1000"/>
+                                <integer value="1000"/>
+                            </visibilityPriorities>
+                            <customSpacing>
+                                <real value="3.4028234663852886e+38"/>
+                                <real value="3.4028234663852886e+38"/>
+                            </customSpacing>
+                        </stackView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="IeI-av-oCo" firstAttribute="width" secondItem="jsW-D8-rrd" secondAttribute="width" id="1FE-Oa-Pc0"/>
+                    </constraints>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="jsW-D8-rrd" secondAttribute="trailing" id="8w4-78-A0P"/>
+                <constraint firstItem="jsW-D8-rrd" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="93P-ho-uQy"/>
+                <constraint firstItem="jsW-D8-rrd" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="7" id="iKZ-E7-dtc"/>
+            </constraints>
+            <point key="canvasLocation" x="-685.5" y="257.5"/>
+        </customView>
+    </objects>
+</document>
