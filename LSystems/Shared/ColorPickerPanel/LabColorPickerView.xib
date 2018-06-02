@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="LabColorPicker" customModule="L_Systems" customModuleProvider="target"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="604" height="96"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jsW-D8-rrd">
+                    <rect key="frame" x="0.0" y="0.0" width="604" height="96"/>
+                    <subviews>
+                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="6gT-e7-v4Q">
+                            <rect key="frame" x="0.0" y="0.0" width="604" height="96"/>
+                            <subviews>
+                                <customView translatesAutoresizingMaskIntoConstraints="NO" id="NDV-ir-kgu" customClass="ColorSlider" customModule="L_Systems" customModuleProvider="target">
+                                    <rect key="frame" x="8" y="10" width="484" height="76"/>
+                                </customView>
+                                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hmG-CB-3Gr">
+                                    <rect key="frame" x="500" y="37" width="96" height="22"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="96" id="lPt-lb-O5a"/>
+                                        <constraint firstAttribute="height" constant="22" id="wB3-wb-ygI"/>
+                                    </constraints>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="N1y-tL-Xm5">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="NDV-ir-kgu" firstAttribute="leading" secondItem="6gT-e7-v4Q" secondAttribute="leading" constant="8" id="HwJ-uR-YoA"/>
+                                <constraint firstItem="hmG-CB-3Gr" firstAttribute="leading" secondItem="NDV-ir-kgu" secondAttribute="trailing" constant="8" id="V05-hJ-9Vg"/>
+                                <constraint firstItem="NDV-ir-kgu" firstAttribute="height" secondItem="6gT-e7-v4Q" secondAttribute="height" constant="-20" id="adg-75-hxy"/>
+                                <constraint firstAttribute="trailing" secondItem="hmG-CB-3Gr" secondAttribute="trailing" constant="8" id="mkE-ag-B7e"/>
+                                <constraint firstItem="hmG-CB-3Gr" firstAttribute="centerY" secondItem="6gT-e7-v4Q" secondAttribute="centerY" id="uXl-yy-dY2"/>
+                                <constraint firstItem="NDV-ir-kgu" firstAttribute="centerY" secondItem="6gT-e7-v4Q" secondAttribute="centerY" id="zV9-h5-NwD"/>
+                            </constraints>
+                        </customView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="6gT-e7-v4Q" firstAttribute="width" secondItem="jsW-D8-rrd" secondAttribute="width" id="Img-e0-BdP"/>
+                    </constraints>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="jsW-D8-rrd" secondAttribute="trailing" id="1mL-YF-WUV"/>
+                <constraint firstItem="jsW-D8-rrd" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="RiT-xT-TTW"/>
+                <constraint firstItem="jsW-D8-rrd" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="UrO-bB-Ll5"/>
+                <constraint firstAttribute="bottom" secondItem="jsW-D8-rrd" secondAttribute="bottom" id="mu4-2A-xD5"/>
+            </constraints>
+        </customView>
+        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="0hH-NC-Dp2">
+            <rect key="frame" x="0.0" y="0.0" width="38" height="17"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="QmY-jM-aak">
+                <font key="font" metaFont="system"/>
+                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+            </textFieldCell>
+        </textField>
+    </objects>
+</document>

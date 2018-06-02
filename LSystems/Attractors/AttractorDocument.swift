@@ -34,6 +34,7 @@ class AttractorDocument: NSDocument {
     }
     
     weak var info_panel_window_ctlr: NSWindowController!
+    weak var coloring_info_panel_window_ctlr: NSWindowController!
     
     override init() {
         super.init()
@@ -52,29 +53,42 @@ class AttractorDocument: NSDocument {
     }
     
     func showGraphicsWindowController() {
-        // create new graphics window
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
         
-        self.graphics_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Graphics Window Controller")) as! NSWindowController
-        
-        let graphics_cntlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Attractor Graphics Controller")) as! AttractorGraphicsViewController
-        
-        self.graphics_window_ctlr.contentViewController = graphics_cntlr
-        self.graphics_window_ctlr.shouldCloseDocument = false
-        
-        self.addWindowController(self.graphics_window_ctlr)
+        // create new graphics window
+        if self.graphics_window_ctlr == nil {
+            self.graphics_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Graphics Window Controller")) as! NSWindowController
+            self.graphics_window_ctlr.shouldCloseDocument = false
+            
+            self.addWindowController(self.graphics_window_ctlr)
+            
+            self.graphics_window_ctlr.showWindow(self)
+        }
         
         // create info panel window
-        self.info_panel_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Info Panel Window")) as! NSWindowController
-        self.info_panel_window_ctlr.shouldCloseDocument = false
-        
-        self.addWindowController(self.info_panel_window_ctlr)
-        
-        // show windows
-        self.graphics_window_ctlr.showWindow(self)
-        self.info_panel_window_ctlr.showWindow(self)
+        if self.info_panel_window_ctlr == nil {
+            self.info_panel_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Info Panel Window")) as! NSWindowController
+            self.info_panel_window_ctlr.shouldCloseDocument = false
+            
+            self.addWindowController(self.info_panel_window_ctlr)
+            
+            self.info_panel_window_ctlr.showWindow(self)
+        }
     }
-
+    
+    func showColoringInfo() {
+        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+        
+        if self.coloring_info_panel_window_ctlr == nil {
+            self.coloring_info_panel_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Coloring Info Panel")) as! NSWindowController
+            self.coloring_info_panel_window_ctlr.shouldCloseDocument = false
+            
+            self.addWindowController(self.coloring_info_panel_window_ctlr)
+            
+            self.coloring_info_panel_window_ctlr.showWindow(self)
+        }
+    }
+    
     // MARK: File IO
     override func data(ofType typeName: String) throws -> Data {
         // Insert code here to write your document to data of the specified type. If outError != nil, ensure that you create and set an appropriate error when returning nil.

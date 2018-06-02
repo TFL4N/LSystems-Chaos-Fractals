@@ -49,7 +49,6 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
         return self.attractor_manager?.attractor.parameters.count ?? 0
     }
     
-    // MARK: TableView Delegate
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         var cell: NSTableCellView? = nil
         
@@ -95,5 +94,9 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
     // MARK: - Button Handlers
     @IBAction func handleShowGraphicsPress(_: Any?) {
         self.document?.showGraphicsWindowController()
+    }
+    
+    @IBAction func handleShowColoringInfoPress(_: Any?) {
+        self.document?.showColoringInfo()
     }
 }
