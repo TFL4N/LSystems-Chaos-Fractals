@@ -61,8 +61,6 @@ class AttractorDocument: NSDocument {
             self.graphics_window_ctlr.shouldCloseDocument = false
             
             self.addWindowController(self.graphics_window_ctlr)
-            
-            self.graphics_window_ctlr.showWindow(self)
         }
         
         // create info panel window
@@ -71,9 +69,10 @@ class AttractorDocument: NSDocument {
             self.info_panel_window_ctlr.shouldCloseDocument = false
             
             self.addWindowController(self.info_panel_window_ctlr)
-            
-            self.info_panel_window_ctlr.showWindow(self)
         }
+        
+        self.info_panel_window_ctlr.showWindow(self)
+        self.graphics_window_ctlr.showWindow(self)
     }
     
     func showColoringInfo() {
@@ -84,9 +83,9 @@ class AttractorDocument: NSDocument {
             self.coloring_info_panel_window_ctlr.shouldCloseDocument = false
             
             self.addWindowController(self.coloring_info_panel_window_ctlr)
-            
-            self.coloring_info_panel_window_ctlr.showWindow(self)
         }
+        
+        self.coloring_info_panel_window_ctlr.showWindow(self)
     }
     
     // MARK: File IO
