@@ -86,6 +86,8 @@ class LabColorPicker: NSColorPicker, NSColorPickingCustom {
             self.l_color_slider.setLabColor(color)
             self.a_color_slider.setLabColor(color)
         }
+        
+        self.colorPanel.color = NSColor(cgColor: color)!
     }
     
     func getColor() -> CGColor {

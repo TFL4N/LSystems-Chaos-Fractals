@@ -28,13 +28,126 @@ class ColorMap: NSObject, NSCoding {
     }
 }
 
-class LinearColor: NSObject, NSCoding {
-    required init?(coder aDecoder: NSCoder) {
+class GradientColor: NSObject, NSCoding {
+    private(set) var colors: [GradientColorItem]
+    
+    var didChangeHandler: ((GradientColor)->())?
+    
+    override convenience init() {
+        self.init(colors: [])
+    }
+    
+    init(colors: [GradientColorItem]) {
+        self.colors = colors
+        super.init()
         
+        for item in self.colors {
+            for kp in GradientColor.key_paths {
+                item.addObserver(self, forKeyPath: kp, options: [.new], context: nil)
+            }
+        }
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        let coder = aDecoder as! NSKeyedUnarchiver
+        guard let colors = coder.decodeObject(forKey: "gradientcolor_colors") as? [GradientColorItem] else {
+            return nil
+        }
+        
+        self.init(colors: colors)
+    }
+    
+    deinit {
+        for item in self.colors {
+            for kp in GradientColor.key_paths {
+                item.removeObserver(self, forKeyPath: kp, context: nil)
+            }
+        }
     }
     
     func encode(with aCoder: NSCoder) {
+        let coder = aCoder as! NSKeyedArchiver
         
+        coder.encode(self.colors, forKey: "gradientcolor_colors")
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        self.didChangeHandler?(self)
+    }
+    
+    private func sortColors() {
+        self.colors.sort { (lhs, rhs) -> Bool in
+            return lhs.position < rhs.position
+        }
+    }
+    
+    private static let key_paths = ["position", "nscolor"]
+    func addColor(_ color: CGColor, atPosition position: Float) {
+        let item = GradientColorItem(position: position, color: color)
+        for kp in GradientColor.key_paths {
+            item.addObserver(self, forKeyPath: kp, options: [.new], context: nil)
+        }
+        
+        
+        self.colors.append(item)
+        self.sortColors()
+        
+        self.didChangeHandler?(self)
+    }
+    
+    func removeColor(atIndex: Int) {
+        let item = self.colors.remove(at: atIndex)
+        
+        for kp in GradientColor.key_paths {
+            item.removeObserver(self, forKeyPath: kp, context: nil)
+        }
+        
+        self.didChangeHandler?(self)
+    }
+}
+
+class GradientColorItem: NSObject, NSCoding {
+    @objc dynamic var position: Float
+    var color: CGColor {
+        willSet {
+            self.willChangeValue(forKey: "nscolor")
+        }
+        
+        didSet {
+            self.didChangeValue(forKey: "nscolor")
+        }
+    }
+    
+    @objc dynamic var nscolor: NSColor {
+        return NSColor(cgColor: self.color)!
+    }
+    
+    convenience override init() {
+        self.init(position: 0.0, color: CGColor.white)
+    }
+    
+    init(position: Float, color: CGColor) {
+        self.position = position
+        self.color = color
+        
+        super.init()
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        let coder = aDecoder as! NSKeyedUnarchiver
+        guard let pos = coder.decodeObject(forKey: "gradientcolor_item_position") as? Float,
+            let color = CGColor.conditionallyCast(coder.decodeObject(forKey: "gradientcolor_item_color")) else {
+            return nil
+        }
+        
+        self.init(position: pos, color: color)
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        let coder = aCoder as! NSKeyedArchiver
+        
+        coder.encode(self.position, forKey: "gradientcolor_item_position")
+        coder.encode(self.color, forKey: "gradientcolor_item_color")
     }
 }
 
@@ -43,7 +156,7 @@ class ColorInfo: NSObject, NSCoding {
     
     var colorMap: ColorMap? = nil
     
-    var linearColor: LinearColor? = nil
+    var gradientColor: GradientColor? = nil
     
     override init() {
         super.init()
@@ -57,7 +170,7 @@ class ColorInfo: NSObject, NSCoding {
         
         self.coloringType = type
         self.colorMap = coder.decodeObject(forKey: "colorinfo_colormap") as? ColorMap
-        self.linearColor = coder.decodeObject(forKey: "colorinfo_linearcolor") as? LinearColor
+        self.gradientColor = coder.decodeObject(forKey: "colorinfo_linearcolor") as? GradientColor
     }
     
     func encode(with aCoder: NSCoder) {
@@ -65,6 +178,6 @@ class ColorInfo: NSObject, NSCoding {
         
         try! coder.encodeEncodable(self.coloringType, forKey: "colorinfo_type")
         coder.encode(self.colorMap, forKey: "colorinfo_colormap")
-        coder.encode(self.linearColor, forKey: "colorinfo_linearcolor")
+        coder.encode(self.gradientColor, forKey: "colorinfo_linearcolor")
     }
 }

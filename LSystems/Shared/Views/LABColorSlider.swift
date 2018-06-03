@@ -9,8 +9,11 @@
 import Cocoa
 
 class LABColorSlider: NSControl {
+    fileprivate var background_layer: CAGradientLayer! = nil
+    
     private var indicator_layer: CALayer! = nil
-    private var background_layer: CAGradientLayer! = nil
+    private var indicator_bg_layer: CALayer! = nil
+    private var indicator_fg_layer: CALayer! = nil
     
     @objc dynamic var value: Float = 0.0 {
         willSet {
@@ -35,6 +38,7 @@ class LABColorSlider: NSControl {
     fileprivate var current_l: CGFloat = 0.0
     fileprivate var current_a: CGFloat = 0.0
     fileprivate var current_b: CGFloat = 0.0
+    fileprivate var current_alpha: CGFloat = 1.0
     
     var gradientColors: (CGColor, CGColor) = (CGColor.white, CGColor.black) {
         didSet {
@@ -99,50 +103,83 @@ class LABColorSlider: NSControl {
     
     fileprivate func refreshIndicator() {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        self.indicator_layer.backgroundColor = CGColor(colorSpace: color_space, components: [self.current_l, self.current_a, self.current_b, 1.0])
+        self.indicator_fg_layer.backgroundColor = CGColor(colorSpace: color_space, components: [self.current_l, self.current_a, self.current_b, self.current_alpha])
     }
     
     // MARK: - Layers
-    private func buildBackgroundLayer() -> CAGradientLayer {
-        let layer = CAGradientLayer()
-        layer.colors = [
+    fileprivate func buildBackgroundLayer() -> CAGradientLayer {
+        let new_layer = CAGradientLayer()
+        new_layer.name = "background"
+        new_layer.colors = [
             self.gradientColors.0,
             self.gradientColors.1,
         ]
-        layer.locations = [0.0, 1.0]
-        
-        layer.borderColor = CGColor(gray: 0.75, alpha: 1.0)
-        layer.borderWidth = 2.0
-        layer.cornerRadius = 20.0
-        
-        layer.transform = CATransform3DMakeRotation(CGFloat.pi / 2, 0, 0, 1)
-        
-        return layer
-    }
-    
-    private func buildIndicatorLayer() -> CALayer {
-        let size: CGFloat = 40.0
-        
-        let new_layer = CALayer()
-        new_layer.bounds = CGRect(origin: CGPoint.zero,
-                                  size: CGSize(width: size, height: size))
-        new_layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        new_layer.position = CGPoint(x: 0.0, y: 0.5)
+        new_layer.locations = [0.0, 1.0]
         
         new_layer.borderColor = CGColor(gray: 0.75, alpha: 1.0)
-        new_layer.borderWidth = 1.5
-        new_layer.cornerRadius = size / 2
+        new_layer.borderWidth = 2.0
+        new_layer.cornerRadius = 5.0
+        
+        new_layer.transform = CATransform3DMakeRotation(-CGFloat.pi / 2, 0, 0, 1)
+        
+        new_layer.actions = [
+            "colors" : NSNull()
+        ]
+        
+        return new_layer
+    }
+    
+    fileprivate func buildIndicatorLayer() -> CALayer {
+        let size: Int = 40
+        let bounds = CGRect(origin: CGPoint.zero,
+                            size: CGSize(width: size, height: size))
+        let corner_radius = CGFloat(size) / 2
+        let pos = CGPoint(x: size/2, y: size/2)
+        
+        let new_bg_layer = CALayer()
+        new_bg_layer.name = "indicator_bg"
+        new_bg_layer.bounds = bounds
+        new_bg_layer.position = pos
+        new_bg_layer.cornerRadius = corner_radius
+        
+        new_bg_layer.backgroundColor = Style.createDefaultCheckerColor()
+        
+        self.indicator_bg_layer = new_bg_layer
+        
+        let new_fg_layer = CALayer()
+        new_fg_layer.name = "indicator_fg"
+        new_fg_layer.bounds = bounds
+        new_fg_layer.position = pos
+        
+        new_fg_layer.borderColor = CGColor(gray: 0.75, alpha: 1.0)
+        new_fg_layer.borderWidth = 1.5
+        new_fg_layer.cornerRadius = corner_radius
+        
+        new_fg_layer.backgroundColor = CGColor.white
+        
+        new_fg_layer.actions = [
+            "backgroundColor": NSNull()
+        ]
+        
+        self.indicator_fg_layer = new_fg_layer
+        
+        let new_layer = CALayer()
+        new_layer.name = "indicator"
+        new_layer.bounds = bounds
+        new_layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        new_layer.position = CGPoint(x: 0.0, y: 0.0)
         
         new_layer.shadowColor = CGColor.black
         new_layer.shadowOffset = CGSize(width: 0.0, height: 1.5)
         new_layer.shadowOpacity = 0.25
         new_layer.shadowRadius = 1.5
         
-        new_layer.backgroundColor = CGColor.white
-        
         new_layer.actions = [
-            "backgroundColor": NSNull()
+            "position": NSNull()
         ]
+        
+        new_layer.addSublayer(new_bg_layer)
+        new_layer.addSublayer(new_fg_layer)
         
         return new_layer
     }
@@ -184,20 +221,20 @@ class LABColorSlider: NSControl {
         let normalized = self.normalized(position: position, inRect: self.canvasFrame)
         
         if animated {
-            self.indicator_layer.actions = ["colors": NSNull()]
+            self.indicator_layer.actions?.removeValue(forKey: "position")
         } else {
-            self.indicator_layer.actions = [
-                "position": NSNull(),
-                "colors": NSNull()
-            ]
+            self.indicator_layer.actions?.updateValue(NSNull(), forKey: "position")
         }
         
         self.value = self.denormalize(value: Float(normalized.x), min: self.minValue, max: self.maxValue)
         
-        self.indicator_layer.actions = ["colors": NSNull()]
+        self.indicator_layer.actions?.removeValue(forKey: "position")
     }
 }
 
+// MARK: -
+// MARK: - Color Sliders
+// MARK: -
 class LColorSlider: LABColorSlider {
     override var current_l: CGFloat {
         get {
@@ -222,9 +259,14 @@ class LColorSlider: LABColorSlider {
     }
     
     override func setLabColor(L: CGFloat, A: CGFloat, B: CGFloat, alpha: CGFloat = 1.0) {
+        self.value = Float(L)
+        self.setBackgroundColor(A: A, B: B)
+    }
+    
+    func setBackgroundColor(A: CGFloat, B: CGFloat) {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        let min_color = CGColor(colorSpace: color_space, components: [CGFloat(self.minValue),A,B,alpha])!
-        let max_color = CGColor(colorSpace: color_space, components: [CGFloat(self.maxValue),A,B,alpha])!
+        let min_color = CGColor(colorSpace: color_space, components: [CGFloat(self.minValue),A,B,1.0])!
+        let max_color = CGColor(colorSpace: color_space, components: [CGFloat(self.maxValue),A,B,1.0])!
         
         self.current_a = A
         self.current_b = B
@@ -258,9 +300,14 @@ class AColorSlider: LABColorSlider {
     }
     
     override func setLabColor(L: CGFloat, A: CGFloat, B: CGFloat, alpha: CGFloat = 1.0) {
+        self.value = Float(A)
+        self.setBackgroundColor(L: L, B: B)
+    }
+    
+    func setBackgroundColor(L: CGFloat, B: CGFloat) {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        let min_color = CGColor(colorSpace: color_space, components: [L,CGFloat(self.minValue),B,alpha])!
-        let max_color = CGColor(colorSpace: color_space, components: [L,CGFloat(self.maxValue),B,alpha])!
+        let min_color = CGColor(colorSpace: color_space, components: [L,CGFloat(self.minValue),B,1.0])!
+        let max_color = CGColor(colorSpace: color_space, components: [L,CGFloat(self.maxValue),B,1.0])!
         
         self.current_l = L
         self.current_b = B
@@ -294,12 +341,71 @@ class BColorSlider: LABColorSlider {
     }
     
     override func setLabColor(L: CGFloat, A: CGFloat, B: CGFloat, alpha: CGFloat = 1.0) {
+        self.value = Float(B)
+        self.setBackgroundColor(L: L, A: A)
+    }
+    
+    func setBackgroundColor(L: CGFloat, A: CGFloat) {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        let min_color = CGColor(colorSpace: color_space, components: [L,A,CGFloat(self.minValue),alpha])!
-        let max_color = CGColor(colorSpace: color_space, components: [L,A,CGFloat(self.maxValue),alpha])!
+        let min_color = CGColor(colorSpace: color_space, components: [L,A,CGFloat(self.minValue),1.0])!
+        let max_color = CGColor(colorSpace: color_space, components: [L,A,CGFloat(self.maxValue),1.0])!
         
         self.current_l = L
         self.current_a = A
+        
+        self.gradientColors = (min_color,max_color)
+        self.refreshIndicator()
+    }
+}
+
+class AlphaColorSlider: LABColorSlider {
+    override var current_alpha: CGFloat {
+        get {
+            return CGFloat(self.value)
+        }
+        set {}
+    }
+    
+    // MARK: - Lifecycle
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        self.commonInit()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.commonInit()
+    }
+    
+    private func commonInit() {
+        // bg layer
+        let alpha_layer = CALayer()
+        alpha_layer.cornerRadius = self.background_layer.cornerRadius
+        alpha_layer.backgroundColor = Style.createDefaultCheckerColor()
+        
+        alpha_layer.constraints = [
+            CAConstraint(attribute: .height, relativeTo: "background", attribute: .height),
+            CAConstraint(attribute: .width, relativeTo: "background", attribute: .width),
+            CAConstraint(attribute: .midX, relativeTo: "background", attribute: .midX),
+            CAConstraint(attribute: .midY, relativeTo: "background", attribute: .midY)
+        ]
+        
+        self.layer!.insertSublayer(alpha_layer, at: 0)
+    }
+    
+    override func setLabColor(L: CGFloat, A: CGFloat, B: CGFloat, alpha: CGFloat) {
+        self.value = Float(alpha)
+        self.setBackgroundColor(L: L, A: A, B: B)
+    }
+    
+    func setBackgroundColor(L: CGFloat, A: CGFloat, B: CGFloat) {
+        let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
+        let min_color = CGColor(colorSpace: color_space, components: [L,A,B,0.0])!
+        let max_color = CGColor(colorSpace: color_space, components: [L,A,B,1.0])!
+        
+        self.current_l = L
+        self.current_a = A
+        self.current_b = B
         
         self.gradientColors = (min_color,max_color)
         self.refreshIndicator()
