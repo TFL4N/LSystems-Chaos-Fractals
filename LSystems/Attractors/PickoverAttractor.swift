@@ -75,15 +75,21 @@ class PickoverAttractorOperation: AttractorOperation {
         current_main_colors.reserveCapacity(vertex_count_buffer_limit * 4)
         
         // color array
-        let main_color_interpolator = LinearInterpolator()
-        let from_color = LabColor(l: Value(type: .float, value: 76.0),
-                                  a: Value(type: .float, value: -97.5),
-                                  b: Value(type: .float, value: 68.5),
-                                  alpha: Value(type: .float, value: 1.0))
-        let to_color = LabColor(l: Value(type: .float, value: 52.0),
-                                a: Value(type: .float, value: 83.5),
-                                b: Value(type: .float, value: -100.0),
-                                alpha: Value(type: .float, value: 1.0))
+        var coloring_interpolator: GradientColor.Interpolator? = nil
+        var coloring_mode = self.attractor.coloring_info.coloringType
+        
+        if coloring_mode == .Gradient {
+            if let color = self.attractor.coloring_info.gradientColor,
+                let interpolator = GradientColor
+                    .Interpolator(color: color,
+                                  interpolatingColorSpace: CGColorSpace(name: CGColorSpace.genericLab)!,
+                                  ouputColorSpace: CGColorSpace(name: CGColorSpace.genericRGBLinear)!) {
+                coloring_interpolator = interpolator
+            } else {
+                coloring_mode = .None
+            }
+        }
+        
         
         
         // output buffer
@@ -127,6 +133,7 @@ class PickoverAttractorOperation: AttractorOperation {
         var y: Float = 0
         var z: Float = 0
         
+        
         // produce data
         var iteration = 0
         while iteration < max_iters {
@@ -136,6 +143,7 @@ class PickoverAttractorOperation: AttractorOperation {
             }
             
             iteration += 1
+            let mu = Float(iteration) / Float(max_iters)
             
             // generate vertex
             let new_x: Float = sin(A*y) + z*cos(B*x)
@@ -147,38 +155,30 @@ class PickoverAttractorOperation: AttractorOperation {
             z = new_z
             
             // generate main color
-            let mu = Float(iteration) / Float(max_iters)
-            let lab_color = from_color.interpolate(main_color_interpolator,
-                                                   at: mu,
-                                                   toColor: to_color)
-            let rgb_color = lab_color.getRGBComponents()
-            
-            //            print(rgb_color)
-            
-            let main_red: Float = Float(rgb_color.r)
-            let main_green: Float = Float(rgb_color.g)
-            let main_blue: Float = Float(rgb_color.b)
-            let main_alpha: Float = Float(rgb_color.a)
             
             if iteration > skip_iters {
-                current_vertex_index += 1
-                if current_vertex_index <= vertex_count_buffer_limit {
-                    // vertex
-                    current_vertices.append(contentsOf: [
-                        x, y, z
-                        ])
-                    
-                    // rgba
-                    current_main_colors.append(contentsOf: [
-                        main_red,
-                        main_green,
-                        main_blue,
-                        main_alpha
-                        ])
-                } else {
-                    updateOutputBuffer()
+                // vertex
+                current_vertices.append(contentsOf: [
+                    x, y, z
+                    ])
+                
+                // main color
+                switch coloring_mode {
+                case .Gradient:
+                    current_main_colors.append(contentsOf: coloring_interpolator!.interpolate(mu: mu))
+                case .ColorMap, .None:
+                    let rgb_color = CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+                    current_main_colors.append(contentsOf: rgb_color.components!.map {Float($0)})
                 }
+
             }
+            
+            // update vertex index
+            current_vertex_index += 1
+            if current_vertex_index == vertex_count_buffer_limit {
+                updateOutputBuffer()
+            }
+            
             
             // update progress
             self.progress = mu
