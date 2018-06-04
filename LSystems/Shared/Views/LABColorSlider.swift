@@ -40,15 +40,6 @@ class LABColorSlider: NSControl {
     fileprivate var current_b: CGFloat = 0.0
     fileprivate var current_alpha: CGFloat = 1.0
     
-    var gradientColors: (CGColor, CGColor) = (CGColor.white, CGColor.black) {
-        didSet {
-            self.background_layer.colors = [
-                self.gradientColors.0,
-                self.gradientColors.1,
-            ]
-        }
-    }
-    
     private var canvasFrame: CGRect {
         return self.bounds
     }
@@ -98,7 +89,7 @@ class LABColorSlider: NSControl {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
         let color = CGColor(colorSpace: color_space, components: [L,A,B,alpha])!
         
-        self.gradientColors = (color,color)
+        self.background_layer.colors = [color, color]
     }
     
     fileprivate func refreshIndicator() {
@@ -111,10 +102,9 @@ class LABColorSlider: NSControl {
         let new_layer = CAGradientLayer()
         new_layer.name = "background"
         new_layer.colors = [
-            self.gradientColors.0,
-            self.gradientColors.1,
+            CGColor.white,
+            CGColor.black
         ]
-        new_layer.locations = [0.0, 1.0]
         
         new_layer.borderColor = CGColor(gray: 0.75, alpha: 1.0)
         new_layer.borderWidth = 2.0
@@ -265,13 +255,26 @@ class LColorSlider: LABColorSlider {
     
     func setBackgroundColor(A: CGFloat, B: CGFloat) {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        let min_color = CGColor(colorSpace: color_space, components: [CGFloat(self.minValue),A,B,1.0])!
-        let max_color = CGColor(colorSpace: color_space, components: [CGFloat(self.maxValue),A,B,1.0])!
         
         self.current_a = A
         self.current_b = B
         
-        self.gradientColors = (min_color,max_color)
+        let mid = (self.maxValue + self.minValue) / 2
+        let min_mid = (self.minValue + mid) / 2
+        let max_mid = (self.maxValue + mid) / 2
+        
+        self.background_layer.colors = [
+            CGColor(colorSpace: color_space,
+                    components: [CGFloat(self.minValue),A,B,1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [CGFloat(min_mid),A,B,1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [CGFloat(mid),A,B,1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [CGFloat(max_mid),A,B,1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [CGFloat(self.maxValue),A,B,1.0])!
+        ]
         self.refreshIndicator()
     }
 }
@@ -295,7 +298,7 @@ class AColorSlider: LABColorSlider {
     }
     
     private func commonInit() {
-        self.minValue = -127.0
+        self.minValue = 0.0
         self.maxValue = 127.0
     }
     
@@ -306,13 +309,26 @@ class AColorSlider: LABColorSlider {
     
     func setBackgroundColor(L: CGFloat, B: CGFloat) {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        let min_color = CGColor(colorSpace: color_space, components: [L,CGFloat(self.minValue),B,1.0])!
-        let max_color = CGColor(colorSpace: color_space, components: [L,CGFloat(self.maxValue),B,1.0])!
         
         self.current_l = L
         self.current_b = B
         
-        self.gradientColors = (min_color,max_color)
+        let mid = (self.maxValue + self.minValue) / 2
+        let min_mid = (self.minValue + mid) / 2
+        let max_mid = (self.maxValue + mid) / 2
+        
+        self.background_layer.colors = [
+            CGColor(colorSpace: color_space,
+                    components: [L,CGFloat(self.minValue),B,1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,CGFloat(min_mid),B,1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,CGFloat(mid),B,1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,CGFloat(max_mid),B,1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,CGFloat(self.maxValue),B,1.0])!
+        ]
         self.refreshIndicator()
     }
 }
@@ -336,7 +352,7 @@ class BColorSlider: LABColorSlider {
     }
     
     private func commonInit() {
-        self.minValue = -127.0
+        self.minValue = -128.0
         self.maxValue = 127.0
     }
     
@@ -347,13 +363,26 @@ class BColorSlider: LABColorSlider {
     
     func setBackgroundColor(L: CGFloat, A: CGFloat) {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        let min_color = CGColor(colorSpace: color_space, components: [L,A,CGFloat(self.minValue),1.0])!
-        let max_color = CGColor(colorSpace: color_space, components: [L,A,CGFloat(self.maxValue),1.0])!
         
         self.current_l = L
         self.current_a = A
         
-        self.gradientColors = (min_color,max_color)
+        let mid = (self.maxValue + self.minValue) / 2
+        let min_mid = (self.minValue + mid) / 2
+        let max_mid = (self.maxValue + mid) / 2
+        
+        self.background_layer.colors = [
+            CGColor(colorSpace: color_space,
+                    components: [L,A,CGFloat(self.minValue),1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,A,CGFloat(min_mid),1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,A,CGFloat(mid),1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,A,CGFloat(max_mid),1.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,A,CGFloat(self.maxValue),1.0])!
+        ]
         self.refreshIndicator()
     }
 }
@@ -400,14 +429,17 @@ class AlphaColorSlider: LABColorSlider {
     
     func setBackgroundColor(L: CGFloat, A: CGFloat, B: CGFloat) {
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        let min_color = CGColor(colorSpace: color_space, components: [L,A,B,0.0])!
-        let max_color = CGColor(colorSpace: color_space, components: [L,A,B,1.0])!
         
         self.current_l = L
         self.current_a = A
         self.current_b = B
         
-        self.gradientColors = (min_color,max_color)
+        self.background_layer.colors = [
+            CGColor(colorSpace: color_space,
+                    components: [L,A,B,0.0])!,
+            CGColor(colorSpace: color_space,
+                    components: [L,A,B,1.0])!
+        ]
         self.refreshIndicator()
     }
 }
