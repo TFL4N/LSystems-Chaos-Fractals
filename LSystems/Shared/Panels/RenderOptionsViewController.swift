@@ -35,8 +35,6 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
         ])
     
     private var needsBindings = true
-    
-    
     override func viewWillAppear() {
         super.viewWillAppear()
         

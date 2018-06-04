@@ -46,6 +46,9 @@
 		6568AB9420A33195009B828A /* colormap_13.png in Resources */ = {isa = PBXBuildFile; fileRef = 6568AB7F20A33194009B828A /* colormap_13.png */; };
 		6568AB9520A33195009B828A /* colormap_11.png in Resources */ = {isa = PBXBuildFile; fileRef = 6568AB8020A33194009B828A /* colormap_11.png */; };
 		6568AB9620A33195009B828A /* colormap_10.png in Resources */ = {isa = PBXBuildFile; fileRef = 6568AB8120A33194009B828A /* colormap_10.png */; };
+		6569AA9B20C4C3B900B94E69 /* ColoringInfoSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569AA9A20C4C3B900B94E69 /* ColoringInfoSettingsViewController.swift */; };
+		6569AA9E20C4C3E900B94E69 /* ColorMapSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569AA9C20C4C3E900B94E69 /* ColorMapSettingsViewController.swift */; };
+		6569AAA120C4C46300B94E69 /* ColoringInfoSettingsTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569AAA020C4C46300B94E69 /* ColoringInfoSettingsTabController.swift */; };
 		6581E13E20C2C3BB00B5447A /* LabColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65720C28056006A1DF0 /* LabColorPicker.swift */; };
 		6581E14020C2C3D300B5447A /* LabColorPickerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6595A65520C27E5D006A1DF0 /* LabColorPickerView.xib */; };
 		6595A64320BB5FDD006A1DF0 /* ValueSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64220BB5FDD006A1DF0 /* ValueSlider.swift */; };
@@ -55,7 +58,7 @@
 		6595A64D20BF7ED4006A1DF0 /* BufferPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64C20BF7ED4006A1DF0 /* BufferPool.swift */; };
 		6595A64F20C25EF4006A1DF0 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64E20C25EF3006A1DF0 /* Benchmark.swift */; };
 		6595A65120C273D2006A1DF0 /* GradientColorItemCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65020C273D2006A1DF0 /* GradientColorItemCellView.swift */; };
-		6595A65320C2798D006A1DF0 /* ColoringInfoPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65220C2798D006A1DF0 /* ColoringInfoPanelViewController.swift */; };
+		6595A65320C2798D006A1DF0 /* GradientColorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65220C2798D006A1DF0 /* GradientColorSettingsViewController.swift */; };
 		65D8447F20B7E53E00FDCBCC /* RendererUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */; };
 		65F0D36820C375AD00E94785 /* LABColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */; };
 		65F0D36920C375DB00E94785 /* LABColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */; };
@@ -63,7 +66,7 @@
 		65F0D36D20C388E700E94785 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0D36C20C388E700E94785 /* Utils.swift */; };
 		65F0D36F20C3B0FB00E94785 /* ColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0D36E20C3B0FB00E94785 /* ColorWell.swift */; };
 		65F0D37120C3F28400E94785 /* GradientColorWell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F0D37020C3F28400E94785 /* GradientColorWell.swift */; };
-		65F0D37220C3FD6400E94785 /* ColorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568AB3F20A30F03009B828A /* ColorInfo.swift */; };
+		65F0D37220C3FD6400E94785 /* ColoringInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6568AB3F20A30F03009B828A /* ColoringInfo.swift */; };
 		65F1EB22206C8083007DF72B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F1EB21206C8083007DF72B /* AppDelegate.swift */; };
 		65F1EB24206C8083007DF72B /* LGraphicsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F1EB23206C8083007DF72B /* LGraphicsViewController.swift */; };
 		65F1EB28206C8083007DF72B /* LSystemShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 65F1EB27206C8083007DF72B /* LSystemShaders.metal */; };
@@ -116,7 +119,7 @@
 		6568AB3A209F7B54009B828A /* MatrixUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixUtils.swift; sourceTree = "<group>"; };
 		6568AB3D20A05294009B828A /* AAPLShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLShaderTypes.h; sourceTree = "<group>"; };
 		6568AB3E20A052BC009B828A /* AAPLShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AAPLShaders.metal; sourceTree = "<group>"; };
-		6568AB3F20A30F03009B828A /* ColorInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorInfo.swift; sourceTree = "<group>"; };
+		6568AB3F20A30F03009B828A /* ColoringInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringInfo.swift; sourceTree = "<group>"; };
 		6568AB6D20A33194009B828A /* colormap_2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colormap_2.png; sourceTree = "<group>"; };
 		6568AB6E20A33194009B828A /* colormap_21.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colormap_21.png; sourceTree = "<group>"; };
 		6568AB6F20A33194009B828A /* colormap_20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colormap_20.png; sourceTree = "<group>"; };
@@ -138,6 +141,9 @@
 		6568AB7F20A33194009B828A /* colormap_13.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colormap_13.png; sourceTree = "<group>"; };
 		6568AB8020A33194009B828A /* colormap_11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colormap_11.png; sourceTree = "<group>"; };
 		6568AB8120A33194009B828A /* colormap_10.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = colormap_10.png; sourceTree = "<group>"; };
+		6569AA9A20C4C3B900B94E69 /* ColoringInfoSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringInfoSettingsViewController.swift; sourceTree = "<group>"; };
+		6569AA9C20C4C3E900B94E69 /* ColorMapSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMapSettingsViewController.swift; sourceTree = "<group>"; };
+		6569AAA020C4C46300B94E69 /* ColoringInfoSettingsTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringInfoSettingsTabController.swift; sourceTree = "<group>"; };
 		6581E13820C2C36300B5447A /* LabColorPicker.colorPicker */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LabColorPicker.colorPicker; sourceTree = BUILT_PRODUCTS_DIR; };
 		6581E13A20C2C36300B5447A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6595A64220BB5FDD006A1DF0 /* ValueSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueSlider.swift; sourceTree = "<group>"; };
@@ -147,7 +153,7 @@
 		6595A64C20BF7ED4006A1DF0 /* BufferPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferPool.swift; sourceTree = "<group>"; };
 		6595A64E20C25EF3006A1DF0 /* Benchmark.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Benchmark.swift; sourceTree = "<group>"; };
 		6595A65020C273D2006A1DF0 /* GradientColorItemCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientColorItemCellView.swift; sourceTree = "<group>"; };
-		6595A65220C2798D006A1DF0 /* ColoringInfoPanelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringInfoPanelViewController.swift; sourceTree = "<group>"; };
+		6595A65220C2798D006A1DF0 /* GradientColorSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientColorSettingsViewController.swift; sourceTree = "<group>"; };
 		6595A65520C27E5D006A1DF0 /* LabColorPickerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabColorPickerView.xib; sourceTree = "<group>"; };
 		6595A65720C28056006A1DF0 /* LabColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabColorPicker.swift; sourceTree = "<group>"; };
 		6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LABColorSlider.swift; sourceTree = "<group>"; };
@@ -256,7 +262,6 @@
 				6595A64620BB8540006A1DF0 /* VideoCapture.swift */,
 				6568AB3C20A05266009B828A /* old_code */,
 				6568AB3A209F7B54009B828A /* MatrixUtils.swift */,
-				6568AB3F20A30F03009B828A /* ColorInfo.swift */,
 				65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */,
 				6595A64C20BF7ED4006A1DF0 /* BufferPool.swift */,
 				65F0D36C20C388E700E94785 /* Utils.swift */,
@@ -293,7 +298,7 @@
 		65252A4720B7DF4E008CD676 /* Panels */ = {
 			isa = PBXGroup;
 			children = (
-				6595A65220C2798D006A1DF0 /* ColoringInfoPanelViewController.swift */,
+				6569AA9920C4C37E00B94E69 /* Coloring Info */,
 				65252A4820B7DF83008CD676 /* RenderOptionsViewController.swift */,
 				65F0D36A20C378BA00E94785 /* LabColorPickerViewController.swift */,
 			);
@@ -361,6 +366,18 @@
 				6568AB8120A33194009B828A /* colormap_10.png */,
 			);
 			path = "Color Maps";
+			sourceTree = "<group>";
+		};
+		6569AA9920C4C37E00B94E69 /* Coloring Info */ = {
+			isa = PBXGroup;
+			children = (
+				6568AB3F20A30F03009B828A /* ColoringInfo.swift */,
+				6595A65220C2798D006A1DF0 /* GradientColorSettingsViewController.swift */,
+				6569AA9A20C4C3B900B94E69 /* ColoringInfoSettingsViewController.swift */,
+				6569AA9C20C4C3E900B94E69 /* ColorMapSettingsViewController.swift */,
+				6569AAA020C4C46300B94E69 /* ColoringInfoSettingsTabController.swift */,
+			);
+			path = "Coloring Info";
 			sourceTree = "<group>";
 		};
 		6581E13920C2C36300B5447A /* LabColorPicker */ = {
@@ -634,7 +651,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65F0D37220C3FD6400E94785 /* ColorInfo.swift in Sources */,
+				65F0D37220C3FD6400E94785 /* ColoringInfo.swift in Sources */,
+				6569AAA120C4C46300B94E69 /* ColoringInfoSettingsTabController.swift in Sources */,
 				65F0D36B20C378BA00E94785 /* LabColorPickerViewController.swift in Sources */,
 				65F1EB28206C8083007DF72B /* LSystemShaders.metal in Sources */,
 				6595A64920BBA345006A1DF0 /* Locks.swift in Sources */,
@@ -657,13 +675,15 @@
 				6568AA9F209F076E009B828A /* PopUpCellView.swift in Sources */,
 				65F1EB53206C859C007DF72B /* LSystemMainViewController.swift in Sources */,
 				6568AAA1209F148F009B828A /* NotificationCenter.swift in Sources */,
+				6569AA9E20C4C3E900B94E69 /* ColorMapSettingsViewController.swift in Sources */,
 				65252A4920B7DF83008CD676 /* RenderOptionsViewController.swift in Sources */,
 				65F1EB55206C8AC8007DF72B /* LSystemManager.swift in Sources */,
 				6595A64F20C25EF4006A1DF0 /* Benchmark.swift in Sources */,
-				6595A65320C2798D006A1DF0 /* ColoringInfoPanelViewController.swift in Sources */,
+				6595A65320C2798D006A1DF0 /* GradientColorSettingsViewController.swift in Sources */,
 				65F0D36820C375AD00E94785 /* LABColorSlider.swift in Sources */,
 				65252A3B20B660F1008CD676 /* AttractorRenderer.swift in Sources */,
 				65252A3420B6544E008CD676 /* PickoverAttractor.swift in Sources */,
+				6569AA9B20C4C3B900B94E69 /* ColoringInfoSettingsViewController.swift in Sources */,
 				65252A4020B7704A008CD676 /* AttractorShaders.metal in Sources */,
 				6595A65120C273D2006A1DF0 /* GradientColorItemCellView.swift in Sources */,
 				6568AADD209F444B009B828A /* LSystemDocument.swift in Sources */,

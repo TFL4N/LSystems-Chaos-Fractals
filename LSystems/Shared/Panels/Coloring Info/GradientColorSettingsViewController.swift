@@ -1,5 +1,5 @@
 //
-//  ColoringInfoPanelViewController.swift
+//  GradientColorViewController.swift
 //  L-Systems
 //
 //  Created by Spizzace on 6/2/18.
@@ -8,31 +8,42 @@
 
 import Cocoa
 
-class ColoringInfoPanelViewController: AttractorDocumentViewController, NSTableViewDelegate, NSTableViewDataSource {
+class GradientColorSettingsViewController: NSViewController, ColoringInfoSettingsProtocol, NSTableViewDelegate, NSTableViewDataSource {
 
     @IBOutlet var color_list_table_view: NSTableView!
     @IBOutlet var gradient_color_well: GradientColorWell!
     
-    var gradient_color = GradientColor() {
-        didSet {
-            self.gradient_color.didChangeHandler = self.handleColorDidChange(_:)
+    var coloring_info: ColoringInfo {
+        return (self.parent as! ColoringInfoSettingsProtocol).coloring_info
+    }
+    
+    var gradient_color: GradientColor {
+        let info = self.coloring_info
+        if info.gradientColor == nil {
+            info.gradientColor = GradientColor()
         }
+        
+        info.gradientColor?.didChangeHandler = self.handleColorDidChange(_:)
+        
+        return info.gradientColor!
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.color_list_table_view.delegate = self
-        self.color_list_table_view.dataSource = self
-        self.color_list_table_view.usesAutomaticRowHeights = true
-        
-        self.gradient_color.didChangeHandler = self.handleColorDidChange(_:)
     }
     
+    private var needsBindings = true
     override func viewWillAppear() {
         super.viewWillAppear()
         
-        self.color_list_table_view.reloadData()
+        if self.needsBindings {
+            self.needsBindings = false
+            self.color_list_table_view.delegate = self
+            self.color_list_table_view.dataSource = self
+            self.color_list_table_view.usesAutomaticRowHeights = true
+        }
+        
+        self.handleColorDidChange(self.gradient_color)
     }
     
     private func handleColorDidChange(_ color: GradientColor) {

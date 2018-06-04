@@ -9,7 +9,7 @@
 import Foundation
 
 class PickoverAttractor: Attractor {
-    override init() {
+    init() {
         let params = [
             Parameter(name: "iterations", value: Value(type: .integer, value: 0)),
             Parameter(name: "skip iterations", value: Value(type: .integer, value: 0)),
@@ -19,10 +19,10 @@ class PickoverAttractor: Attractor {
             Parameter(name: "D", value: Value(type: .float, value: 0))
         ]
         
-        super.init(parameters: params)!
+        super.init(parameters: params, coloringInfo: ColoringInfo())!
     }
     
-    override init?(parameters: [Parameter]) {
+    override init?(parameters: [Parameter], coloringInfo: ColoringInfo) {
         // check parameters
         for p in ["A","B","C","D"] {
             if !parameters.contains(where: { (par: Parameter) -> Bool in
@@ -35,15 +35,15 @@ class PickoverAttractor: Attractor {
         }
         
         // init
-        super.init(parameters: parameters)
+        super.init(parameters: parameters, coloringInfo: coloringInfo)
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let coder = aDecoder as! NSKeyedUnarchiver
-        guard let params = coder.decodeObject(forKey: "attractor_parameters") as? [Parameter]
-            else { return nil }
+        guard let decoded = Attractor.decodeObject(coder: aDecoder) else {
+            return nil
+        }
         
-        self.init(parameters: params)
+        self.init(parameters: decoded.parameters, coloringInfo: decoded.coloringInfo)
     }
     
     override func buildOperationData(atFrame: FrameId = 0, bufferPool: BufferPool) -> AttractorOperation {

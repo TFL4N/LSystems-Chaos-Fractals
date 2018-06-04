@@ -10,10 +10,43 @@ import Cocoa
 
 enum ColoringType: String, Codable {
     case None = "None"
+    case Gradient = "Gradient"
     case ColorMap = "ColorMap"
     
-    static let allTypes = [None, ColorMap]
+    static let allTypes = [None, Gradient, ColorMap]
     static let allStringTypes = ColoringType.allTypes.map { $0.rawValue }
+}
+
+
+class ColoringInfo: NSObject, NSCoding {
+    var coloringType: ColoringType = .None
+    
+    var colorMap: ColorMap? = nil
+    
+    var gradientColor: GradientColor? = nil
+    
+    override init() {
+        super.init()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        let coder = aDecoder as! NSKeyedUnarchiver
+        guard let type = coder.decodeDecodable(ColoringType.self, forKey: "colorinfo_type") else {
+            return nil
+        }
+        
+        self.coloringType = type
+        self.colorMap = coder.decodeObject(forKey: "colorinfo_colormap") as? ColorMap
+        self.gradientColor = coder.decodeObject(forKey: "colorinfo_linearcolor") as? GradientColor
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        let coder = aCoder as! NSKeyedArchiver
+        
+        try! coder.encodeEncodable(self.coloringType, forKey: "colorinfo_type")
+        coder.encode(self.colorMap, forKey: "colorinfo_colormap")
+        coder.encode(self.gradientColor, forKey: "colorinfo_linearcolor")
+    }
 }
 
 class ColorMap: NSObject, NSCoding {
@@ -72,6 +105,10 @@ class GradientColor: NSObject, NSCoding {
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == GradientColor.key_paths[0] {
+            self.sortColors()
+        }
+        
         self.didChangeHandler?(self)
     }
     
@@ -119,7 +156,13 @@ class GradientColorItem: NSObject, NSCoding {
     }
     
     @objc dynamic var nscolor: NSColor {
-        return NSColor(cgColor: self.color)!
+        get {
+            return NSColor(cgColor: self.color)!
+        }
+        
+        set {
+            self.color = newValue.cgColor
+        }
     }
     
     convenience override init() {
@@ -135,49 +178,19 @@ class GradientColorItem: NSObject, NSCoding {
     
     required convenience init?(coder aDecoder: NSCoder) {
         let coder = aDecoder as! NSKeyedUnarchiver
-        guard let pos = coder.decodeObject(forKey: "gradientcolor_item_position") as? Float,
-            let color = CGColor.conditionallyCast(coder.decodeObject(forKey: "gradientcolor_item_color")) else {
+        guard let color = coder.decodeObject(forKey: "gradientcolor_item_color") as? NSColor else {
             return nil
         }
         
-        self.init(position: pos, color: color)
+        let pos = coder.decodeFloat(forKey: "gradientcolor_item_position")
+        
+        self.init(position: pos, color: color.cgColor)
     }
     
     func encode(with aCoder: NSCoder) {
         let coder = aCoder as! NSKeyedArchiver
         
         coder.encode(self.position, forKey: "gradientcolor_item_position")
-        coder.encode(self.color, forKey: "gradientcolor_item_color")
-    }
-}
-
-class ColorInfo: NSObject, NSCoding {
-    var coloringType: ColoringType = .None
-    
-    var colorMap: ColorMap? = nil
-    
-    var gradientColor: GradientColor? = nil
-    
-    override init() {
-        super.init()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        let coder = aDecoder as! NSKeyedUnarchiver
-        guard let type = coder.decodeDecodable(ColoringType.self, forKey: "colorinfo_type") else {
-            return nil
-        }
-        
-        self.coloringType = type
-        self.colorMap = coder.decodeObject(forKey: "colorinfo_colormap") as? ColorMap
-        self.gradientColor = coder.decodeObject(forKey: "colorinfo_linearcolor") as? GradientColor
-    }
-    
-    func encode(with aCoder: NSCoder) {
-        let coder = aCoder as! NSKeyedArchiver
-        
-        try! coder.encodeEncodable(self.coloringType, forKey: "colorinfo_type")
-        coder.encode(self.colorMap, forKey: "colorinfo_colormap")
-        coder.encode(self.gradientColor, forKey: "colorinfo_linearcolor")
+        coder.encode(self.nscolor, forKey: "gradientcolor_item_color")
     }
 }

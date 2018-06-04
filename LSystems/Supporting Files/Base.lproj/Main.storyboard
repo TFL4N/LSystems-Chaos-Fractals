@@ -890,8 +890,8 @@
         <!--Color Info Panel-->
         <scene sceneID="oHj-xW-hQ6">
             <objects>
-                <windowController storyboardIdentifier="Coloring Info Panel" id="GYc-8e-A02" userLabel="Color Info Panel" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Lz6-04-kjk">
+                <windowController storyboardIdentifier="Coloring Info Panel" showSeguePresentationStyle="single" id="GYc-8e-A02" userLabel="Color Info Panel" sceneMemberID="viewController">
+                    <window key="window" title="Coloring Info" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="Lz6-04-kjk">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="249" width="480" height="243"/>
@@ -901,12 +901,92 @@
                         </connections>
                     </window>
                     <connections>
-                        <segue destination="ler-fj-OQQ" kind="relationship" relationship="window.shadowedContentViewController" id="a9t-jK-xzw"/>
+                        <segue destination="sfy-fl-Wdv" kind="relationship" relationship="window.shadowedContentViewController" id="qiY-Cf-ua2"/>
                     </connections>
                 </windowController>
                 <customObject id="2kb-ae-Vqe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1931" y="562.5"/>
+        </scene>
+        <!--Coloring Info Settings View Controller-->
+        <scene sceneID="SKd-dv-8aS">
+            <objects>
+                <viewController id="sfy-fl-Wdv" customClass="ColoringInfoSettingsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="QOx-Rz-tRz">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <box title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="zPa-4w-69x">
+                                <rect key="frame" x="7" y="247" width="436" height="45"/>
+                                <view key="contentView" id="GPP-g6-f79">
+                                    <rect key="frame" x="2" y="2" width="432" height="41"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="15" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xSw-qS-uPq">
+                                            <rect key="frame" x="10" y="10" width="140" height="21"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RMv-In-iCy">
+                                                    <rect key="frame" x="-2" y="4" width="97" height="17"/>
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Coloring Mode:" id="BU7-DQ-ejk">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TYt-Ud-40p">
+                                                    <rect key="frame" x="106" y="-3" width="37" height="26"/>
+                                                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="HjR-hS-G68">
+                                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                        <font key="font" metaFont="menu"/>
+                                                        <menu key="menu" id="3vr-cj-YL5"/>
+                                                    </popUpButtonCell>
+                                                    <connections>
+                                                        <action selector="handleColoringModeSelection:" target="sfy-fl-Wdv" id="cvk-HC-a99"/>
+                                                    </connections>
+                                                </popUpButton>
+                                            </subviews>
+                                            <visibilityPriorities>
+                                                <integer value="1000"/>
+                                                <integer value="1000"/>
+                                            </visibilityPriorities>
+                                            <customSpacing>
+                                                <real value="3.4028234663852886e+38"/>
+                                                <real value="3.4028234663852886e+38"/>
+                                            </customSpacing>
+                                        </stackView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="xSw-qS-uPq" firstAttribute="leading" secondItem="GPP-g6-f79" secondAttribute="leading" constant="10" id="ISo-7R-7Th"/>
+                                        <constraint firstItem="xSw-qS-uPq" firstAttribute="top" secondItem="GPP-g6-f79" secondAttribute="top" constant="10" id="loP-h8-VFD"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xSw-qS-uPq" secondAttribute="trailing" constant="10" id="q1Y-rU-MRc"/>
+                                        <constraint firstAttribute="bottom" secondItem="xSw-qS-uPq" secondAttribute="bottom" constant="10" id="zCf-zO-ts1"/>
+                                    </constraints>
+                                </view>
+                            </box>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="XZ4-ky-esG">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="241"/>
+                                <connections>
+                                    <segue destination="FYf-Ml-GDq" kind="embed" id="w8a-GQ-Xz4"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="XZ4-ky-esG" firstAttribute="top" secondItem="zPa-4w-69x" secondAttribute="bottom" constant="10" id="37S-ou-I3s"/>
+                            <constraint firstAttribute="bottom" secondItem="XZ4-ky-esG" secondAttribute="bottom" id="Cph-ie-BOh"/>
+                            <constraint firstItem="zPa-4w-69x" firstAttribute="top" secondItem="QOx-Rz-tRz" secondAttribute="top" constant="10" id="TCO-ET-gAe"/>
+                            <constraint firstItem="XZ4-ky-esG" firstAttribute="leading" secondItem="QOx-Rz-tRz" secondAttribute="leading" id="gTq-La-j1Z"/>
+                            <constraint firstAttribute="trailing" secondItem="zPa-4w-69x" secondAttribute="trailing" constant="10" id="mhS-QE-4LW"/>
+                            <constraint firstItem="zPa-4w-69x" firstAttribute="leading" secondItem="QOx-Rz-tRz" secondAttribute="leading" constant="10" id="p9Q-XC-KIf"/>
+                            <constraint firstAttribute="trailing" secondItem="XZ4-ky-esG" secondAttribute="trailing" id="qUl-2E-qxv"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="coloring_mode_button" destination="TYt-Ud-40p" id="E7g-lS-mV6"/>
+                    </connections>
+                </viewController>
+                <customObject id="uYh-M6-e9E" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1931" y="989"/>
         </scene>
         <!--Color Picker Panel-->
         <scene sceneID="d7A-ax-COc">
@@ -1118,10 +1198,49 @@
             </objects>
             <point key="canvasLocation" x="2499" y="1061"/>
         </scene>
-        <!--Coloring Info Panel View Controller-->
+        <!--Coloring Info Settings Tab Controller-->
+        <scene sceneID="NsQ-S6-40l">
+            <objects>
+                <tabViewController selectedTabViewItemIndex="0" id="FYf-Ml-GDq" customClass="ColoringInfoSettingsTabController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabViewItems>
+                        <tabViewItem id="IJx-SD-hu2"/>
+                        <tabViewItem identifier="" id="zf1-dx-ij2"/>
+                    </tabViewItems>
+                    <tabView key="tabView" type="noTabsNoBorder" id="JGb-jA-g4n">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="message"/>
+                        <connections>
+                            <outlet property="delegate" destination="FYf-Ml-GDq" id="fV6-Kh-h0b"/>
+                        </connections>
+                    </tabView>
+                    <connections>
+                        <outlet property="tabView" destination="JGb-jA-g4n" id="ikG-zp-0yx"/>
+                        <segue destination="ler-fj-OQQ" kind="relationship" relationship="tabItems" id="RZg-31-xLQ"/>
+                        <segue destination="kmp-4W-67t" kind="relationship" relationship="tabItems" id="pMw-dU-Fpx"/>
+                    </connections>
+                </tabViewController>
+                <customObject id="lj0-uL-pl0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1935" y="1496"/>
+        </scene>
+        <!--Color Map-->
+        <scene sceneID="900-BV-Ldr">
+            <objects>
+                <viewController title="Color Map" id="kmp-4W-67t" customClass="ColorMapSettingsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="3p9-Xu-x1V">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="QXg-wu-Hyh" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2210" y="1970"/>
+        </scene>
+        <!--Gradient Color-->
         <scene sceneID="NyV-Z8-Djr">
             <objects>
-                <viewController id="ler-fj-OQQ" customClass="ColoringInfoPanelViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Gradient Color" id="ler-fj-OQQ" customClass="GradientColorSettingsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="aeZ-pg-oUz">
                         <rect key="frame" x="0.0" y="0.0" width="485" height="307"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -1276,7 +1395,7 @@
                 </viewController>
                 <customObject id="1qX-sT-NNL" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1928.5" y="1032.5"/>
+            <point key="canvasLocation" x="1670" y="1974"/>
         </scene>
         <!--Rendering-->
         <scene sceneID="ZVe-BC-Hys">
@@ -1506,7 +1625,7 @@
                             <constraint firstItem="ELq-ai-2OP" firstAttribute="top" secondItem="vT4-n7-1fh" secondAttribute="top" id="7dR-zt-Po9"/>
                             <constraint firstItem="ELq-ai-2OP" firstAttribute="leading" secondItem="vT4-n7-1fh" secondAttribute="leading" constant="20" id="M4f-2g-q8n"/>
                             <constraint firstAttribute="trailing" secondItem="ELq-ai-2OP" secondAttribute="trailing" constant="20" id="n7n-ge-tpv"/>
-                            <constraint firstAttribute="bottom" secondItem="ELq-ai-2OP" secondAttribute="bottom" constant="20" id="udl-2T-nWX"/>
+                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="ELq-ai-2OP" secondAttribute="bottom" constant="20" id="udl-2T-nWX"/>
                         </constraints>
                     </view>
                     <connections>

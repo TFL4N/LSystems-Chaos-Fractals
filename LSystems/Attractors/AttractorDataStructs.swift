@@ -44,17 +44,18 @@ class AttractorOperation: Operation {
 
 class Attractor: NSObject, NSCoding {
     let parameters: [Parameter]
+    let coloring_info: ColoringInfo
     
     @objc dynamic var didChange = true
     
     static let observation_key_paths = ["value", "value.value"]
-    override init() {
-        self.parameters = []
-        super.init()
+    override convenience init() {
+        self.init(parameters: [], coloringInfo: ColoringInfo())!
     }
     
-    init?(parameters: [Parameter]) {
+    init?(parameters: [Parameter], coloringInfo: ColoringInfo) {
         self.parameters = parameters
+        self.coloring_info = coloringInfo
         super.init()
         
         // Observation
@@ -66,11 +67,11 @@ class Attractor: NSObject, NSCoding {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let coder = aDecoder as! NSKeyedUnarchiver
-        guard let parameters = coder.decodeObject(forKey: "attractor_parameters") as? [Parameter]
-            else { return nil }
+        guard let decoded = Attractor.decodeObject(coder: aDecoder) else {
+            return nil
+        }
         
-        self.init(parameters: parameters)
+        self.init(parameters: decoded.parameters, coloringInfo: decoded.coloringInfo)
     }
     
     deinit {
@@ -81,10 +82,21 @@ class Attractor: NSObject, NSCoding {
         }
     }
     
+    static func decodeObject(coder: NSCoder) -> (parameters: [Parameter], coloringInfo: ColoringInfo)? {
+        let coder = coder as! NSKeyedUnarchiver
+        guard let parameters = coder.decodeObject(forKey: "attractor_parameters") as? [Parameter]
+            else { return nil }
+        
+        let coloring = (coder.decodeObject(forKey: "attractor_coloring_info") as? ColoringInfo) ?? ColoringInfo()
+        
+        return (parameters, coloring)
+    }
+    
     func encode(with aCoder: NSCoder) {
         let coder = aCoder as! NSKeyedArchiver
         
         coder.encode(self.parameters, forKey: "attractor_parameters")
+        coder.encode(self.coloring_info, forKey: "attractor_coloring_info")
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
