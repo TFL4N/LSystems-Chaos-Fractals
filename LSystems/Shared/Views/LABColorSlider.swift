@@ -295,8 +295,8 @@ class AColorSlider: LABColorSlider {
     }
     
     private func commonInit() {
-        self.minValue = -110.0
-        self.maxValue = 110.0
+        self.minValue = -127.0
+        self.maxValue = 127.0
     }
     
     override func setLabColor(L: CGFloat, A: CGFloat, B: CGFloat, alpha: CGFloat = 1.0) {
@@ -336,8 +336,8 @@ class BColorSlider: LABColorSlider {
     }
     
     private func commonInit() {
-        self.minValue = -110.0
-        self.maxValue = 110.0
+        self.minValue = -127.0
+        self.maxValue = 127.0
     }
     
     override func setLabColor(L: CGFloat, A: CGFloat, B: CGFloat, alpha: CGFloat = 1.0) {
