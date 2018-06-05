@@ -11,6 +11,7 @@ import Cocoa
 class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldDelegate {
 
     @IBOutlet var renderModeButton: NSPopUpButton!
+    @IBOutlet var pointSizeTextField: NSTextField!
     @IBOutlet var renderRefreshButton: NSButton!
     
     @IBOutlet var cameraViewingModeButton: NSPopUpButton!
@@ -100,16 +101,22 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
                       to: self.document!.graphics_view_cltr!,
                       withKeyPath: "render_mode_raw",
                       options: nil)
+            
+            self.pointSizeTextField
+            .bind(.value,
+                  to: renderer,
+                  withKeyPath: "pointSize",
+                  options: nil)
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        
-        self.cameraScaleTextField.formatter = formatter
+        self.pointSizeTextField.formatter = AttractorRenderer.pointSizeFormatter()
+        self.cameraTranslationTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
+        self.cameraRotationTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
+        self.cameraScaleTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
     }
    
     override func controlTextDidEndEditing(_ notification: Notification) {

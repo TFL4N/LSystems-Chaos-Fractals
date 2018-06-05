@@ -46,12 +46,8 @@ class GradientColorItemCellView: NSTableCellView {
         }
         
         // config
-        let formatter = NumberFormatter()
-        formatter.allowsFloats = true
+        let formatter = NumberFormatter.buildFloatFormatter(min: 0, max: 1)
         formatter.minimumFractionDigits = 1
-        formatter.minimumIntegerDigits = 1
-        formatter.minimum = 0
-        formatter.maximum = 1
         
         self.positionTextField.formatter = formatter
         

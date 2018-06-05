@@ -28,14 +28,15 @@ typedef struct
 } ColorInOut;
 
 vertex ColorInOut attractorVertexShader(Vertex in [[stage_in]],
-                               constant A_Uniforms & uniforms [[ buffer(A_BufferIndexUniforms) ]])
+                                        constant A_Uniforms & uniforms [[ buffer(A_BufferIndexUniforms) ]],
+                                        constant float* point_size [[ buffer(A_BufferIndexPointSize) ]])
 {
     ColorInOut out;
     
     float4 position = float4(in.position, 1.0);
     out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
     out.color = in.color;
-    out.point_size = 2.0;
+    out.point_size = *point_size;
     
     return out;
 }

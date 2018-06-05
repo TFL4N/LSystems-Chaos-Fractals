@@ -9,6 +9,31 @@
 import Foundation
 import Cocoa
 
+
+extension NumberFormatter {
+    static func buildFloatFormatter(min: Float?, max: Float?) -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.allowsFloats = true
+        formatter.alwaysShowsDecimalSeparator = true
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 5
+        formatter.numberStyle = .decimal
+        formatter.maximum = max != nil ? NSNumber(value: max!) : nil
+        formatter.minimum = min != nil ? NSNumber(value: min!) : nil
+        
+        return formatter
+    }
+    
+    static func buildPercentFormatter(fractionDigits: Int = 0) -> NumberFormatter {
+        let percentFormatter = NumberFormatter()
+        percentFormatter.allowsFloats = true
+        percentFormatter.maximumFractionDigits = fractionDigits
+        percentFormatter.numberStyle = .percent
+        
+        return percentFormatter
+    }
+}
+
 class NSObjectUtils {
     static func observedValueDidChange<T: Equatable>(_ change: [NSKeyValueChangeKey : Any]) -> (Bool, T?) {
         let new_change = change[NSKeyValueChangeKey.newKey] as? T

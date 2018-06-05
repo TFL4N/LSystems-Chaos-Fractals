@@ -64,25 +64,11 @@ class LabColorPickerViewController: NSViewController {
         self.current_color_well.didClickHandler = { (_) in
             self.completionHandler?(self.color)
         }
-       
-        let buildNumberFormatter = { (min: Float, max: Float) -> NumberFormatter in
-            let formatter = NumberFormatter()
-            formatter.allowsFloats = true
-            formatter.generatesDecimalNumbers = true
-            formatter.alwaysShowsDecimalSeparator = true
-            formatter.minimumFractionDigits = 1
-            formatter.maximumFractionDigits = 5
-            formatter.numberStyle = .decimal
-            formatter.maximum = NSNumber(value: max)
-            formatter.minimum = NSNumber(value: min)
-            
-            return formatter
-        }
         
-        self.l_color_textfield.formatter = buildNumberFormatter(self.l_color_slider.minValue, self.l_color_slider.maxValue)
-        self.a_color_textfield.formatter = buildNumberFormatter(self.a_color_slider.minValue, self.a_color_slider.maxValue)
-        self.b_color_textfield.formatter = buildNumberFormatter(self.b_color_slider.minValue, self.b_color_slider.maxValue)
-        self.alpha_color_textfield.formatter = buildNumberFormatter(self.alpha_color_slider.minValue, self.alpha_color_slider.maxValue)
+        self.l_color_textfield.formatter = NumberFormatter.buildFloatFormatter(min: self.l_color_slider.minValue, max: self.l_color_slider.maxValue)
+        self.a_color_textfield.formatter = NumberFormatter.buildFloatFormatter(min: self.a_color_slider.minValue, max: self.a_color_slider.maxValue)
+        self.b_color_textfield.formatter = NumberFormatter.buildFloatFormatter(min: self.b_color_slider.minValue, max: self.b_color_slider.maxValue)
+        self.alpha_color_textfield.formatter = NumberFormatter.buildFloatFormatter(min: self.alpha_color_slider.minValue, max: self.alpha_color_slider.maxValue)
         
         self.l_color_textfield.bind(.value, to: self.l_color_slider, withKeyPath: "value", options: nil)
         self.a_color_textfield.bind(.value, to: self.a_color_slider, withKeyPath: "value", options: nil)

@@ -243,16 +243,11 @@ class Value: NSObject, NSCoding {
     }
     
     func createNumberFormatter() -> Formatter {
-        let formatter = NumberFormatter()
+        var formatter = NumberFormatter()
         
         switch self.type {
         case .float:
-            formatter.allowsFloats = true
-            formatter.generatesDecimalNumbers = true
-            formatter.alwaysShowsDecimalSeparator = true
-            formatter.minimumFractionDigits = 1
-            formatter.maximumFractionDigits = 5
-            formatter.numberStyle = .decimal
+            formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
         case .integer:
             formatter.allowsFloats = false
             formatter.generatesDecimalNumbers = false

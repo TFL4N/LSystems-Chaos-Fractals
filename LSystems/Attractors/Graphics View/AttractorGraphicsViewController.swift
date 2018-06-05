@@ -68,13 +68,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         // Progress View
         //////////////////
         self.progressContainerView.alphaValue = 0.0
-        
-        let percentFormatter = NumberFormatter()
-        percentFormatter.allowsFloats = true
-        percentFormatter.maximumFractionDigits = 2
-        percentFormatter.numberStyle = .percent
-        
-        self.progressLabel.formatter = percentFormatter
+        self.progressLabel.formatter = NumberFormatter.buildPercentFormatter(fractionDigits: 2)
     
         // Add Gestures
         /////////////////

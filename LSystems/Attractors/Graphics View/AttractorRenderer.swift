@@ -73,6 +73,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     
     // projection
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
+    @objc dynamic var pointSize: Float = 1.0
     
     // ETC
     var delegate: AttractorRendererDelegate
@@ -302,8 +303,8 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                                                       index: A_BufferIndex.vertexColors.rawValue)
                         
                         
-                        //                    // set color mode
-                        //                    renderEncoder.setFragmentBytes(&self.colorMode, length: MemoryLayout.size(ofValue: self.colorMode), index: A_BufferIndex.colorMode.rawValue)
+                        // set point size
+                        renderEncoder.setVertexBytes(&self.pointSize, length: MemoryLayout.size(ofValue: self.pointSize), index: A_BufferIndex.pointSize.rawValue)
                         
                         // draw vertices
                         renderEncoder.drawPrimitives(type: .point,
@@ -380,6 +381,10 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     }
     
     // MARK: Helpers
+    static func pointSizeFormatter() -> NumberFormatter {
+        return NumberFormatter.buildFloatFormatter(min: 0.0, max: 10.0)
+    }
+    
     func addTranslationWithAdjustment(_ trans: (x: Float, y: Float)) {
         var trans_vector = float4(trans.x, trans.y, 0.0, 0.0)
         let rotation_matrix = matrix4x4_rotation(radians: self.rotation, axis: self.rotationAxis)
