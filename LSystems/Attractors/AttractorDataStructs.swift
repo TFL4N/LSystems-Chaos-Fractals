@@ -342,25 +342,24 @@ class Parameter: NSObject, NSCoding {
 
 class AnimationSequence {
     var key_frames: [KeyFrame]
-    var interpolator: Interpolator = LinearInterpolator()
+    var interpolator: InterpolateProtocol = LinearInterpolator()
     
     init(keyFrames: [KeyFrame]) {
         self.key_frames = keyFrames
     }
 }
 
-protocol Interpolator {
+protocol InterpolateProtocol {
     // @param at: the current position, represented on the scale 0.0 -> 1.0
     func interpolate(at: Float, fromValue: Value, toValue: Value) -> Value
 }
 
-class LinearInterpolator: Interpolator {
-    func interpolate(at pos: Float, fromValue: Value, toValue: Value) -> Value {
+class LinearInterpolator: InterpolateProtocol {
+    func interpolate(at: Float, fromValue: Value, toValue: Value) -> Value {
         let to = toValue.floatValue!
         let from = fromValue.floatValue!
         
-        var val = (to - from) * pos
-        val += from
+        let val = InterpolateUtils.interpolate(mu: at, from: from, to: to)
         
         return Value(type: .float, value: val)
     }

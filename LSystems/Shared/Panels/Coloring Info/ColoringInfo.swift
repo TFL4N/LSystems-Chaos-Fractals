@@ -148,7 +148,7 @@ class GradientColor: NSObject, NSCoding {
         let interpolating_color_space: CGColorSpace
         let output_color_space: CGColorSpace
         
-        init?(color: GradientColor, interpolatingColorSpace: CGColorSpace, ouputColorSpace: CGColorSpace, outputsFloat: Bool = true) {
+        init?(color: GradientColor, interpolatingColorSpace: CGColorSpace, outputColorSpace: CGColorSpace, outputsFloat: Bool = true) {
             var items = color.colors.map({ (item) -> GradientColorItem in
                 let lab_color = item.color.converted(to: interpolatingColorSpace, intent: .absoluteColorimetric, options: nil)!
                 return GradientColorItem(position: item.position, color: lab_color)
@@ -171,7 +171,7 @@ class GradientColor: NSObject, NSCoding {
             
             self.items = items
             self.interpolating_color_space = interpolatingColorSpace
-            self.output_color_space = ouputColorSpace
+            self.output_color_space = outputColorSpace
         }
         
         func interpolate(mu: Float) -> [Float] {
@@ -184,15 +184,31 @@ class GradientColor: NSObject, NSCoding {
         }
         
         func interpolate(mu: Float) -> CGColor {
-            let cg_mu = CGFloat(mu)
             let colors = self.getColors(mu: mu)
-        
-            var output_comps = [CGFloat](repeating: 0.0, count: self.interpolating_color_space.numberOfComponents)
-            for i in 0..<self.interpolating_color_space.numberOfComponents {
-                output_comps[i] = self.interpolate(mu: cg_mu,
-                                                   from: colors.from.color.components![i],
-                                                   to: colors.to.color.components![i])
+            
+            let from = colors.from.position
+            let to = colors.to.position
+            let local_mu: CGFloat
+            if from == to {
+                local_mu = 1.0
+            } else {
+                local_mu = CGFloat( (mu - from) / (to - from) )
             }
+            
+            let comps_count = self.interpolating_color_space.numberOfComponents + 1
+            var output_comps = [CGFloat](repeating: 0.0, count:comps_count)
+            for i in 0..<comps_count {
+                output_comps[i] = InterpolateUtils.interpolate(mu: local_mu,
+                                              from: colors.from.color.components![i],
+                                              to: colors.to.color.components![i])
+            }
+            
+//            print("*****************")
+//            print(mu)
+//            print(colors.from.color.components!)
+//            print(colors.to.color.components!)
+//            print("** \(output_comps)")
+//            print("-------------------")
             
             let new_color = CGColor(colorSpace: self.interpolating_color_space, components: output_comps)!
             return new_color.converted(to: self.output_color_space, intent: .absoluteColorimetric, options: nil)!
@@ -214,13 +230,6 @@ class GradientColor: NSObject, NSCoding {
             }
             
             return output
-        }
-        
-        private func interpolate(mu: CGFloat, from: CGFloat, to: CGFloat) -> CGFloat {
-            var val = (to - from) * mu
-            val += from
-            
-            return val
         }
     }
 }

@@ -83,7 +83,7 @@ class PickoverAttractorOperation: AttractorOperation {
                 let interpolator = GradientColor
                     .Interpolator(color: color,
                                   interpolatingColorSpace: CGColorSpace(name: CGColorSpace.genericLab)!,
-                                  ouputColorSpace: CGColorSpace(name: CGColorSpace.genericRGBLinear)!) {
+                                  outputColorSpace: CGColorSpace(name: CGColorSpace.genericRGBLinear)!) {
                 coloring_interpolator = interpolator
             } else {
                 coloring_mode = .None

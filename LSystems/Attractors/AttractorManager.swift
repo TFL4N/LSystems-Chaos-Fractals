@@ -75,7 +75,7 @@ class AttractorManager: NSObject {
     }
     
     private func handleAttractorDidChange() {
-        print("Handle Did Change")
+//        print("Handle Did Change")
     }
     
     func buildAttractorVertexDataAtCurrentFrame(bufferPool: BufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {

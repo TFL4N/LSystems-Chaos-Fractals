@@ -49,6 +49,7 @@
 		6569AA9B20C4C3B900B94E69 /* ColoringInfoSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569AA9A20C4C3B900B94E69 /* ColoringInfoSettingsViewController.swift */; };
 		6569AA9E20C4C3E900B94E69 /* ColorMapSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569AA9C20C4C3E900B94E69 /* ColorMapSettingsViewController.swift */; };
 		6569AAA120C4C46300B94E69 /* ColoringInfoSettingsTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569AAA020C4C46300B94E69 /* ColoringInfoSettingsTabController.swift */; };
+		6569AAA420C53BEF00B94E69 /* Interpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569AAA320C53BEF00B94E69 /* Interpolation.swift */; };
 		6581E13E20C2C3BB00B5447A /* LabColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65720C28056006A1DF0 /* LabColorPicker.swift */; };
 		6581E14020C2C3D300B5447A /* LabColorPickerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6595A65520C27E5D006A1DF0 /* LabColorPickerView.xib */; };
 		6595A64320BB5FDD006A1DF0 /* ValueSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64220BB5FDD006A1DF0 /* ValueSlider.swift */; };
@@ -144,6 +145,7 @@
 		6569AA9A20C4C3B900B94E69 /* ColoringInfoSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringInfoSettingsViewController.swift; sourceTree = "<group>"; };
 		6569AA9C20C4C3E900B94E69 /* ColorMapSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMapSettingsViewController.swift; sourceTree = "<group>"; };
 		6569AAA020C4C46300B94E69 /* ColoringInfoSettingsTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringInfoSettingsTabController.swift; sourceTree = "<group>"; };
+		6569AAA320C53BEF00B94E69 /* Interpolation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interpolation.swift; sourceTree = "<group>"; };
 		6581E13820C2C36300B5447A /* LabColorPicker.colorPicker */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LabColorPicker.colorPicker; sourceTree = BUILT_PRODUCTS_DIR; };
 		6581E13A20C2C36300B5447A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6595A64220BB5FDD006A1DF0 /* ValueSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueSlider.swift; sourceTree = "<group>"; };
@@ -264,7 +266,6 @@
 				6568AB3A209F7B54009B828A /* MatrixUtils.swift */,
 				65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */,
 				6595A64C20BF7ED4006A1DF0 /* BufferPool.swift */,
-				65F0D36C20C388E700E94785 /* Utils.swift */,
 			);
 			path = Graphics;
 			sourceTree = "<group>";
@@ -291,6 +292,7 @@
 				65252A3620B65B7D008CD676 /* Graphics */,
 				65252A4720B7DF4E008CD676 /* Panels */,
 				65252A3020B62CE7008CD676 /* Views */,
+				6569AAA520C53C2000B94E69 /* Utils */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -378,6 +380,15 @@
 				6569AAA020C4C46300B94E69 /* ColoringInfoSettingsTabController.swift */,
 			);
 			path = "Coloring Info";
+			sourceTree = "<group>";
+		};
+		6569AAA520C53C2000B94E69 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6569AAA320C53BEF00B94E69 /* Interpolation.swift */,
+				65F0D36C20C388E700E94785 /* Utils.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		6581E13920C2C36300B5447A /* LabColorPicker */ = {
@@ -678,6 +689,7 @@
 				6569AA9E20C4C3E900B94E69 /* ColorMapSettingsViewController.swift in Sources */,
 				65252A4920B7DF83008CD676 /* RenderOptionsViewController.swift in Sources */,
 				65F1EB55206C8AC8007DF72B /* LSystemManager.swift in Sources */,
+				6569AAA420C53BEF00B94E69 /* Interpolation.swift in Sources */,
 				6595A64F20C25EF4006A1DF0 /* Benchmark.swift in Sources */,
 				6595A65320C2798D006A1DF0 /* GradientColorSettingsViewController.swift in Sources */,
 				65F0D36820C375AD00E94785 /* LABColorSlider.swift in Sources */,
