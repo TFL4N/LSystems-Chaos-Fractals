@@ -21,7 +21,7 @@
 typedef NS_ENUM(NSInteger, A_BufferIndex)
 {
     A_BufferIndexVertexPositions = 0,
-    A_BufferIndexVertexColors    = 1,
+    A_BufferIndexVertexMu        = 1,
     A_BufferIndexTexCoord        = 2,
     
     A_BufferIndexUniforms        = 3,
@@ -37,8 +37,16 @@ typedef NS_ENUM(NSInteger, A_BufferIndex)
 typedef NS_ENUM(NSInteger, A_VertexAttribute)
 {
     A_VertexAttributePosition  = 0,
+    A_VertexAttributeMu        = 1,
+    
 //    A_VertexAttributeColor     = 1,
 //    A_VertexAttributeTexCoord  = 2
+};
+
+typedef NS_ENUM(NSInteger, A_ColoringMode)
+{
+    A_ColoringModeNone  = 0,
+    A_ColoringModeMainColor = 1
 };
 
 typedef NS_ENUM(NSInteger, A_TextureIndex)

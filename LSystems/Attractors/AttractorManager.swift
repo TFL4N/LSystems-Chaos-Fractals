@@ -23,8 +23,8 @@ class AttractorManager: NSObject {
     private var requesting_refresh: Bool = false
 
     private var current_buffers_lock = ReadWriteLock()
-    private var current_buffers_store: [BigBuffer]?
-    var current_buffers: [BigBuffer]? {
+    private var current_buffers_store: [AttractorBuffer]?
+    var current_buffers: [AttractorBuffer]? {
         get {
             self.current_buffers_lock.readLock()
             defer {

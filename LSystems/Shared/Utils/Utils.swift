@@ -19,6 +19,19 @@ extension CGColor {
             comps[3]
         ]
     }
+    
+    static var whiteLabColor: CGColor {
+        return CGColor.white.converted(to: CGColorSpace(name: CGColorSpace.genericLab)!,
+                               intent: .absoluteColorimetric,
+                               options: nil)!
+    }
+}
+
+extension MTLClearColor {
+    init(_ colors: [Float]) {
+        let colors = colors.map { Double($0) }
+        self.init(red: colors[0], green: colors[1], blue: colors[2], alpha: colors[3])
+    }
 }
 
 extension NumberFormatter {
@@ -26,6 +39,7 @@ extension NumberFormatter {
         let formatter = NumberFormatter()
         formatter.allowsFloats = true
         formatter.alwaysShowsDecimalSeparator = true
+        formatter.isLenient = true
         formatter.minimumFractionDigits = 1
         formatter.maximumFractionDigits = 5
         formatter.numberStyle = .decimal

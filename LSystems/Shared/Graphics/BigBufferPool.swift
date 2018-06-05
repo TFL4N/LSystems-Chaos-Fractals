@@ -9,6 +9,26 @@
 import Foundation
 import Metal
 
+class AttractorBuffer {
+    let vertex_buffer: BigBuffer
+    let mu_buffer: BigBuffer
+    
+    init(vertices: BigBuffer, mus: BigBuffer) {
+        self.vertex_buffer = vertices
+        self.mu_buffer = mus
+    }
+    
+    func retain() {
+        self.vertex_buffer.retain()
+        self.mu_buffer.retain()
+    }
+    
+    func release() {
+        self.vertex_buffer.release()
+        self.mu_buffer.release()
+    }
+}
+
 class BigBuffer: Equatable {
     let buffer: MTLBuffer
     var count: Int = 0

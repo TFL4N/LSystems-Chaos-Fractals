@@ -22,7 +22,7 @@ class AttractorOperation: Operation {
     let buffer_pool: BigBufferPool
     let attractor: Attractor
     
-    var data_buffers: [BigBuffer]? = nil
+    var data_buffers: [AttractorBuffer]? = nil
     
     var progress_handler: ProgressHandler? = nil
     var did_start_handler: DidStartHandler? = nil

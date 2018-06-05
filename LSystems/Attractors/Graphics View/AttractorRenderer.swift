@@ -45,10 +45,10 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
 
     var buffer_pool: BigBufferPool
     
-    var coloring_mode_buffers: [Int]
+    var coloring_mode_buffers: [Int32]
     var base_color_buffers: [vector_float4]
     let main_color_buffers: [MTLBuffer]
-    var main_color_count_buffers: [Int]
+    var main_color_count_buffers: [Int32]
     
     
     // Camera View Mode
@@ -117,9 +117,9 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         
         self.main_color_buffers = mutable_main_color_buffer
         
-        self.coloring_mode_buffers = [Int](repeating: 1, count: AttractorRenderer.maxColorBufferSize)
+        self.coloring_mode_buffers = [Int32](repeating: 1, count: AttractorRenderer.maxColorBufferSize)
         self.base_color_buffers = [vector_float4](repeating: vector_float4(1.0), count: AttractorRenderer.maxBuffersInFlight)
-        self.main_color_count_buffers = [Int](repeating: 0, count: AttractorRenderer.maxBuffersInFlight)
+        self.main_color_count_buffers = [Int32](repeating: 0, count: AttractorRenderer.maxBuffersInFlight)
         
         //
         // Build Pipeline
@@ -160,6 +160,10 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         mtlVertexDescriptor.attributes[A_VertexAttribute.position.rawValue].offset = 0
         mtlVertexDescriptor.attributes[A_VertexAttribute.position.rawValue].bufferIndex = A_BufferIndex.vertexPositions.rawValue
         
+        mtlVertexDescriptor.attributes[A_VertexAttribute.mu.rawValue].format = MTLVertexFormat.float
+        mtlVertexDescriptor.attributes[A_VertexAttribute.mu.rawValue].offset = 0
+        mtlVertexDescriptor.attributes[A_VertexAttribute.mu.rawValue].bufferIndex = A_BufferIndex.vertexMu.rawValue
+        
 //        mtlVertexDescriptor.attributes[A_VertexAttribute.color.rawValue].format = MTLVertexFormat.float4
 //        mtlVertexDescriptor.attributes[A_VertexAttribute.color.rawValue].offset = 0
 //        mtlVertexDescriptor.attributes[A_VertexAttribute.color.rawValue].bufferIndex = A_BufferIndex.vertexColors.rawValue
@@ -171,6 +175,10 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         mtlVertexDescriptor.layouts[A_BufferIndex.vertexPositions.rawValue].stride = 12
         mtlVertexDescriptor.layouts[A_BufferIndex.vertexPositions.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[A_BufferIndex.vertexPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+        
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexMu.rawValue].stride = 4
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexMu.rawValue].stepRate = 1
+        mtlVertexDescriptor.layouts[A_BufferIndex.vertexMu.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
 //        mtlVertexDescriptor.layouts[A_BufferIndex.vertexColors.rawValue].stride = 16
 //        mtlVertexDescriptor.layouts[A_BufferIndex.vertexColors.rawValue].stepRate = 1
@@ -282,7 +290,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
             self.main_color_buffers[self.current_frame_index].contents()
                 .copyMemory(from: main_colors,
                             byteCount: count * MemoryLayout<A_ColorItem>.stride)
-            self.main_color_count_buffers[self.current_frame_index] = count
+            self.main_color_count_buffers[self.current_frame_index] = Int32(count)
         } else {
             self.main_color_count_buffers[self.current_frame_index] = 0
         }
@@ -316,7 +324,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
             if let renderPassDescriptor = view.currentRenderPassDescriptor {
-                renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.5, 0.5, 0.5, 1.0)
+                renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor( CGColor.whiteLabColor.fromLABtoMTLColor() )
                 
                 /// Final pass rendering code here
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
@@ -342,9 +350,14 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                         
                         // set vertex buffer
                         renderEncoder
-                            .setVertexBuffer(buffers.buffer,
+                            .setVertexBuffer(buffers.vertex_buffer.buffer,
                                              offset: 0,
                                              index: A_BufferIndex.vertexPositions.rawValue)
+                        
+                        renderEncoder
+                            .setVertexBuffer(buffers.mu_buffer.buffer,
+                                             offset: 0,
+                                             index: A_BufferIndex.vertexMu.rawValue)
                         
                         // set point size
                         renderEncoder
@@ -355,7 +368,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                         // set coloring mode
                         renderEncoder
                             .setVertexBytes(&(self.coloring_mode_buffers[self.current_frame_index]),
-                                            length: MemoryLayout<Int>.stride,
+                                            length: MemoryLayout<Int32>.stride,
                                             index: A_BufferIndex.colorMode.rawValue)
                         
                         // set base color
@@ -373,14 +386,14 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                         // set main colors count
                         renderEncoder
                             .setVertexBytes(&(self.main_color_count_buffers[self.current_frame_index]),
-                                            length: MemoryLayout<Int>.stride,
+                                            length: MemoryLayout<Int32>.stride,
                                             index: A_BufferIndex.mainColorsCount.rawValue)
                         
                         // draw vertices
                         renderEncoder
                             .drawPrimitives(type: .point,
                                             vertexStart: 0,
-                                            vertexCount: buffers.count)
+                                            vertexCount: buffers.vertex_buffer.count)
                     }
                     
                     // end encoding

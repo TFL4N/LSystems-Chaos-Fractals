@@ -69,40 +69,44 @@ class GradientColorWell: NSView {
         }
         
         let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        let interpolator = GradientColor.Interpolator(color: color,
-                                                      interpolatingColorSpace: color_space,
-                                                      outputColorSpace: color_space)!
-        
-        var colors: [CGColor] = [color.colors[0].color]
-        var positions: [NSNumber] = [0.0]
-        
-        
-        for i in 1..<color.colors.count {
-            let first_color = color.colors[i-1]
-            let second_color = color.colors[i]
+        if let interpolator = GradientColor.Interpolator(color: color,
+                                                         interpolatingColorSpace: color_space,
+                                                         outputColorSpace: color_space) {
             
-            let min = first_color.position
-            let max = second_color.position
+            var colors: [CGColor] = [color.colors[0].color]
+            var positions: [NSNumber] = [0.0]
             
-            let min_mid = InterpolateUtils.interpolate(mu: 0.25, from: min, to: max)
-            let mid = InterpolateUtils.interpolate(mu: 0.5, from: min, to: max)
-            let max_mid = InterpolateUtils.interpolate(mu: 0.75, from: min, to: max)
             
-            let new_positions = [
-                min_mid, mid, max_mid, max
-            ]
-            
-            for pos in new_positions {
-                colors.append(interpolator.interpolate(mu: pos))
-                positions.append(NSNumber(value: pos))
+            for i in 1..<color.colors.count {
+                let first_color = color.colors[i-1]
+                let second_color = color.colors[i]
+                
+                let min = first_color.position
+                let max = second_color.position
+                
+                let min_mid = InterpolateUtils.interpolate(mu: 0.25, from: min, to: max)
+                let mid = InterpolateUtils.interpolate(mu: 0.5, from: min, to: max)
+                let max_mid = InterpolateUtils.interpolate(mu: 0.75, from: min, to: max)
+                
+                let new_positions = [
+                    min_mid, mid, max_mid, max
+                ]
+                
+                for pos in new_positions {
+                    colors.append(interpolator.interpolate(mu: pos))
+                    positions.append(NSNumber(value: pos))
+                }
             }
+            
+            //        print(positions)
+            //        print(colors)
+            //        print()
+            
+            self.gradient_layer.colors = colors
+            self.gradient_layer.locations = positions
+        } else {
+            self.gradient_layer.colors = []
+            self.gradient_layer.locations = []
         }
-        
-//        print(positions)
-//        print(colors)
-//        print()
-        
-        self.gradient_layer.colors = colors
-        self.gradient_layer.locations = positions
     }
 }

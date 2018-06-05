@@ -71,41 +71,28 @@ class PickoverAttractorOperation: AttractorOperation {
         var current_vertices = [Float]()
         current_vertices.reserveCapacity(vertex_count_buffer_limit * 3)
         
-        var current_main_colors = [Float]()
-        current_main_colors.reserveCapacity(vertex_count_buffer_limit * 4)
-        
-        // color array
-        var coloring_interpolator: GradientColor.Interpolator? = nil
-        var coloring_mode = self.attractor.coloring_info.coloringType
-        
-        if coloring_mode == .Gradient {
-            if let color = self.attractor.coloring_info.gradientColor,
-                let interpolator = GradientColor
-                    .Interpolator(color: color,
-                                  interpolatingColorSpace: CGColorSpace(name: CGColorSpace.genericLab)!,
-                                  outputColorSpace: CGColorSpace(name: CGColorSpace.genericRGBLinear)!) {
-                coloring_interpolator = interpolator
-            } else {
-                coloring_mode = .None
-            }
-        }
-        
-        
+        var current_mus = [Float]()
+        current_mus.reserveCapacity(vertex_count_buffer_limit)
         
         // output buffer
-        var output_buffers = [BigBuffer]()
+        var output_buffers = [AttractorBuffer]()
         var current_vertex_index = 0
         
         let updateOutputBuffer = {
             let vertex_buffer = self.buffer_pool.getBuffer()
+            let mu_buffer = self.buffer_pool.getBuffer()
             
             vertex_buffer.setData(current_vertices)
             vertex_buffer.count = current_vertex_index
             
-            output_buffers.append(vertex_buffer)
+            mu_buffer.setData(current_mus)
+            mu_buffer.count = current_vertex_index
+            
+            let attractor_buffer = AttractorBuffer(vertices: vertex_buffer, mus: mu_buffer)
+            output_buffers.append(attractor_buffer)
             
             current_vertices = []
-            current_main_colors = []
+            current_mus = []
             
             current_vertex_index = 0
         }
@@ -154,6 +141,9 @@ class PickoverAttractorOperation: AttractorOperation {
                 current_vertices.append(contentsOf: [
                     x, y, z
                     ])
+                
+                // mu
+                current_mus.append(mu)
             }
             
             // update vertex index
