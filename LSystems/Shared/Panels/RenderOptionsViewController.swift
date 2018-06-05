@@ -139,7 +139,7 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
     }
     
     @IBAction func handleRenderRefreshPress(_ sender: AnyObject) {
-        self.document?.graphics_view_cltr?.mtkView.draw()
+        self.document?.graphics_view_cltr?.handleRefreshPress()
     }
     
     // MARK: Camera Settings

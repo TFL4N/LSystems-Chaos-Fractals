@@ -9,6 +9,25 @@
 import Foundation
 import Cocoa
 
+class NSObjectUtils {
+    static func observedValueDidChange<T: Equatable>(_ change: [NSKeyValueChangeKey : Any]) -> (Bool, T?) {
+        let new_change = change[NSKeyValueChangeKey.newKey] as? T
+        let old_change = change[NSKeyValueChangeKey.oldKey] as? T
+        
+        if let new = new_change,
+            let old = old_change {
+            if new != old {
+                return (true, new)
+            } else {
+                return (false, new)
+            }
+        } else {
+            return (false, nil)
+        }
+    }
+    
+}
+
 class ViewUtils {
     static func constraintsEqualSizeAndPosition(toLayer: String) -> [CAConstraint] {
         return [

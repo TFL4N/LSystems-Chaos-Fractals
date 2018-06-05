@@ -20,6 +20,7 @@ class AttractorManager: NSObject {
     }()
     
     var current_frame: FrameId = 0
+    private var requesting_refresh: Bool = false
 
     private var current_buffers_lock = ReadWriteLock()
     private var current_buffers_store: [AttractorBuffer]?
@@ -56,20 +57,17 @@ class AttractorManager: NSObject {
         self.attractor.addObserver(self, forKeyPath: "didChange", options: [.new, .old], context: nil)
     }
     
+    deinit {
+        self.attractor.removeObserver(self, forKeyPath: "didChange", context: nil)
+    }
+    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "didChange" {
-            let new_val = (change![NSKeyValueChangeKey.newKey]! as! NSNumber).boolValue
-            let old_val = (change![NSKeyValueChangeKey.oldKey] as? NSNumber)?.boolValue
-            
-            var did_change = new_val
-            if let old_val = old_val {
-                if old_val != new_val && new_val {
-                    did_change = true
+            if let change = change {
+                let foo: (Bool, Bool?) = NSObjectUtils.observedValueDidChange(change)
+                if foo.0 && foo.1! {
+                    self.handleAttractorDidChange()
                 }
-            }
-            
-            if did_change {
-                self.handleAttractorDidChange()
             }
         }
     }
@@ -78,13 +76,18 @@ class AttractorManager: NSObject {
 //        print("Handle Did Change")
     }
     
+    func requestRefresh() {
+        self.requesting_refresh = true
+    }
+    
     func buildAttractorVertexDataAtCurrentFrame(bufferPool: BufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
         self.buildAttractorVertexData(atFrame: self.current_frame, bufferPool: bufferPool, progressHandler: progressHandler, didStartHandler: didStartHandler, didFinishHandler: didFinishHandler, force: force)
     }
     
     func buildAttractorVertexData(atFrame: FrameId, bufferPool: BufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
-        if self.attractor.didChange || force {
+        if self.attractor.didChange || self.requesting_refresh || force {
             self.attractor.didChange = false
+            self.requesting_refresh = false
             
             let operation = self.attractor.buildOperationData(atFrame: atFrame, bufferPool: bufferPool)
             operation.did_start_handler = didStartHandler

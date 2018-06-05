@@ -48,7 +48,7 @@ class Attractor: NSObject, NSCoding {
     
     @objc dynamic var didChange = true
     
-    static let observation_key_paths = ["value", "value.value"]
+    static let parameter_observation_key_paths = ["value", "value.value"]
     override convenience init() {
         self.init(parameters: [], coloringInfo: ColoringInfo())!
     }
@@ -59,8 +59,10 @@ class Attractor: NSObject, NSCoding {
         super.init()
         
         // Observation
+        self.coloring_info.addObserver(self, forKeyPath: "didChange", options: [.new, .old], context: nil)
+        
         for p in self.parameters {
-            for kp in Attractor.observation_key_paths {
+            for kp in Attractor.parameter_observation_key_paths {
                 p.addObserver(self, forKeyPath: kp, options: .new, context: nil)
             }
         }
@@ -75,8 +77,10 @@ class Attractor: NSObject, NSCoding {
     }
     
     deinit {
+        self.coloring_info.removeObserver(self, forKeyPath: "didChange", context: nil)
+        
         for p in self.parameters {
-            for kp in Attractor.observation_key_paths {
+            for kp in Attractor.parameter_observation_key_paths {
                 p.removeObserver(self, forKeyPath: kp)
             }
         }

@@ -18,26 +18,63 @@ enum ColoringType: String, Codable {
 }
 
 
+@objcMembers
 class ColoringInfo: NSObject, NSCoding {
-    var coloringType: ColoringType = .None
-    
-    var colorMap: ColorMap? = nil
-    
-    var gradientColor: GradientColor? = nil
-    
-    override init() {
-        super.init()
+    dynamic var coloringType: ColoringType {
+        didSet {
+            if oldValue != self.coloringType {
+                self.didChange = true
+            }
+        }
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    dynamic var colorMap: ColorMap?
+    
+    dynamic var gradientColor: GradientColor? {
+        willSet {
+            if let color = self.gradientColor {
+                color.removeObserver(self, forKeyPath: "didChange", context: nil)
+            }
+        }
+        
+        didSet {
+            if let color = self.gradientColor {
+                color.addObserver(self, forKeyPath: "didChange", options: [.initial, .new, .old], context: nil)
+            }
+        }
+    }
+    
+    dynamic var didChange: Bool = false
+    
+    override convenience init() {
+        self.init(type: .None, colorMap: nil, gradientColor: nil)
+    }
+    
+    init(type: ColoringType, colorMap: ColorMap?, gradientColor: GradientColor?) {
+        self.coloringType = type
+        self.colorMap = colorMap
+        self.gradientColor = nil
+        super.init()
+        
+        // will call property observers
+        defer {
+            self.gradientColor = gradientColor
+        }
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
         let coder = aDecoder as! NSKeyedUnarchiver
         guard let type = coder.decodeDecodable(ColoringType.self, forKey: "colorinfo_type") else {
             return nil
         }
         
-        self.coloringType = type
-        self.colorMap = coder.decodeObject(forKey: "colorinfo_colormap") as? ColorMap
-        self.gradientColor = coder.decodeObject(forKey: "colorinfo_linearcolor") as? GradientColor
+        self.init(type: type,
+                  colorMap: coder.decodeObject(forKey: "colorinfo_colormap") as? ColorMap,
+                  gradientColor: coder.decodeObject(forKey: "colorinfo_linearcolor") as? GradientColor)
+    }
+    
+    deinit {
+        self.gradientColor = nil
     }
     
     func encode(with aCoder: NSCoder) {
@@ -46,6 +83,17 @@ class ColoringInfo: NSObject, NSCoding {
         try! coder.encodeEncodable(self.coloringType, forKey: "colorinfo_type")
         coder.encode(self.colorMap, forKey: "colorinfo_colormap")
         coder.encode(self.gradientColor, forKey: "colorinfo_linearcolor")
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "didChange" {
+            if let change = change {
+                let foo: (Bool, Bool?) = NSObjectUtils.observedValueDidChange(change)
+                if foo.0 && foo.1! {
+                    self.didChange = true
+                }
+            }
+        }
     }
 }
 
@@ -64,7 +112,7 @@ class ColorMap: NSObject, NSCoding {
 class GradientColor: NSObject, NSCoding {
     private(set) var colors: [GradientColorItem]
     
-    var didChangeHandler: ((GradientColor)->())?
+    @objc dynamic var didChange: Bool = false
     
     override convenience init() {
         self.init(colors: [])
@@ -109,7 +157,7 @@ class GradientColor: NSObject, NSCoding {
             self.sortColors()
         }
         
-        self.didChangeHandler?(self)
+        self.didChange = true
     }
     
     private func sortColors() {
@@ -129,7 +177,7 @@ class GradientColor: NSObject, NSCoding {
         self.colors.append(item)
         self.sortColors()
         
-        self.didChangeHandler?(self)
+        self.didChange = true
     }
     
     func removeColor(atIndex: Int) {
@@ -139,7 +187,7 @@ class GradientColor: NSObject, NSCoding {
             item.removeObserver(self, forKeyPath: kp, context: nil)
         }
         
-        self.didChangeHandler?(self)
+        self.didChange = true
     }
     
     // MARK: - Interpolator

@@ -23,13 +23,7 @@ class GradientColorSettingsViewController: NSViewController, ColoringInfoSetting
             info.gradientColor = GradientColor()
         }
         
-        info.gradientColor?.didChangeHandler = self.handleColorDidChange(_:)
-        
         return info.gradientColor!
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
     }
     
     private var needsBindings = true
@@ -43,6 +37,18 @@ class GradientColorSettingsViewController: NSViewController, ColoringInfoSetting
             self.color_list_table_view.usesAutomaticRowHeights = true
         }
         
+        self.coloring_info.addObserver(self, forKeyPath: "didChange", options: .new, context: nil)
+        
+        self.handleColorDidChange(self.gradient_color)
+    }
+    
+    override func viewWillDisappear() {
+        super.viewWillDisappear()
+        
+        self.coloring_info.removeObserver(self, forKeyPath: "didChange", context: nil)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         self.handleColorDidChange(self.gradient_color)
     }
     

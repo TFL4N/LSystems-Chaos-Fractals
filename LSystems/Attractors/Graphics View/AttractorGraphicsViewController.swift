@@ -260,6 +260,11 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         self.mtkView.draw()
     }
     
+    func handleRefreshPress() {
+        self.attractor_manager.requestRefresh()
+        self.mtkView.draw()
+    }
+    
     // MARK: Gesture Handlers
     var lastScaleValue: CGFloat = 0.0
     var lastPanValue: CGPoint = CGPoint.zero
