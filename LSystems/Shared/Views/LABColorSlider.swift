@@ -23,7 +23,7 @@ class LABColorSlider: NSControl {
         didSet {
             self.didChangeValue(for: \.value)
             
-            let normalized = self.normalize(value: self.value, min: self.minValue, max: self.maxValue)
+            let normalized = InterpolateUtils.normalize(value: self.value, min: self.minValue, max: self.maxValue)
             
             let position = self.denormalize(position: CGPoint(x: CGFloat(normalized), y: 0.5), inRect: self.canvasFrame)
             
@@ -174,15 +174,7 @@ class LABColorSlider: NSControl {
         return new_layer
     }
     
-    // MARK: - Mouse Events
-    private func normalize<T: FloatingPoint>(value: T, min: T, max: T ) -> T {
-        return (value - min) / (max - min)
-    }
-    
-    private func denormalize<T: FloatingPoint>(value: T, min: T, max: T) -> T {
-        return min + (value * (max - min))
-    }
-    
+    // MARK: - Mouse Event
     private func normalized(position: CGPoint, inRect: CGRect) -> CGPoint {
         var x = (position.x - inRect.minX) / inRect.width
         var y = (position.y - inRect.minY) / inRect.height
@@ -216,7 +208,7 @@ class LABColorSlider: NSControl {
             self.indicator_layer.actions?.updateValue(NSNull(), forKey: "position")
         }
         
-        self.value = self.denormalize(value: Float(normalized.x), min: self.minValue, max: self.maxValue)
+        self.value = InterpolateUtils.interpolate(mu: Float(normalized.x), from: self.minValue, to: self.maxValue)
         
         self.indicator_layer.actions?.removeValue(forKey: "position")
     }

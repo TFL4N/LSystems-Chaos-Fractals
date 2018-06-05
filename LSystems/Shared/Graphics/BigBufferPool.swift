@@ -9,40 +9,19 @@
 import Foundation
 import Metal
 
-
-class AttractorBuffer {
-    let vertex_buffer: BufferItem
-    let main_color_buffer: BufferItem
-    
-    init(vertices: BufferItem, main_colors: BufferItem) {
-        self.vertex_buffer = vertices
-        self.main_color_buffer = main_colors
-    }
-    
-    func retain() {
-        self.vertex_buffer.retain()
-        self.main_color_buffer.retain()
-    }
-    
-    func release() {
-        self.vertex_buffer.release()
-        self.main_color_buffer.release()
-    }
-}
-
-class BufferItem: Equatable {
+class BigBuffer: Equatable {
     let buffer: MTLBuffer
     var count: Int = 0
     
-    unowned let buffer_pool: BufferPool
+    unowned let buffer_pool: BigBufferPool
     private(set) var retainCount = 0
     
-    init(buffer: MTLBuffer, bufferPool: BufferPool) {
+    init(buffer: MTLBuffer, bufferPool: BigBufferPool) {
         self.buffer = buffer
         self.buffer_pool = bufferPool
     }
     
-    static func == (lhs: BufferItem, rhs: BufferItem) -> Bool {
+    static func == (lhs: BigBuffer, rhs: BigBuffer) -> Bool {
         return lhs === rhs
     }
     
@@ -70,11 +49,11 @@ class BufferItem: Equatable {
     }
 }
 
-class BufferPool {
-    typealias BufferArray = [BufferItem]
+class BigBufferPool {
+    typealias BufferArray = [BigBuffer]
     
     static let max_buffer_length = 512*1024*1024
-    static var max_float_vertices_per_buffer = BufferPool.max_buffer_length / (MemoryLayout<Float>.stride * 4)
+    static var max_float_vertices_per_buffer = BigBufferPool.max_buffer_length / (MemoryLayout<Float>.stride * 4)
     let device: MTLDevice
     
     private var clean_buffers = BufferArray()
@@ -95,10 +74,10 @@ class BufferPool {
         self.recycler_timer = nil
     }
     
-    private func createBuffer() -> BufferItem {
-        let buffer = device.makeBuffer(length: BufferPool.max_buffer_length, options: [])!
+    private func createBuffer() -> BigBuffer {
+        let buffer = device.makeBuffer(length: BigBufferPool.max_buffer_length, options: [])!
         
-        return BufferItem(buffer: buffer, bufferPool: self)
+        return BigBuffer(buffer: buffer, bufferPool: self)
     }
     
     func readCleanBuffersOperation<Result>(_ block: (BufferArray)->Result) -> Result {
@@ -117,8 +96,8 @@ class BufferPool {
         return self.dirty_buffers_lock.withWriteLock { block(&self.dirty_buffers) }
     }
     
-    func getBuffer() -> BufferItem {
-        let buffer = self.writeCleanBuffersOperation { (buffers) -> BufferItem? in
+    func getBuffer() -> BigBuffer {
+        let buffer = self.writeCleanBuffersOperation { (buffers) -> BigBuffer? in
             if buffers.isEmpty {
                 return nil
             } else {
@@ -135,7 +114,7 @@ class BufferPool {
         return buffer
     }
     
-    func recycleBuffer(_ buffer: BufferItem) {
+    func recycleBuffer(_ buffer: BigBuffer) {
         self.writeDirtyBuffersOperation { ( buffers ) in
             if let idx = buffers.index(of: buffer) {
                 buffers.remove(at: idx)
@@ -151,7 +130,7 @@ class BufferPool {
     
     @objc private func handleRecyclerTimer(_ timer: Timer) {
         self.writeDirtyBuffersOperation { (buffers) in
-            var recyclable_buffers = [(Int,BufferItem)]()
+            var recyclable_buffers = [(Int,BigBuffer)]()
             
             for (i, buf) in buffers.reversed().enumerated() {
                 if buf.retainCount <= 0 {

@@ -19,10 +19,10 @@ class AttractorOperation: Operation {
     typealias DidStartHandler = ()->()
     
     let frame_id: FrameId
-    let buffer_pool: BufferPool
+    let buffer_pool: BigBufferPool
     let attractor: Attractor
     
-    var data_buffers: [AttractorBuffer]? = nil
+    var data_buffers: [BigBuffer]? = nil
     
     var progress_handler: ProgressHandler? = nil
     var did_start_handler: DidStartHandler? = nil
@@ -33,7 +33,7 @@ class AttractorOperation: Operation {
         }
     }
     
-    required init(_ attractor: Attractor, frameId: FrameId, bufferPool: BufferPool) {
+    required init(_ attractor: Attractor, frameId: FrameId, bufferPool: BigBufferPool) {
         self.attractor = attractor
         self.frame_id = frameId
         self.buffer_pool = bufferPool
@@ -117,7 +117,7 @@ class Attractor: NSObject, NSCoding {
         return nil
     }
     
-    func buildOperationData(atFrame: FrameId = 0, bufferPool: BufferPool) -> AttractorOperation {
+    func buildOperationData(atFrame: FrameId = 0, bufferPool: BigBufferPool) -> AttractorOperation {
         let attractor_copy = self.deepCopy()
         return AttractorOperation(attractor_copy,
                                   frameId: atFrame,

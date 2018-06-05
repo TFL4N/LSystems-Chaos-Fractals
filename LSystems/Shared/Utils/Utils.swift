@@ -9,6 +9,17 @@
 import Foundation
 import Cocoa
 
+extension CGColor {
+    func fromLABtoMTLColor() -> [Float] {
+        let comps = self.components!.map {Float($0)}
+        return [
+            InterpolateUtils.normalize(value: comps[0], min: 0.0, max: 100.0),
+            InterpolateUtils.normalize(value: comps[1], min: 0.0, max: 127.0),
+            InterpolateUtils.normalize(value: comps[2], min: -128.0, max: 127.0),
+            comps[3]
+        ]
+    }
+}
 
 extension NumberFormatter {
     static func buildFloatFormatter(min: Float?, max: Float?) -> NumberFormatter {

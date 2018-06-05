@@ -10,9 +10,10 @@ import Foundation
 
 class InterpolateUtils {
     static func interpolate<T: BinaryFloatingPoint>(mu: T, from: T, to: T) -> T {
-        var val = (to - from) * mu
-        val += from
-        
-        return val
+        return from + (to - from) * mu
+    }
+    
+    static func normalize<T: BinaryFloatingPoint>(value: T, min: T, max: T) -> T {
+        return (value - min) / (max - min)
     }
 }

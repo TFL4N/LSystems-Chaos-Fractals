@@ -23,8 +23,8 @@ class AttractorManager: NSObject {
     private var requesting_refresh: Bool = false
 
     private var current_buffers_lock = ReadWriteLock()
-    private var current_buffers_store: [AttractorBuffer]?
-    var current_buffers: [AttractorBuffer]? {
+    private var current_buffers_store: [BigBuffer]?
+    var current_buffers: [BigBuffer]? {
         get {
             self.current_buffers_lock.readLock()
             defer {
@@ -80,11 +80,11 @@ class AttractorManager: NSObject {
         self.requesting_refresh = true
     }
     
-    func buildAttractorVertexDataAtCurrentFrame(bufferPool: BufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
+    func buildAttractorVertexDataAtCurrentFrame(bufferPool: BigBufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
         self.buildAttractorVertexData(atFrame: self.current_frame, bufferPool: bufferPool, progressHandler: progressHandler, didStartHandler: didStartHandler, didFinishHandler: didFinishHandler, force: force)
     }
     
-    func buildAttractorVertexData(atFrame: FrameId, bufferPool: BufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
+    func buildAttractorVertexData(atFrame: FrameId, bufferPool: BigBufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
         if self.attractor.didChange || self.requesting_refresh || force {
             self.attractor.didChange = false
             self.requesting_refresh = false
@@ -103,5 +103,21 @@ class AttractorManager: NSObject {
             self.operation_queue.cancelAllOperations()
             self.operation_queue.addOperation(operation)
         }
+    }
+    
+    func getMTLBaseColorAtCurrentFrame() -> vector_float4 {
+        return self.getMTLBaseColor(atFrame: self.current_frame)
+    }
+    
+    func getMTLBaseColor(atFrame: FrameId) -> vector_float4 {
+        return vector_float4(1.0)
+    }
+   
+    func getMainColorsAtCurrentFrame() -> [A_ColorItem]? {
+        return self.getMainColors(atFrame: self.current_frame)
+    }
+    
+    func getMainColors(atFrame: FrameId) -> [A_ColorItem]? {
+        return self.attractor.coloring_info.gradientColor?.getMTLGradientColorItems()
     }
 }

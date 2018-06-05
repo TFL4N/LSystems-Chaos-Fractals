@@ -28,13 +28,17 @@ typedef NS_ENUM(NSInteger, A_BufferIndex)
     
     A_BufferIndexPointSize       = 4,
     A_BufferIndexColorMode       = 5,
+    
+    A_BufferIndexBaseColor       = 6,
+    A_BufferIndexMainColors      = 7,
+    A_BufferIndexMainColorsCount = 8,
 };
 
 typedef NS_ENUM(NSInteger, A_VertexAttribute)
 {
     A_VertexAttributePosition  = 0,
-    A_VertexAttributeColor     = 1,
-    A_VertexAttributeTexCoord  = 2
+//    A_VertexAttributeColor     = 1,
+//    A_VertexAttributeTexCoord  = 2
 };
 
 typedef NS_ENUM(NSInteger, A_TextureIndex)
@@ -47,5 +51,11 @@ typedef struct
     matrix_float4x4 projectionMatrix;
     matrix_float4x4 modelViewMatrix;
 } A_Uniforms;
+
+typedef struct
+{
+    vector_float4 color;
+    float position;
+} A_ColorItem;
 
 #endif /* AttractorShaderTypes_h */

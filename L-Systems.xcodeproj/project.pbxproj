@@ -56,7 +56,7 @@
 		6595A64520BB640B006A1DF0 /* ValueSliderCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64420BB640B006A1DF0 /* ValueSliderCellView.swift */; };
 		6595A64720BB8540006A1DF0 /* VideoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64620BB8540006A1DF0 /* VideoCapture.swift */; };
 		6595A64920BBA345006A1DF0 /* Locks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64820BBA345006A1DF0 /* Locks.swift */; };
-		6595A64D20BF7ED4006A1DF0 /* BufferPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64C20BF7ED4006A1DF0 /* BufferPool.swift */; };
+		6595A64D20BF7ED4006A1DF0 /* BigBufferPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64C20BF7ED4006A1DF0 /* BigBufferPool.swift */; };
 		6595A64F20C25EF4006A1DF0 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64E20C25EF3006A1DF0 /* Benchmark.swift */; };
 		6595A65120C273D2006A1DF0 /* GradientColorItemCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65020C273D2006A1DF0 /* GradientColorItemCellView.swift */; };
 		6595A65320C2798D006A1DF0 /* GradientColorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65220C2798D006A1DF0 /* GradientColorSettingsViewController.swift */; };
@@ -152,7 +152,7 @@
 		6595A64420BB640B006A1DF0 /* ValueSliderCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueSliderCellView.swift; sourceTree = "<group>"; };
 		6595A64620BB8540006A1DF0 /* VideoCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCapture.swift; sourceTree = "<group>"; };
 		6595A64820BBA345006A1DF0 /* Locks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locks.swift; sourceTree = "<group>"; };
-		6595A64C20BF7ED4006A1DF0 /* BufferPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferPool.swift; sourceTree = "<group>"; };
+		6595A64C20BF7ED4006A1DF0 /* BigBufferPool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigBufferPool.swift; sourceTree = "<group>"; };
 		6595A64E20C25EF3006A1DF0 /* Benchmark.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Benchmark.swift; sourceTree = "<group>"; };
 		6595A65020C273D2006A1DF0 /* GradientColorItemCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientColorItemCellView.swift; sourceTree = "<group>"; };
 		6595A65220C2798D006A1DF0 /* GradientColorSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientColorSettingsViewController.swift; sourceTree = "<group>"; };
@@ -265,7 +265,7 @@
 				6568AB3C20A05266009B828A /* old_code */,
 				6568AB3A209F7B54009B828A /* MatrixUtils.swift */,
 				65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */,
-				6595A64C20BF7ED4006A1DF0 /* BufferPool.swift */,
+				6595A64C20BF7ED4006A1DF0 /* BigBufferPool.swift */,
 			);
 			path = Graphics;
 			sourceTree = "<group>";
@@ -678,7 +678,7 @@
 				65F1EB57206C9145007DF72B /* RuleCellView.swift in Sources */,
 				65252A3220B62F47008CD676 /* AttractorMainViewController.swift in Sources */,
 				6568AB3B209F7B54009B828A /* MatrixUtils.swift in Sources */,
-				6595A64D20BF7ED4006A1DF0 /* BufferPool.swift in Sources */,
+				6595A64D20BF7ED4006A1DF0 /* BigBufferPool.swift in Sources */,
 				65F0D36F20C3B0FB00E94785 /* ColorWell.swift in Sources */,
 				65D8447F20B7E53E00FDCBCC /* RendererUtils.swift in Sources */,
 				65252A4620B782D5008CD676 /* AttractorManager.swift in Sources */,

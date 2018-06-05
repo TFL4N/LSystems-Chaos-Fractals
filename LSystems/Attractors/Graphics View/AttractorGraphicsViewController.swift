@@ -42,6 +42,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         
         self.mtkView = mtkView
         self.mtkView.framebufferOnly = false
+        self.mtkView.colorspace = CGColorSpace(name: CGColorSpace.genericLab)!
         
         // Select the device to render with.  We choose the default device
         guard let defaultDevice = MTLCreateSystemDefaultDevice() else {

@@ -17,7 +17,7 @@ using namespace metal;
 typedef struct
 {
     float3 position [[attribute(A_VertexAttributePosition)]];
-    float4 color [[attribute(A_VertexAttributeColor)]];
+//    float4 color [[attribute(A_VertexAttributeColor)]];
 } Vertex;
 
 typedef struct
@@ -29,14 +29,19 @@ typedef struct
 
 vertex ColorInOut attractorVertexShader(Vertex in [[stage_in]],
                                         constant A_Uniforms & uniforms [[ buffer(A_BufferIndexUniforms) ]],
-                                        constant float* point_size [[ buffer(A_BufferIndexPointSize) ]])
+                                        constant float* point_size [[ buffer(A_BufferIndexPointSize) ]],
+                                        constant int* coloring_mode [[ buffer(A_BufferIndexColorMode) ]],
+                                        constant float4* base_color [[ buffer(A_BufferIndexBaseColor) ]],
+                                        constant A_ColorItem* main_colors [[ buffer(A_BufferIndexMainColors) ]],
+                                        constant int* main_colors_count [[ buffer(A_BufferIndexMainColorsCount) ]])
 {
     ColorInOut out;
     
     float4 position = float4(in.position, 1.0);
     out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
-    out.color = in.color;
     out.point_size = *point_size;
+    
+    out.color = float4(1.0, 60.0, 1.0, 1.0);
     
     return out;
 }
@@ -44,8 +49,8 @@ vertex ColorInOut attractorVertexShader(Vertex in [[stage_in]],
 fragment float4 attractorFragmentShader(ColorInOut in [[stage_in]],
                                constant A_Uniforms & uniforms [[ buffer(A_BufferIndexUniforms) ]])
 {
-//    float4 color = float4(0.4751, 0.3946, 1.0, 1.0);
-    float4 color = in.color;
+    float4 color = float4(1.0, 60.0, 1.0, 1.0);
+//    float4 color = in.color;
     
     return color;
 }

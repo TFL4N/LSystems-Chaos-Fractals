@@ -814,7 +814,7 @@
                                                             </buttonCell>
                                                         </button>
                                                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LAh-gC-tHh">
-                                                            <rect key="frame" x="0.0" y="0.0" width="412" height="22"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="425" height="22"/>
                                                             <subviews>
                                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="s4i-5S-6aQ">
                                                                     <rect key="frame" x="-2" y="5" width="77" height="17"/>
@@ -825,7 +825,7 @@
                                                                     </textFieldCell>
                                                                 </textField>
                                                                 <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DMh-QF-MFa">
-                                                                    <rect key="frame" x="81" y="0.0" width="331" height="22"/>
+                                                                    <rect key="frame" x="81" y="0.0" width="344" height="22"/>
                                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="O8H-LD-ZJy">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -1401,7 +1401,7 @@
         <scene sceneID="ZVe-BC-Hys">
             <objects>
                 <viewController title="Rendering" id="3v3-ta-aM8" customClass="RenderOptionsViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="vT4-n7-1fh">
+                    <view key="view" id="vT4-n7-1fh">
                         <rect key="frame" x="0.0" y="0.0" width="237" height="332"/>
                         <autoresizingMask key="autoresizingMask" heightSizable="YES"/>
                         <subviews>

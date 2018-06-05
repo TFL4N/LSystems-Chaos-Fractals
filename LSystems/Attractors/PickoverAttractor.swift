@@ -46,7 +46,7 @@ class PickoverAttractor: Attractor {
         self.init(parameters: decoded.parameters, coloringInfo: decoded.coloringInfo)
     }
     
-    override func buildOperationData(atFrame: FrameId = 0, bufferPool: BufferPool) -> AttractorOperation {
+    override func buildOperationData(atFrame: FrameId = 0, bufferPool: BigBufferPool) -> AttractorOperation {
         let attractor_copy = self.deepCopy()
         return PickoverAttractorOperation(attractor_copy,
                                   frameId: atFrame,
@@ -67,7 +67,7 @@ class PickoverAttractorOperation: AttractorOperation {
         let skip_iters = self.attractor.parameter(withName: "skip iterations")!.value!.integerValue!
         
         // vertex array
-        let vertex_count_buffer_limit = BufferPool.max_float_vertices_per_buffer
+        let vertex_count_buffer_limit = BigBufferPool.max_float_vertices_per_buffer
         var current_vertices = [Float]()
         current_vertices.reserveCapacity(vertex_count_buffer_limit * 3)
         
@@ -93,21 +93,16 @@ class PickoverAttractorOperation: AttractorOperation {
         
         
         // output buffer
-        var output_buffers = [AttractorBuffer]()
+        var output_buffers = [BigBuffer]()
         var current_vertex_index = 0
         
         let updateOutputBuffer = {
             let vertex_buffer = self.buffer_pool.getBuffer()
-            let main_color_buffer = self.buffer_pool.getBuffer()
             
             vertex_buffer.setData(current_vertices)
             vertex_buffer.count = current_vertex_index
             
-            main_color_buffer.setData(current_main_colors)
-            main_color_buffer.count = current_vertex_index
-            
-            let attractor_buffer = AttractorBuffer(vertices: vertex_buffer, main_colors: main_color_buffer)
-            output_buffers.append(attractor_buffer)
+            output_buffers.append(vertex_buffer)
             
             current_vertices = []
             current_main_colors = []
@@ -154,23 +149,11 @@ class PickoverAttractorOperation: AttractorOperation {
             y = new_y
             z = new_z
             
-            // generate main color
-            
             if iteration > skip_iters {
                 // vertex
                 current_vertices.append(contentsOf: [
                     x, y, z
                     ])
-                
-                // main color
-                switch coloring_mode {
-                case .Gradient:
-                    current_main_colors.append(contentsOf: coloring_interpolator!.interpolate(mu: mu))
-                case .ColorMap, .None:
-                    let rgb_color = CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
-                    current_main_colors.append(contentsOf: rgb_color.components!.map {Float($0)})
-                }
-
             }
             
             // update vertex index
@@ -178,7 +161,6 @@ class PickoverAttractorOperation: AttractorOperation {
             if current_vertex_index == vertex_count_buffer_limit {
                 updateOutputBuffer()
             }
-            
             
             // update progress
             self.progress = mu
