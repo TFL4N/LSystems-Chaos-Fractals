@@ -112,6 +112,10 @@ class ColorWell: NSView {
                          object: nil)
     }
     
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        return true
+    }
+    
     @objc private func handleClickGesture(_ gesture: NSClickGestureRecognizer) {
         switch self.mode {
         case .displayOnly:

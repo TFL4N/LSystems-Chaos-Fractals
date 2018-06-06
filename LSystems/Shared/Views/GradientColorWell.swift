@@ -58,6 +58,10 @@ class GradientColorWell: NSView {
         self.layer = new_layer
         self.wantsLayer = true
     }
+    
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        return true
+    }
  
     func update(withGradientColor color: GradientColor) {
         if color.colors.count == 0 {
