@@ -60,8 +60,6 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
             return
         }
         
-        self.renderer.mtkView(self.mtkView, drawableSizeWillChange: mtkView.drawableSize)
-        
         // Additional Configuration
         self.mtkView.delegate = self.renderer
         self.render_mode = RenderMode(rawValue: self.render_mode_raw)!
@@ -84,9 +82,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
     
     // MARK: Attractor Renderer Delegate
     func rendererDidDraw() {
-        if self.render_mode == .video_capture {
-            self.handleDidDraw_VideoCapture()
-        }
+ 
     }
     
     lazy var progressBench = Benchmark()
@@ -158,9 +154,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         }
     }
     
-    // MARK: Video Capture
-    var videoCaptureSettings = VideoCapture()
-   
+    // MARK: Image Capture
     func captureImage(destinationURL: URL) {
         // get image from metal
         guard let image = self.mtkView.currentDrawable!.texture.toImage() else {
@@ -188,37 +182,9 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         
         self.attractor_manager.current_frame += 1
         
-        if self.attractor_manager.current_frame < self.videoCaptureSettings.frame_count {
-            self.mtkView.draw()
-        }
-    }
-    
-    func handleDidDraw_VideoCapture() {
-        switch self.videoCaptureSettings.status {
-        case .error, .done:
-            return
-        case .idle:
-            self.videoCaptureSettings.beginCapturingVideo()
-            
-            print("Drawable: \(self.mtkView.drawableSize)")
-            
-            if self.videoCaptureSettings.status == .capturing {
-                fallthrough
-            }
-        case .capturing:
-            // append frame
-            self.videoCaptureSettings.appendFrame(
-                self.attractor_manager.current_frame,
-                texture: self.mtkView.currentDrawable!.texture)
-            
-            self.attractor_manager.current_frame += 1
-            
-            if self.attractor_manager.current_frame < self.videoCaptureSettings.frame_count {
-                self.mtkView.draw()
-            } else {
-                self.videoCaptureSettings.finishCapturingVideo()
-            }
-        }
+//        if self.attractor_manager.current_frame < self.videoCaptureSettings.frame_count {
+//            self.mtkView.draw()
+//        }
     }
 
     // MARK: Renderer Mode

@@ -7,6 +7,7 @@
 //
 
 import AVFoundation
+import MetalKit
 
 typealias FrameId = UInt
 typealias FrameInterval = UInt
@@ -16,12 +17,29 @@ enum VideoCaptureError: Error {
     case FailedToCreatePixelBufferPool
     case FailedToGetPixelBufferPool
     case FailedToGetPixelBaseAddress
+    
+    case FailedToCreateMTLDevice
 }
 
-class VideoCapture {
-    let frame_rate: UInt = 24
-    let frame_count = 500
-    let video_size: CGSize = CGSize(width: 1600, height: 1200)
+struct VideoCaptureSettings {
+    var frame_rate: UInt
+    var video_size: CGSize
+    var output_file_path: String?
+    
+    static func defaultSettings() -> VideoCaptureSettings {
+        return VideoCaptureSettings(frame_rate: 24,
+                                    video_size: CGSize(width: 1600, height: 1200),
+                                    output_file_path: nil)
+    }
+}
+
+class VideoCapture: AttractorRendererDelegate {
+    let attractor_manager: AttractorManager!
+    let settings: VideoCaptureSettings
+    let frame_count: UInt
+    
+    var mtkView: MTKView!
+    var renderer: AttractorRenderer!
     
     var video_writer: AVAssetWriter!
     var video_writer_input: AVAssetWriterInput!
@@ -30,14 +48,25 @@ class VideoCapture {
     var status: Status = .idle
     var error: Error? = nil
     
+    enum Status {
+        case idle, capturing, done, error
+    }
+    
+    init(attractor: Attractor, frame_count: UInt, settings: VideoCaptureSettings) {
+        self.attractor_manager = AttractorManager(attractor: attractor)
+        self.frame_count = frame_count
+        self.settings = settings
+    }
+    
     private func destroy() {
         self.video_writer = nil
         self.video_writer_input = nil
         self.pixel_buffer_adapter = nil
     }
     
-    func beginCapturingVideo()  {
+    func beginCapturingVideo() -> Bool  {
         do {
+            try self.createRenderer()
             try self.createVideoAssetWriter()
             
             self.video_writer.startWriting()
@@ -48,6 +77,10 @@ class VideoCapture {
             //            }
             
             self.status = .capturing
+            
+            self.mtkView.draw()
+            
+            return true
         } catch {
             print("beginCapturingVideo Fail: \(error)")
             
@@ -55,7 +88,7 @@ class VideoCapture {
             self.status = .error
             
             self.destroy()
-            return
+            return false
         }
     }
     
@@ -94,6 +127,19 @@ class VideoCapture {
         }
     }
     
+    private func createRenderer() throws {
+        guard let device = MTLCreateSystemDefaultDevice() else {
+            throw VideoCaptureError.FailedToCreateMTLDevice
+        }
+        self.mtkView = MTKView(frame: CGRect(origin: CGPoint.zero, size: self.settings.video_size), device: device)
+        self.mtkView.isPaused = true
+        self.mtkView.enableSetNeedsDisplay = false
+        
+        self.renderer = try AttractorRenderer(metalKitView: self.mtkView, delegate: self)
+        
+        self.mtkView.delegate = self.renderer
+    }
+    
     private func createVideoAssetWriter() throws {
         let output_url = URL(fileURLWithPath: "/Users/SpaiceMaine/GoodKarmaCoding/LSystems Documents/capture/video.mov")
         
@@ -108,8 +154,8 @@ class VideoCapture {
         // create input
         let settings: [String:Any] = [
             AVVideoCodecKey : AVVideoCodecType.h264,
-            AVVideoWidthKey : self.video_size.width,
-            AVVideoHeightKey : self.video_size.height
+            AVVideoWidthKey : self.settings.video_size.width,
+            AVVideoHeightKey : self.settings.video_size.height
         ]
         self.video_writer_input = AVAssetWriterInput(mediaType: .video,
                                                      outputSettings: settings)
@@ -119,8 +165,8 @@ class VideoCapture {
         // buffer adapter
         let sourceBufferAttributes : [String : AnyObject] = [
             kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: kCVPixelFormatType_32BGRA),
-            kCVPixelBufferWidthKey as String : NSNumber(value: Int(self.video_size.width)),
-            kCVPixelBufferHeightKey as String : NSNumber(value: Int(self.video_size.height)),
+            kCVPixelBufferWidthKey as String : NSNumber(value: Int(self.settings.video_size.width)),
+            kCVPixelBufferHeightKey as String : NSNumber(value: Int(self.settings.video_size.height)),
             ]
         self.pixel_buffer_adapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: self.video_writer_input, sourcePixelBufferAttributes: sourceBufferAttributes)
     }
@@ -144,8 +190,8 @@ class VideoCapture {
             }
             
             guard CVPixelBufferCreate(kCFAllocatorDefault,
-                                      Int(self.video_size.width),
-                                      Int(self.video_size.height),
+                                      Int(self.settings.video_size.width),
+                                      Int(self.settings.video_size.height),
                                       kCVPixelFormatType_32BGRA,
                                       nil,
                                       pixel_buffer_ptr) == kCVReturnSuccess,
@@ -170,13 +216,42 @@ class VideoCapture {
             
             // Append Pixel Data
             //////////////////////
-            let frame_duration = CMTimeMake(1, Int32(self.frame_rate))
+            let frame_duration = CMTimeMake(1, Int32(self.settings.frame_rate))
             let time = CMTimeMultiply(frame_duration, Int32(frame))
             self.pixel_buffer_adapter.append(pixel_buffer, withPresentationTime: time)
         }
     }
     
-    enum Status {
-        case idle, capturing, done, error
+    // MARK: - Renderer Delegate
+    func rendererDidDraw() {
+        switch self.status {
+        case .error, .done, .idle:
+            return
+        case .capturing:
+            // append frame
+            self.appendFrame(
+                self.attractor_manager.current_frame,
+                texture: self.mtkView.currentDrawable!.texture)
+            
+            self.attractor_manager.current_frame += 1
+            
+            if self.attractor_manager.current_frame < self.frame_count {
+                self.mtkView.draw()
+            } else {
+                self.finishCapturingVideo()
+            }
+        }
+    }
+    
+    func dataBuildProgress(_: Float) {
+        
+    }
+    
+    func dataBuildDidStart() {
+        
+    }
+    
+    func dataBuildDidFinished(wasCancelled: Bool) {
+        
     }
 }

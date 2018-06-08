@@ -909,7 +909,7 @@
                 </windowController>
                 <customObject id="2kb-ae-Vqe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1931" y="562.5"/>
+            <point key="canvasLocation" x="1626" y="563"/>
         </scene>
         <!--Coloring Info Settings View Controller-->
         <scene sceneID="SKd-dv-8aS">
@@ -989,7 +989,41 @@
                 </viewController>
                 <customObject id="uYh-M6-e9E" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1931" y="989"/>
+            <point key="canvasLocation" x="1626" y="989"/>
+        </scene>
+        <!--Window Controller-->
+        <scene sceneID="FOh-af-UcC">
+            <objects>
+                <windowController id="D62-Uu-hC2" sceneMemberID="viewController">
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="p3L-ln-9bg">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="196" y="249" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
+                        <connections>
+                            <outlet property="delegate" destination="D62-Uu-hC2" id="T6L-E3-4Nl"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="ZIw-ob-J2g" kind="relationship" relationship="window.shadowedContentViewController" id="DRC-hJ-Noa"/>
+                    </connections>
+                </windowController>
+                <customObject id="fLb-zq-Aqn" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2626" y="576"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="sTs-9D-4c4">
+            <objects>
+                <viewController id="ZIw-ob-J2g" sceneMemberID="viewController">
+                    <view key="view" id="nbX-47-zG8">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="EAS-ha-dpg" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2626" y="1030"/>
         </scene>
         <!--Color Picker Panel-->
         <scene sceneID="d7A-ax-COc">
@@ -1010,7 +1044,7 @@
                 </windowController>
                 <customObject id="ph3-hj-09g" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2498.5" y="576"/>
+            <point key="canvasLocation" x="2099" y="567"/>
         </scene>
         <!--Lab Color Picker View Controller-->
         <scene sceneID="Uxc-J2-0Y2">
@@ -1199,7 +1233,7 @@
                 </viewController>
                 <customObject id="RQA-ow-oue" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2499" y="1061"/>
+            <point key="canvasLocation" x="2099" y="1052"/>
         </scene>
         <!--Coloring Info Settings Tab Controller-->
         <scene sceneID="NsQ-S6-40l">
@@ -1225,7 +1259,7 @@
                 </tabViewController>
                 <customObject id="lj0-uL-pl0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1935" y="1496"/>
+            <point key="canvasLocation" x="1630" y="1496"/>
         </scene>
         <!--Color Map-->
         <scene sceneID="900-BV-Ldr">
@@ -1238,7 +1272,7 @@
                 </viewController>
                 <customObject id="QXg-wu-Hyh" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2210" y="1970"/>
+            <point key="canvasLocation" x="1905" y="1970"/>
         </scene>
         <!--Gradient Color-->
         <scene sceneID="NyV-Z8-Djr">
@@ -1398,7 +1432,7 @@
                 </viewController>
                 <customObject id="1qX-sT-NNL" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1670" y="1974"/>
+            <point key="canvasLocation" x="1365" y="1974"/>
         </scene>
         <!--Rendering-->
         <scene sceneID="ZVe-BC-Hys">
@@ -1885,7 +1919,7 @@
                                         </customSpacing>
                                     </stackView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e82-mF-qIC">
-                                        <rect key="frame" x="0.0" y="0.0" width="438" height="65"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="439" height="65"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CMf-z1-Sfa">
                                                 <rect key="frame" x="-2" y="23" width="87" height="19"/>
@@ -1896,7 +1930,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="1wJ-u7-enT" customClass="GradientColorWell" customModule="L_Systems" customModuleProvider="target">
-                                                <rect key="frame" x="91" y="10" width="347" height="45"/>
+                                                <rect key="frame" x="91" y="10" width="348" height="45"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="45" id="NRL-56-qvB"/>
                                                 </constraints>
