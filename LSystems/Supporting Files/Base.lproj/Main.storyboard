@@ -994,7 +994,7 @@
         <!--Window Controller-->
         <scene sceneID="FOh-af-UcC">
             <objects>
-                <windowController id="D62-Uu-hC2" sceneMemberID="viewController">
+                <windowController storyboardIdentifier="Video Capture Window" id="D62-Uu-hC2" sceneMemberID="viewController">
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="p3L-ln-9bg">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -1012,14 +1012,26 @@
             </objects>
             <point key="canvasLocation" x="2626" y="576"/>
         </scene>
-        <!--View Controller-->
+        <!--Video Capture View Controller-->
         <scene sceneID="sTs-9D-4c4">
             <objects>
-                <viewController id="ZIw-ob-J2g" sceneMemberID="viewController">
+                <viewController id="ZIw-ob-J2g" customClass="VideoCaptureViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="nbX-47-zG8">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView placeholderIntrinsicWidth="300" placeholderIntrinsicHeight="96" translatesAutoresizingMaskIntoConstraints="NO" id="XM9-Kq-S3f" customClass="ProgressView" customModule="L_Systems" customModuleProvider="target">
+                                <rect key="frame" x="90" y="87" width="300" height="96"/>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="XM9-Kq-S3f" firstAttribute="centerX" secondItem="nbX-47-zG8" secondAttribute="centerX" id="ErG-mK-ZyE"/>
+                            <constraint firstItem="XM9-Kq-S3f" firstAttribute="centerY" secondItem="nbX-47-zG8" secondAttribute="centerY" id="IPm-St-hky"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="progressView" destination="XM9-Kq-S3f" id="DhB-5X-5yO"/>
+                    </connections>
                 </viewController>
                 <customObject id="EAS-ha-dpg" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -2451,60 +2463,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="rVj-jN-moL">
+                            <box placeholderIntrinsicWidth="323" placeholderIntrinsicHeight="59" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="rVj-jN-moL" customClass="ProgressView" customModule="L_Systems" customModuleProvider="target">
                                 <rect key="frame" x="454" y="16" width="329" height="65"/>
                                 <view key="contentView" id="4iE-vF-EAg">
                                     <rect key="frame" x="2" y="2" width="325" height="61"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <progressIndicator wantsLayer="YES" maxValue="1" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="SXc-Qt-fHa">
-                                            <rect key="frame" x="20" y="33" width="200" height="20"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="200" id="kMA-K3-LL0"/>
-                                                <constraint firstAttribute="height" constant="18" id="x6z-xH-zdK"/>
-                                            </constraints>
-                                        </progressIndicator>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RzR-l4-u1T">
-                                            <rect key="frame" x="239" y="33" width="68" height="19"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="64" id="YJv-Ka-BUa"/>
-                                            </constraints>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="z4A-ag-X5H">
-                                                <font key="font" metaFont="system" size="16"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Ie-TY-NUh">
-                                            <rect key="frame" x="18" y="10" width="4" height="19"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="L6v-iH-75o">
-                                                <font key="font" metaFont="system" size="16"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2or-gW-Djr">
-                                            <rect key="frame" x="43" y="10" width="264" height="19"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" id="7qK-ab-5fi">
-                                                <font key="font" metaFont="system" size="16"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="RzR-l4-u1T" firstAttribute="leading" secondItem="SXc-Qt-fHa" secondAttribute="trailing" constant="21" id="Ca2-aT-f3C"/>
-                                        <constraint firstItem="2or-gW-Djr" firstAttribute="leading" secondItem="0Ie-TY-NUh" secondAttribute="trailing" constant="25" id="GeO-3r-zkI"/>
-                                        <constraint firstItem="0Ie-TY-NUh" firstAttribute="leading" secondItem="SXc-Qt-fHa" secondAttribute="leading" id="H2u-Mn-abH"/>
-                                        <constraint firstItem="2or-gW-Djr" firstAttribute="centerY" secondItem="0Ie-TY-NUh" secondAttribute="centerY" id="MqK-ai-4ea"/>
-                                        <constraint firstItem="0Ie-TY-NUh" firstAttribute="top" secondItem="SXc-Qt-fHa" secondAttribute="bottom" constant="5" id="TBh-re-QEx"/>
-                                        <constraint firstItem="SXc-Qt-fHa" firstAttribute="leading" secondItem="4iE-vF-EAg" secondAttribute="leading" constant="20" id="UDb-hQ-thA"/>
-                                        <constraint firstItem="RzR-l4-u1T" firstAttribute="centerY" secondItem="SXc-Qt-fHa" secondAttribute="centerY" id="W4d-ax-7UW"/>
-                                        <constraint firstItem="2or-gW-Djr" firstAttribute="trailing" secondItem="RzR-l4-u1T" secondAttribute="trailing" id="Zd2-tG-agj"/>
-                                        <constraint firstAttribute="trailing" secondItem="RzR-l4-u1T" secondAttribute="trailing" constant="20" id="hht-cA-KHr"/>
-                                        <constraint firstItem="SXc-Qt-fHa" firstAttribute="top" secondItem="4iE-vF-EAg" secondAttribute="top" constant="9" id="mSq-sq-9Fm"/>
-                                        <constraint firstAttribute="bottom" secondItem="0Ie-TY-NUh" secondAttribute="bottom" constant="10" id="q6O-Yr-ZVW"/>
-                                    </constraints>
                                 </view>
                             </box>
                         </subviews>
@@ -2515,10 +2478,6 @@
                     </view>
                     <connections>
                         <outlet property="progressContainerView" destination="rVj-jN-moL" id="7Ww-JE-4of"/>
-                        <outlet property="progressElapsedLabel" destination="0Ie-TY-NUh" id="2zQ-w6-T8B"/>
-                        <outlet property="progressIndicator" destination="SXc-Qt-fHa" id="sez-7w-fsa"/>
-                        <outlet property="progressLabel" destination="RzR-l4-u1T" id="96m-mP-g6n"/>
-                        <outlet property="progressRemainingLabel" destination="2or-gW-Djr" id="gaD-1V-cwV"/>
                     </connections>
                 </viewController>
                 <customObject id="rDa-Xs-Yb5" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

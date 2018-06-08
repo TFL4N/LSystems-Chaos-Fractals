@@ -14,11 +14,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
     var renderer: AttractorRenderer!
     var mtkView: MTKView!
     
-    @IBOutlet var progressContainerView: NSView!
-    @IBOutlet var progressIndicator: NSProgressIndicator!
-    @IBOutlet var progressLabel: NSTextField!
-    @IBOutlet var progressElapsedLabel: NSTextField!
-    @IBOutlet var progressRemainingLabel: NSTextField!
+    @IBOutlet var progressView: ProgressView!
     
     var pinchGesture: NSMagnificationGestureRecognizer!
     var panGesture: NSPanGestureRecognizer!
@@ -66,9 +62,8 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         
         // Progress View
         //////////////////
-        self.progressContainerView.alphaValue = 0.0
-        self.progressLabel.formatter = NumberFormatter.buildPercentFormatter(fractionDigits: 2)
-    
+        self.progressView.alphaValue = 0.0
+       
         // Add Gestures
         /////////////////
         self.pinchGesture = NSMagnificationGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
@@ -86,33 +81,23 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
     }
     
     lazy var progressBench = Benchmark()
-    lazy var timeFormatter: DateComponentsFormatter = {
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.hour, .minute, .second]
-        formatter.unitsStyle = .short
-        formatter.zeroFormattingBehavior = .dropLeading
-        
-        return formatter
-    }()
     
     func dataBuildDidStart() {
         self.progressBench.reset()
         
         DispatchQueue.main.async {
-            if self.progressContainerView.alphaValue < 1.0 {
-                self.progressContainerView.alphaValue = 0.0
-                self.progressContainerView.isHidden = false
+            if self.progressView.alphaValue < 1.0 {
+                self.progressView.alphaValue = 0.0
+                self.progressView.isHidden = false
                 
-                self.progressIndicator.doubleValue = 0
-                self.progressLabel.doubleValue = 0
-                
-                self.progressElapsedLabel.stringValue = self.timeFormatter.string(from: 0)!
-                self.progressRemainingLabel.stringValue = ""
+                self.progressView.setProgress(0.0)
+                self.progressView.setElapsedTime(0.0)
+                self.progressView.setRemaingTime(nil)
                 
 //                print("Show Progress")
                 NSAnimationContext.runAnimationGroup({ (context) in
                     context.duration = 0.3
-                    self.progressContainerView.alphaValue = 1.0
+                    self.progressView.alphaValue = 1.0
                 }, completionHandler: {
 //                    print("Show Progress Complete")
 //                    self.progressContainerView.alphaValue = 1.0
@@ -124,28 +109,27 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
     func dataBuildProgress(_ progress: Float) {
         DispatchQueue.main.async {
             let dblProgress = Double(progress)
-            self.progressIndicator.doubleValue = dblProgress
-            self.progressLabel.floatValue = progress
+            self.progressView.setProgress(dblProgress)
             
             let elapsed_time = self.progressBench.elapsedTime
-            self.progressElapsedLabel.stringValue = self.timeFormatter.string(from: elapsed_time)!
+            self.progressView.setElapsedTime(elapsed_time)
             
             if dblProgress != 0 {
                 let remaining_time = (elapsed_time / dblProgress) * (1.0 - dblProgress)
-                self.progressRemainingLabel.stringValue = self.timeFormatter.string(from: remaining_time)!
+                self.progressView.setRemaingTime(remaining_time)
             } else {
-                self.progressRemainingLabel.stringValue = ""
+                self.progressView.setRemaingTime(nil)
             }
         }
     }
     
     func dataBuildDidFinished(wasCancelled: Bool) {
         DispatchQueue.main.async {
-            if !self.progressContainerView.isHidden {
+            if !self.progressView.isHidden {
 //                print("Hide Progress")
                 NSAnimationContext.runAnimationGroup({ (context) in
                     context.duration = 0.3
-                    self.progressContainerView.alphaValue = 0.0
+                    self.progressView.alphaValue = 0.0
                 }, completionHandler: {
 //                    print("Hide Progress Complete")
 //                    self.progressContainerView.isHidden = true

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		65034ABF20CA5EB1001D7315 /* NibLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65034ABE20CA5EB1001D7315 /* NibLoadable.swift */; };
+		65034AC320CA62CC001D7315 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65034AC220CA62CC001D7315 /* ProgressView.swift */; };
+		65034AC720CA6792001D7315 /* VideoCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65034AC620CA6792001D7315 /* VideoCaptureViewController.swift */; };
 		65252A2D20B62B8B008CD676 /* AttractorDataStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A2C20B62B8A008CD676 /* AttractorDataStructs.swift */; };
 		65252A2F20B62C25008CD676 /* AttractorDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A2E20B62C25008CD676 /* AttractorDocument.swift */; };
 		65252A3220B62F47008CD676 /* AttractorMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A3120B62F47008CD676 /* AttractorMainViewController.swift */; };
@@ -98,6 +101,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		65034ABE20CA5EB1001D7315 /* NibLoadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NibLoadable.swift; sourceTree = "<group>"; };
+		65034AC220CA62CC001D7315 /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		65034AC620CA6792001D7315 /* VideoCaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCaptureViewController.swift; sourceTree = "<group>"; };
 		65252A2C20B62B8A008CD676 /* AttractorDataStructs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttractorDataStructs.swift; sourceTree = "<group>"; };
 		65252A2E20B62C25008CD676 /* AttractorDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttractorDocument.swift; sourceTree = "<group>"; };
 		65252A3120B62F47008CD676 /* AttractorMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttractorMainViewController.swift; sourceTree = "<group>"; };
@@ -241,6 +247,8 @@
 				6595A65020C273D2006A1DF0 /* GradientColorItemCellView.swift */,
 				65F0D36E20C3B0FB00E94785 /* ColorWell.swift */,
 				65F0D37020C3F28400E94785 /* GradientColorWell.swift */,
+				65034AC220CA62CC001D7315 /* ProgressView.swift */,
+				65034ABE20CA5EB1001D7315 /* NibLoadable.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -262,6 +270,7 @@
 			isa = PBXGroup;
 			children = (
 				6595A64620BB8540006A1DF0 /* VideoCapture.swift */,
+				65034AC620CA6792001D7315 /* VideoCaptureViewController.swift */,
 				6568AB3C20A05266009B828A /* old_code */,
 				6568AB3A209F7B54009B828A /* MatrixUtils.swift */,
 				65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */,
@@ -667,6 +676,7 @@
 				65F0D36B20C378BA00E94785 /* LabColorPickerViewController.swift in Sources */,
 				65F1EB28206C8083007DF72B /* LSystemShaders.metal in Sources */,
 				6595A64920BBA345006A1DF0 /* Locks.swift in Sources */,
+				65034ABF20CA5EB1001D7315 /* NibLoadable.swift in Sources */,
 				65F0D36D20C388E700E94785 /* Utils.swift in Sources */,
 				65252A2D20B62B8B008CD676 /* AttractorDataStructs.swift in Sources */,
 				65F0D37120C3F28400E94785 /* GradientColorWell.swift in Sources */,
@@ -678,6 +688,8 @@
 				65F1EB57206C9145007DF72B /* RuleCellView.swift in Sources */,
 				65252A3220B62F47008CD676 /* AttractorMainViewController.swift in Sources */,
 				6568AB3B209F7B54009B828A /* MatrixUtils.swift in Sources */,
+				65034AC320CA62CC001D7315 /* ProgressView.swift in Sources */,
+				65034AC720CA6792001D7315 /* VideoCaptureViewController.swift in Sources */,
 				6595A64D20BF7ED4006A1DF0 /* BigBufferPool.swift in Sources */,
 				65F0D36F20C3B0FB00E94785 /* ColorWell.swift in Sources */,
 				65D8447F20B7E53E00FDCBCC /* RendererUtils.swift in Sources */,
