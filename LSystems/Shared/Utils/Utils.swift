@@ -57,6 +57,20 @@ extension NumberFormatter {
         
         return percentFormatter
     }
+    
+    static func buildIntegerFormatter(min: Int?, max: Int?) -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.allowsFloats = false
+        formatter.generatesDecimalNumbers = false
+        formatter.isLenient = true
+        formatter.maximumFractionDigits = 0
+        formatter.usesGroupingSeparator = true
+        formatter.groupingSize = 3
+        formatter.maximum = max != nil ? NSNumber(value: max!) : nil
+        formatter.minimum = min != nil ? NSNumber(value: min!) : nil
+        
+        return formatter
+    }
 }
 
 class NSObjectUtils {

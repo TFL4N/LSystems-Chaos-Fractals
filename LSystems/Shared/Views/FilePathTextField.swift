@@ -22,10 +22,12 @@ class FilePathTextField: NSTextField {
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
+        self.commonInit()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        self.commonInit()
     }
     
     private func commonInit() {

@@ -249,11 +249,7 @@ class Value: NSObject, NSCoding {
         case .float:
             formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
         case .integer:
-            formatter.allowsFloats = false
-            formatter.generatesDecimalNumbers = false
-            formatter.maximumFractionDigits = 0
-            formatter.usesGroupingSeparator = true
-            formatter.groupingSize = 3
+            formatter = NumberFormatter.buildIntegerFormatter(min: nil, max: nil)
         }
         
         return formatter

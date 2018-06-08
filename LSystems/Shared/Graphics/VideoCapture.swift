@@ -22,14 +22,34 @@ enum VideoCaptureError: Error {
 }
 
 class VideoCaptureSettings: NSObject, NSCoding {
-    var frame_count: UInt
-    var frame_rate: UInt
-    var video_size: CGSize
-    var output_file_url: URL?
-    
     static let default_frame_count: UInt = 500
     static let default_frame_rate: UInt = 24
     static let default_video_size: CGSize = CGSize(width: 1600, height: 1200)
+    
+    @objc dynamic var frame_count: UInt
+    @objc dynamic var frame_rate: UInt
+    @objc dynamic var video_size: CGSize
+    var output_file_url: URL?
+    
+    @objc dynamic var video_width: UInt {
+        get {
+            return UInt(self.video_size.width)
+        }
+        
+        set {
+            self.video_size.width = CGFloat(newValue)
+        }
+    }
+    
+    @objc dynamic var video_height: UInt {
+        get {
+            return UInt(self.video_size.height)
+        }
+        
+        set {
+            self.video_size.height = CGFloat(newValue)
+        }
+    }
     
     init(frame_count: UInt = VideoCaptureSettings.default_frame_count,
          frame_rate: UInt = VideoCaptureSettings.default_frame_rate,

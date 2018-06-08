@@ -88,7 +88,6 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
         DispatchQueue.main.async {
             if self.progressView.alphaValue < 1.0 {
                 self.progressView.alphaValue = 0.0
-                self.progressView.isHidden = false
                 
                 self.progressView.setProgress(0.0)
                 self.progressView.setElapsedTime(0.0)
@@ -125,7 +124,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
     
     func dataBuildDidFinished(wasCancelled: Bool) {
         DispatchQueue.main.async {
-            if !self.progressView.isHidden {
+            if self.progressView.alphaValue != 0.0 {
 //                print("Hide Progress")
                 NSAnimationContext.runAnimationGroup({ (context) in
                     context.duration = 0.3
