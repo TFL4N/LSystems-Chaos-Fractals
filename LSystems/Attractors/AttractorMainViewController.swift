@@ -24,6 +24,9 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
     @IBOutlet var parametersTableView: NSTableView!
     @IBOutlet var showGraphicsButton: NSButton!
     
+    @IBOutlet var baseColorWell: ColorWell!
+    @IBOutlet var mainGradientColorWell: GradientColorWell!
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,12 +34,37 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
         self.parametersTableView.delegate = self
         self.parametersTableView.dataSource = self
         self.parametersTableView.usesAutomaticRowHeights = true
+        
+        self.baseColorWell.mode = .custom
+        self.baseColorWell.didClickHandler = { (color_well) in
+            
+        }
+        
+        let click_gesture = NSClickGestureRecognizer(target: self, action: #selector(handleMainColorClick(_:)))
+        self.mainGradientColorWell.addGestureRecognizer(click_gesture)
     }
     
+    private var needsBindings = true
     override func viewWillAppear() {
         super.viewWillAppear()
         
+        if self.needsBindings {
+            self.needsBindings = false
+            
+            self.attractor_manager.attractor.coloring_info.addObserver(self, forKeyPath: "didChange", options: [.initial, .new], context: nil)
+        }
+        
         self.parametersTableView.reloadData()
+    }
+    
+    deinit {
+        self.attractor_manager.attractor.coloring_info.removeObserver(self, forKeyPath: "didChange", context: nil)
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "didChange" {
+            self.mainGradientColorWell.update(withGradientColor: self.attractor_manager.attractor.coloring_info.gradientColor ?? GradientColor())
+        }
     }
     
     // MARK: TableView DataSource
@@ -96,7 +124,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
         self.document?.showGraphicsWindowController()
     }
     
-    @IBAction func handleShowColoringInfoPress(_: Any?) {
+    @objc func handleMainColorClick(_: NSClickGestureRecognizer) {
         self.document?.showColoringInfo()
     }
 }
