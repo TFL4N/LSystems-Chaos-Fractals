@@ -10,6 +10,8 @@
 		65034ABF20CA5EB1001D7315 /* NibLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65034ABE20CA5EB1001D7315 /* NibLoadable.swift */; };
 		65034AC320CA62CC001D7315 /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65034AC220CA62CC001D7315 /* ProgressView.swift */; };
 		65034AC720CA6792001D7315 /* VideoCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65034AC620CA6792001D7315 /* VideoCaptureViewController.swift */; };
+		65034AC920CA7DE6001D7315 /* CaptureOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65034AC820CA7DE6001D7315 /* CaptureOptionsViewController.swift */; };
+		65034ACB20CA8D01001D7315 /* FilePathTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65034ACA20CA8D01001D7315 /* FilePathTextField.swift */; };
 		65252A2D20B62B8B008CD676 /* AttractorDataStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A2C20B62B8A008CD676 /* AttractorDataStructs.swift */; };
 		65252A2F20B62C25008CD676 /* AttractorDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A2E20B62C25008CD676 /* AttractorDocument.swift */; };
 		65252A3220B62F47008CD676 /* AttractorMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65252A3120B62F47008CD676 /* AttractorMainViewController.swift */; };
@@ -104,6 +106,8 @@
 		65034ABE20CA5EB1001D7315 /* NibLoadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NibLoadable.swift; sourceTree = "<group>"; };
 		65034AC220CA62CC001D7315 /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		65034AC620CA6792001D7315 /* VideoCaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCaptureViewController.swift; sourceTree = "<group>"; };
+		65034AC820CA7DE6001D7315 /* CaptureOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureOptionsViewController.swift; sourceTree = "<group>"; };
+		65034ACA20CA8D01001D7315 /* FilePathTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePathTextField.swift; sourceTree = "<group>"; };
 		65252A2C20B62B8A008CD676 /* AttractorDataStructs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttractorDataStructs.swift; sourceTree = "<group>"; };
 		65252A2E20B62C25008CD676 /* AttractorDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttractorDocument.swift; sourceTree = "<group>"; };
 		65252A3120B62F47008CD676 /* AttractorMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttractorMainViewController.swift; sourceTree = "<group>"; };
@@ -249,6 +253,7 @@
 				65F0D37020C3F28400E94785 /* GradientColorWell.swift */,
 				65034AC220CA62CC001D7315 /* ProgressView.swift */,
 				65034ABE20CA5EB1001D7315 /* NibLoadable.swift */,
+				65034ACA20CA8D01001D7315 /* FilePathTextField.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -312,6 +317,7 @@
 				6569AA9920C4C37E00B94E69 /* Coloring Info */,
 				65252A4820B7DF83008CD676 /* RenderOptionsViewController.swift */,
 				65F0D36A20C378BA00E94785 /* LabColorPickerViewController.swift */,
+				65034AC820CA7DE6001D7315 /* CaptureOptionsViewController.swift */,
 			);
 			path = Panels;
 			sourceTree = "<group>";
@@ -679,6 +685,7 @@
 				65034ABF20CA5EB1001D7315 /* NibLoadable.swift in Sources */,
 				65F0D36D20C388E700E94785 /* Utils.swift in Sources */,
 				65252A2D20B62B8B008CD676 /* AttractorDataStructs.swift in Sources */,
+				65034ACB20CA8D01001D7315 /* FilePathTextField.swift in Sources */,
 				65F0D37120C3F28400E94785 /* GradientColorWell.swift in Sources */,
 				6595A64520BB640B006A1DF0 /* ValueSliderCellView.swift in Sources */,
 				6595A64720BB8540006A1DF0 /* VideoCapture.swift in Sources */,
@@ -693,6 +700,7 @@
 				6595A64D20BF7ED4006A1DF0 /* BigBufferPool.swift in Sources */,
 				65F0D36F20C3B0FB00E94785 /* ColorWell.swift in Sources */,
 				65D8447F20B7E53E00FDCBCC /* RendererUtils.swift in Sources */,
+				65034AC920CA7DE6001D7315 /* CaptureOptionsViewController.swift in Sources */,
 				65252A4620B782D5008CD676 /* AttractorManager.swift in Sources */,
 				65F1EB22206C8083007DF72B /* AppDelegate.swift in Sources */,
 				6568AA9F209F076E009B828A /* PopUpCellView.swift in Sources */,

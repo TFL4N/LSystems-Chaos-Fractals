@@ -29,10 +29,10 @@ class Label: NSTextField {
 
 class ProgressView: NSBox {
     
-    var progressIndicator: NSProgressIndicator
-    var progressLabel: Label
-    var progressElapsedLabel: Label
-    var progressRemainingLabel: Label
+    var progressIndicator: NSProgressIndicator!
+    var progressLabel: Label!
+    var progressElapsedLabel: Label!
+    var progressRemainingLabel: Label!
     
     var timeLabelFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -41,12 +41,7 @@ class ProgressView: NSBox {
         formatter.zeroFormattingBehavior = .dropLeading
         
         return formatter
-        }() {
-        didSet {
-            self.progressElapsedLabel.formatter = self.timeLabelFormatter
-            self.progressRemainingLabel.formatter = self.timeLabelFormatter
-        }
-    }
+        }()
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -60,6 +55,7 @@ class ProgressView: NSBox {
     
     private func commonInit() {
         let content = NSView(frame: NSRect.zero)
+        content.translatesAutoresizingMaskIntoConstraints = false
         
         self.progressIndicator = NSProgressIndicator(frame: NSRect.zero)
         self.progressIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -72,11 +68,9 @@ class ProgressView: NSBox {
         
         self.progressElapsedLabel = Label(frame: NSRect.zero)
         self.progressElapsedLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.progressElapsedLabel.formatter = self.timeLabelFormatter
         
         self.progressRemainingLabel = Label(frame: NSRect.zero)
         self.progressRemainingLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.progressRemainingLabel.formatter = self.timeLabelFormatter
         self.progressRemainingLabel.alignment = .right
         
         let views: [String:Any] = [
@@ -91,9 +85,11 @@ class ProgressView: NSBox {
         }
         self.addSubview(content)
         
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[indicator(200)]-[percent(68)]-20-|", options: [.alignAllCenterY], metrics: nil, views: views))
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[elapsed]-[remaining]-20-|", options: [.alignAllCenterY], metrics: nil, views: views))
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-10-[indicator]-[elapsed]-10-|", options: [], metrics: nil, views: views))
+        content.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[indicator(200)]-[percent(68)]-20-|", options: [.alignAllCenterY], metrics: nil, views: views))
+        content.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-20-[elapsed]-[remaining]-20-|", options: [.alignAllCenterY], metrics: nil, views: views))
+        content.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-10-[indicator]-[elapsed]-10-|", options: [], metrics: nil, views: views))
+        
+        self.contentView = content
     }
     
     func setProgress(_ value: Double?) {
@@ -103,7 +99,7 @@ class ProgressView: NSBox {
     
     func setElapsedTime(_ elapsed_time: Double?) {
         if let value = elapsed_time,
-            let str = self.timeLabelFormatter.string(from: elapsed_time) {
+            let str = self.timeLabelFormatter.string(from: value) {
             self.progressElapsedLabel.stringValue = str
         } else {
             self.progressElapsedLabel.stringValue = ""
@@ -112,7 +108,7 @@ class ProgressView: NSBox {
     
     func setRemaingTime(_ remaining_time: Double?) {
         if let value = remaining_time,
-            let str = self.timeLabelFormatter.string(from: remaining_time) {
+            let str = self.timeLabelFormatter.string(from: value) {
             self.progressRemainingLabel.stringValue = str
         } else {
             self.progressRemainingLabel.stringValue = ""

@@ -26,7 +26,8 @@ enum CameraProjectionMode: String {
 
 class AttractorDocument: NSDocument {
 
-    var attractor_manager: AttractorManager! = AttractorManager(attractor: PickoverAttractor())
+    var attractor_manager: AttractorManager = AttractorManager(attractor: PickoverAttractor())
+    var video_capture_settings: VideoCaptureSettings = VideoCaptureSettings()
     
     weak var graphics_window_ctlr: NSWindowController!
     var graphics_view_cltr: AttractorGraphicsViewController! {
@@ -94,7 +95,8 @@ class AttractorDocument: NSDocument {
         // You can also choose to override fileWrapperOfType:error:, writeToURL:ofType:error:, or writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
         
         let dict: [String: Any] = [
-            "attractor": self.attractor_manager.attractor
+            "attractor": self.attractor_manager.attractor,
+            "video_capture_settings": self.video_capture_settings
         ]
         
         let data = NSMutableData()
@@ -115,6 +117,8 @@ class AttractorDocument: NSDocument {
         let dict = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
         let attractor = dict["attractor"] as! Attractor
         self.attractor_manager = AttractorManager(attractor: attractor)
+        
+        self.video_capture_settings = dict["video_capture_settings"] as? VideoCaptureSettings ?? VideoCaptureSettings()
     }
 
     //
