@@ -24,7 +24,7 @@ enum CameraProjectionMode: String {
     case orthogonal = "Orthogonal"
 }
 
-class AttractorDocument: NSDocument {
+class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
 
     var attractor_manager: AttractorManager = AttractorManager(attractor: PickoverAttractor())
     var video_capture_settings: VideoCaptureSettings = VideoCaptureSettings()
@@ -37,6 +37,9 @@ class AttractorDocument: NSDocument {
     weak var info_panel_window_ctlr: NSWindowController!
     weak var coloring_info_panel_window_ctlr: NSWindowController!
     
+    weak var video_capture_window_ctlr: NSWindowController!
+    
+    // MARK: - Lifecycle
     override init() {
         super.init()
         // Add your subclass-specific initialization here.
@@ -46,6 +49,7 @@ class AttractorDocument: NSDocument {
         return true
     }
 
+    // MARK: - Window Controllers
     override func makeWindowControllers() {
         // Returns the Storyboard that contains your Document window.
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
@@ -89,6 +93,49 @@ class AttractorDocument: NSDocument {
         self.coloring_info_panel_window_ctlr.showWindow(self)
     }
     
+    // MARK: Video Capture
+    func captureVideo() {
+        // validate video settings
+        if let validation_errors = self.video_capture_settings.validate() {
+            let alert = NSAlert()
+            alert.messageText = validation_errors.description
+            alert.addButton(withTitle: "Cancel")
+            alert.alertStyle = .critical
+            
+            alert.runModal()
+            return
+        }
+        
+        // check if capture in progress
+        guard self.video_capture_window_ctlr == nil else {
+            let alert = NSAlert()
+            alert.messageText = "Video capture already in Progress"
+            alert.addButton(withTitle: "Cancel")
+            alert.alertStyle = .critical
+            
+            alert.runModal()
+            return
+        }
+        
+        // build video capture contlr
+        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+        self.video_capture_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Video Capture Window")) as! NSWindowController
+    
+        let video_capture_vc = self.video_capture_window_ctlr.contentViewController as! VideoCaptureViewController
+        video_capture_vc.delegate = self
+        video_capture_vc.video_capture = VideoCapture(attractor: self.attractor_manager.attractor, settings: self.video_capture_settings)
+        
+        self.addWindowController(self.video_capture_window_ctlr)
+        
+        self.video_capture_window_ctlr.showWindow(self)
+    }
+    
+    func handleClosePress(_: VideoCaptureViewController) {
+        self.removeWindowController(self.video_capture_window_ctlr)
+        self.video_capture_window_ctlr.close()
+        self.video_capture_window_ctlr = nil
+    }
+    
     // MARK: File IO
     override func data(ofType typeName: String) throws -> Data {
         // Insert code here to write your document to data of the specified type. If outError != nil, ensure that you create and set an appropriate error when returning nil.
@@ -128,7 +175,7 @@ class AttractorDocument: NSDocument {
     //
     //
     //
-    func adjustAttractor(_ obj: inout Attractor) {
+    func adjustAttractor(_ obj: Attractor) {
         var param = obj.parameter(withName: "D")!
         param.animation = AnimationSequence(keyFrames: [
             KeyFrame(value: Value(type: .float, value: 1.7), duration: 500),

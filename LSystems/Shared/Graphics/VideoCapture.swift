@@ -62,12 +62,12 @@ class VideoCaptureSettings: NSObject, NSCoding {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let coder = aDecoder as! NSKeyedArchiver
+        let coder = aDecoder as! NSKeyedUnarchiver
         
-        var frame_count = UInt(coder.decodeInteger(forKey: "video_capture_settings_frame_count"))
+        var frame_count = (coder.decodeObject(forKey: "video_capture_settings_frame_count") as? NSNumber)?.uintValue ?? 0
         frame_count = frame_count == 0 ? VideoCaptureSettings.default_frame_count : frame_count
         
-        var frame_rate = UInt(coder.decodeInteger(forKey: "video_capture_settings_frame_rate"))
+        var frame_rate = (coder.decodeObject(forKey: "video_capture_settings_frame_rate") as? NSNumber)?.uintValue ?? 0
         frame_rate = frame_rate == 0 ? VideoCaptureSettings.default_frame_rate : frame_rate
         
         var video_size = coder.decodeSize(forKey: "video_capture_settings_video_size")
@@ -90,28 +90,68 @@ class VideoCaptureSettings: NSObject, NSCoding {
         coder.encode(self.video_size, forKey: "video_capture_settings_video_size")
         coder.encode(self.output_file_url?.absoluteString, forKey: "video_capture_settings_output_path")
     }
+    
+    func validate() -> [ValidationError]? {
+        var output = [ValidationError]()
+        if self.frame_count == 0 {
+            output.append(.InvalidFrameCount)
+        }
+        
+        if self.frame_rate == 0 {
+            output.append(.InvalidFrameRate)
+        }
+        
+        if self.output_file_url == nil {
+            output.append(.InvalidOutputURL)
+        }
+        
+        if self.video_size.width < 1
+            || self.video_size.height < 1 {
+            output.append(.InvalidVideoSize)
+        }
+        
+        return output.isEmpty ? nil : output
+    }
+    
+    enum ValidationError: Error {
+        case InvalidFrameCount
+        case InvalidFrameRate
+        case InvalidOutputURL
+        case InvalidVideoSize
+    }
+}
+
+protocol VideoCaptureDelegate {
+    func captureDidBegin(_: VideoCapture)
+    func updateProgress(frame: FrameId, frameProgress: Double, frameElapsedTime: TimeInterval, frameRemainingTime: TimeInterval, overallProgress: Double, overallElapsedTime: TimeInterval, overallTimeRemaining: TimeInterval)
+    func captureDidComplete(_: VideoCapture)
+    func captureDidFail(_: VideoCapture)
+    func captureDidCancel(_: VideoCapture)
 }
 
 class VideoCapture: AttractorRendererDelegate {
     let attractor_manager: AttractorManager!
     let settings: VideoCaptureSettings
     
-    var mtkView: MTKView!
-    var renderer: AttractorRenderer!
+    private var mtkView: MTKView!
+    private var renderer: AttractorRenderer!
     
-    var video_writer: AVAssetWriter!
-    var video_writer_input: AVAssetWriterInput!
-    var pixel_buffer_adapter: AVAssetWriterInputPixelBufferAdaptor!
+    private var video_writer: AVAssetWriter!
+    private var video_writer_input: AVAssetWriterInput!
+    private var pixel_buffer_adapter: AVAssetWriterInputPixelBufferAdaptor!
     
-    var status: Status = .idle
-    var error: Error? = nil
+    private(set) var bench: Benchmark! = nil
+    private(set) var status: Status = .idle
+    private(set) var error: Error? = nil
+    
+    var delegate: VideoCaptureDelegate? = nil
     
     enum Status {
-        case idle, capturing, done, error
+        case idle, capturing, done, cancelled, error
     }
     
     init(attractor: Attractor, settings: VideoCaptureSettings) {
-        self.attractor_manager = AttractorManager(attractor: attractor)
+        self.attractor_manager = AttractorManager(attractor: attractor.deepCopy())
         self.settings = settings.deepCopy()
     }
     
@@ -134,6 +174,9 @@ class VideoCapture: AttractorRendererDelegate {
             //            }
             
             self.status = .capturing
+            self.bench = Benchmark()
+            
+            self.delegate?.captureDidBegin(self)
             
             self.mtkView.draw()
             
@@ -145,6 +188,9 @@ class VideoCapture: AttractorRendererDelegate {
             self.status = .error
             
             self.destroy()
+            
+            self.delegate?.captureDidFail(self)
+            
             return false
         }
     }
@@ -164,6 +210,7 @@ class VideoCapture: AttractorRendererDelegate {
             self.video_writer_input.markAsFinished()
             self.video_writer.finishWriting {
                 self.destroy()
+                self.delegate?.captureDidFail(self)
             }
         }
     }
@@ -175,12 +222,28 @@ class VideoCapture: AttractorRendererDelegate {
                 print("Video Writing Complete: \(err)")
                 self.error = err
                 self.status = .error
+                
+                self.delegate?.captureDidFail(self)
+                
+                self.destroy()
             } else {
                 print("Video Writing Complete")
                 self.status = .done
+                
+                self.delegate?.captureDidComplete(self)
+                
+                self.destroy()
             }
-            
+        }
+    }
+    
+    func cancelCapturingVideo() {
+        self.status = .cancelled
+        
+        self.video_writer_input.markAsFinished()
+        self.video_writer.finishWriting {
             self.destroy()
+            self.delegate?.captureDidFail(self)
         }
     }
     
@@ -191,6 +254,8 @@ class VideoCapture: AttractorRendererDelegate {
         self.mtkView = MTKView(frame: CGRect(origin: CGPoint.zero, size: self.settings.video_size), device: device)
         self.mtkView.isPaused = true
         self.mtkView.enableSetNeedsDisplay = false
+        self.mtkView.framebufferOnly = false
+        self.mtkView.colorspace = CGColorSpace(name: CGColorSpace.genericLab)
         
         self.renderer = try AttractorRenderer(metalKitView: self.mtkView, delegate: self)
         
@@ -267,7 +332,7 @@ class VideoCapture: AttractorRendererDelegate {
                 throw VideoCaptureError.FailedToGetPixelBaseAddress
             }
             texture.getBytes(base_buffer,
-                             bytesPerRow: CVPixelBufferGetBytesPerRow(pixel_buffer),
+                             bytesPerRow:CVPixelBufferGetBytesPerRow(pixel_buffer),
                              from: MTLRegionMake2D(0, 0, texture.width, texture.height),
                              mipmapLevel: 0)
             
@@ -282,7 +347,7 @@ class VideoCapture: AttractorRendererDelegate {
     // MARK: - Renderer Delegate
     func rendererDidDraw() {
         switch self.status {
-        case .error, .done, .idle:
+        case .error, .done, .idle, .cancelled:
             return
         case .capturing:
             // append frame
@@ -300,15 +365,70 @@ class VideoCapture: AttractorRendererDelegate {
         }
     }
     
-    func dataBuildProgress(_: Float) {
+    private func calculateOverallProgress(elapsedTime: TimeInterval) -> (progress: Double, remaining: Double) {
+        let per_frame_percent = 1.0 / Double(self.settings.frame_count)
+        let progress = per_frame_percent * (Double(self.attractor_manager.current_frame) + self.currentFrameProgress)
         
+        var remaining: Double = 0.0
+        if progress != 0 {
+            remaining = (elapsedTime / progress) * (1.0 - progress)
+        }
+        
+        return (progress, remaining)
     }
     
+    private var currentFrameProgress: Double = 0.0
     func dataBuildDidStart() {
+        self.bench.reset()
+        self.currentFrameProgress = 0.0
         
+        let overall_elapsed = self.bench.totalElapsedTime
+        let overall_progress = self.calculateOverallProgress(elapsedTime: overall_elapsed)
+        
+        self.delegate?.updateProgress(frame: self.attractor_manager.current_frame,
+                                      frameProgress: 0.0,
+                                      frameElapsedTime: 0.0,
+                                      frameRemainingTime: 0.0,
+                                      overallProgress: overall_progress.progress,
+                                      overallElapsedTime: overall_elapsed,
+                                      overallTimeRemaining: overall_progress.remaining)
+    }
+    
+    func dataBuildProgress(_ progress: Float) {
+        self.currentFrameProgress = Double(progress)
+        
+        let frame_elapsed_time = self.bench.elapsedTime
+        
+        var frame_remaining_time: Double = 0.0
+        if self.currentFrameProgress != 0 {
+            frame_remaining_time = (frame_elapsed_time / self.currentFrameProgress) * (1.0 - self.currentFrameProgress)
+        }
+        
+        
+        let overall_elapsed = self.bench.totalElapsedTime
+        let overall_progress = self.calculateOverallProgress(elapsedTime: overall_elapsed)
+        
+        self.delegate?.updateProgress(frame: self.attractor_manager.current_frame,
+                                      frameProgress: self.currentFrameProgress,
+                                      frameElapsedTime: frame_elapsed_time,
+                                      frameRemainingTime: frame_remaining_time,
+                                      overallProgress: overall_progress.progress,
+                                      overallElapsedTime: overall_elapsed,
+                                      overallTimeRemaining: overall_progress.remaining)
     }
     
     func dataBuildDidFinished(wasCancelled: Bool) {
+        self.currentFrameProgress = 1.0
         
+        let overall_elapsed = self.bench.totalElapsedTime
+        let overall_progress = self.calculateOverallProgress(elapsedTime: overall_elapsed)
+        
+        self.delegate?.updateProgress(frame: self.attractor_manager.current_frame,
+                                      frameProgress: 1.0,
+                                      frameElapsedTime: self.bench.elapsedTime,
+                                      frameRemainingTime: 0.0,
+                                      overallProgress: overall_progress.progress,
+                                      overallElapsedTime: overall_elapsed,
+                                      overallTimeRemaining: overall_progress.remaining)
     }
 }

@@ -11,7 +11,12 @@ import Cocoa
 class FilePathTextField: NSTextField {
 
     var fileURL: URL? {
-        return URL(fileURLWithPath: self.stringValue)
+        get {
+            return URL(fileURLWithPath: self.stringValue)
+        }
+        set {
+            self.stringValue = self.fileURL?.path ?? self.defaultFileURL?.path ?? ""
+        }
     }
     
     var defaultFileURL: URL? = nil
@@ -19,6 +24,8 @@ class FilePathTextField: NSTextField {
     var allowedFileTypes: [String]? = nil
     var allowsOtherFileTypes: Bool = false
     var isExtensionHidden: Bool = false
+    
+    var handleDidSelectFileURL: ((FilePathTextField, URL?)->())?
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -43,7 +50,8 @@ class FilePathTextField: NSTextField {
         
         panel.begin { (response) in
             if response == NSApplication.ModalResponse.OK {
-                self.stringValue = panel.url?.path ?? self.defaultFileURL?.path ?? ""
+                self.fileURL = panel.url
+                self.handleDidSelectFileURL?(self, panel.url)
             }
         }
     }

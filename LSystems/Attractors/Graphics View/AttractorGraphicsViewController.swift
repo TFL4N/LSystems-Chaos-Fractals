@@ -91,7 +91,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
                 
                 self.progressView.setProgress(0.0)
                 self.progressView.setElapsedTime(0.0)
-                self.progressView.setRemaingTime(nil)
+                self.progressView.setRemainingTime(nil)
                 
 //                print("Show Progress")
                 NSAnimationContext.runAnimationGroup({ (context) in
@@ -115,9 +115,9 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
             
             if dblProgress != 0 {
                 let remaining_time = (elapsed_time / dblProgress) * (1.0 - dblProgress)
-                self.progressView.setRemaingTime(remaining_time)
+                self.progressView.setRemainingTime(remaining_time)
             } else {
-                self.progressView.setRemaingTime(nil)
+                self.progressView.setRemainingTime(nil)
             }
         }
     }

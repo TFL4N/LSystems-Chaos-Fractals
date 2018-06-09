@@ -84,6 +84,9 @@ class ProgressView: NSBox {
             "remaining": self.progressRemainingLabel
         ]
         
+        self.contentView = NSView(frame: NSRect.zero)
+        self.boxType = .primary
+        
         for (_,v) in views {
             self.contentView!.addSubview(v as! NSView)
         }
@@ -97,12 +100,18 @@ class ProgressView: NSBox {
         
     }
     
+    func setProgess(_ value: Double?, elapsedTime: TimeInterval?, remainingTime: TimeInterval?) {
+        self.setProgress(value)
+        self.setElapsedTime(elapsedTime)
+        self.setRemainingTime(remainingTime)
+    }
+    
     func setProgress(_ value: Double?) {
         self.progressIndicator.doubleValue = value ?? 0.0
         self.progressLabel.doubleValue = value ?? 0.0
     }
     
-    func setElapsedTime(_ elapsed_time: Double?) {
+    func setElapsedTime(_ elapsed_time: TimeInterval?) {
         if let value = elapsed_time,
             let str = self.timeLabelFormatter.string(from: value) {
             self.progressElapsedLabel.stringValue = str
@@ -111,8 +120,9 @@ class ProgressView: NSBox {
         }
     }
     
-    func setRemaingTime(_ remaining_time: Double?) {
+    func setRemainingTime(_ remaining_time: TimeInterval?) {
         if let value = remaining_time,
+            value > 0.0,
             let str = self.timeLabelFormatter.string(from: value) {
             self.progressRemainingLabel.stringValue = str
         } else {

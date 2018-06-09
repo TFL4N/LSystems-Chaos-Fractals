@@ -58,7 +58,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
     }
     
     deinit {
-        self.attractor_manager.attractor.coloring_info.removeObserver(self, forKeyPath: "didChange", context: nil)
+        self.attractor_manager?.attractor.coloring_info.removeObserver(self, forKeyPath: "didChange", context: nil)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
