@@ -15,7 +15,7 @@ class FilePathTextField: NSTextField {
             return URL(fileURLWithPath: self.stringValue)
         }
         set {
-            self.stringValue = self.fileURL?.path ?? self.defaultFileURL?.path ?? ""
+            self.stringValue = self.fileURL?.path ?? ""
         }
     }
     
@@ -46,7 +46,7 @@ class FilePathTextField: NSTextField {
         panel.allowedFileTypes = self.allowedFileTypes
         panel.allowsOtherFileTypes = self.allowsOtherFileTypes
         panel.isExtensionHidden = self.isExtensionHidden
-        panel.directoryURL = self.fileURL?.deletingLastPathComponent() ?? self.defaultFileURL
+        panel.directoryURL = self.fileURL?.deletingLastPathComponent() ?? self.defaultFileURL ?? FileManager.default.homeDirectoryForCurrentUser
         
         panel.begin { (response) in
             if response == NSApplication.ModalResponse.OK {

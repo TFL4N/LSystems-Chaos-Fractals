@@ -106,6 +106,38 @@ class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
             return
         }
         
+        /// check if file exists
+        let path = self.video_capture_settings.output_file_url!.path
+        if FileManager.default.fileExists(atPath: path) {
+            let alert = NSAlert()
+            alert.messageText =
+            """
+            File already exists at:
+            \(path)
+            Overwrite?
+            """
+            alert.addButton(withTitle: "Cancel")
+            alert.addButton(withTitle: "Overwrite")
+            alert.alertStyle = .critical
+            
+            switch alert.runModal() {
+            case NSApplication.ModalResponse.alertFirstButtonReturn:
+                do {
+                    try FileManager.default.removeItem(atPath: path)
+                } catch {
+                    let removeAlert = NSAlert()
+                    removeAlert.messageText = "Failed to remove file at:\n\(path)"
+                    removeAlert.addButton(withTitle: "OK")
+                    removeAlert.alertStyle = .critical
+                    
+                    removeAlert.runModal()
+                    return
+                }
+            default:
+                return
+            }
+        }
+        
         // check if capture in progress
         guard self.video_capture_window_ctlr == nil else {
             let alert = NSAlert()
