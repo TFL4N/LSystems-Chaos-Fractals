@@ -29,7 +29,9 @@ class AttractorOperation: Operation {
     
     @objc dynamic var progress: Float = 0.0 {
         didSet {
-            progress_handler?(self.progress)
+            if abs(self.progress - oldValue) > 0.0001 {
+                progress_handler?(self.progress)
+            }
         }
     }
     

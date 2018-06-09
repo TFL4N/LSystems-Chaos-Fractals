@@ -26,6 +26,8 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     
     static let maxBuffersInFlight = 3
     
+    static let pixel_format = MTLPixelFormat.bgra8Unorm
+    
     enum RendererError: Error {
         case badVertexDescriptor
     }
@@ -44,6 +46,8 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     var uniforms: UnsafeMutablePointer<A_Uniforms>
 
     var buffer_pool: BigBufferPool
+    
+    let isVideoCaptureMode: Bool
     
     var coloring_mode_buffers: [Int32]
     var base_color_buffers: [vector_float4]
@@ -86,10 +90,11 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
     var delegate: AttractorRendererDelegate
     
     // MARK: Lifecycle
-    init(metalKitView: MTKView, delegate: AttractorRendererDelegate) throws {
+    init(metalKitView: MTKView, delegate: AttractorRendererDelegate, isVideoCaptureMode: Bool = false) throws {
         self.delegate = delegate
         self.device = metalKitView.device!
         self.commandQueue = self.device.makeCommandQueue()!
+        self.isVideoCaptureMode = isVideoCaptureMode
         
         //
         // Build Buffers
@@ -127,7 +132,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         
         // Build Vertex Descriptor
         metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float_stencil8
-        metalKitView.colorPixelFormat = MTLPixelFormat.bgra8Unorm
+        metalKitView.colorPixelFormat = AttractorRenderer.pixel_format
         metalKitView.sampleCount = 1
         
         let mtlVertexDescriptor = AttractorRenderer.buildMetalVertexDescriptor()
@@ -272,7 +277,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
         },
             didFinishHandler: { (cancelled) in
                 self.delegate.dataBuildDidFinished(wasCancelled: cancelled)
-        })
+        }, sync: self.isVideoCaptureMode)
     }
     
     private func updateColorBufferState() {
@@ -308,7 +313,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
             /// Update State
             self.updateState()
             
-            let data_buffer = self.delegate.attractor_manager.current_buffers ?? []
+            let data_buffer = self.delegate.attractor_manager.current_buffers?.buffers ?? []
             for buf in data_buffer {
                 buf.retain()
             }
@@ -327,6 +332,11 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
             if let renderPassDescriptor = view.currentRenderPassDescriptor {
                 renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor( CGColor.whiteLabColor.fromLABtoMTLColor() )
+                
+//                if let output = output_texture {
+//                    renderPassDescriptor.colorAttachments[0].storeAction = .multisampleResolve
+//                    renderPassDescriptor.colorAttachments[0].resolveTexture = output
+//                }
                 
                 /// Final pass rendering code here
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {

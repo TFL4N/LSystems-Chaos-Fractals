@@ -106,6 +106,17 @@ class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
             return
         }
         
+        // check if capture in progress
+        guard self.video_capture_window_ctlr == nil else {
+            let alert = NSAlert()
+            alert.messageText = "Video capture already in Progress"
+            alert.addButton(withTitle: "Cancel")
+            alert.alertStyle = .critical
+            
+            alert.runModal()
+            return
+        }
+        
         /// check if file exists
         let path = self.video_capture_settings.output_file_url!.path
         if FileManager.default.fileExists(atPath: path) {
@@ -116,8 +127,8 @@ class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
             \(path)
             Overwrite?
             """
-            alert.addButton(withTitle: "Cancel")
             alert.addButton(withTitle: "Overwrite")
+            alert.addButton(withTitle: "Cancel")
             alert.alertStyle = .critical
             
             switch alert.runModal() {
@@ -136,17 +147,6 @@ class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
             default:
                 return
             }
-        }
-        
-        // check if capture in progress
-        guard self.video_capture_window_ctlr == nil else {
-            let alert = NSAlert()
-            alert.messageText = "Video capture already in Progress"
-            alert.addButton(withTitle: "Cancel")
-            alert.alertStyle = .critical
-            
-            alert.runModal()
-            return
         }
         
         // build video capture contlr

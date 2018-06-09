@@ -178,7 +178,9 @@ class VideoCapture: AttractorRendererDelegate {
             
             self.delegate?.captureDidBegin(self)
             
-            self.mtkView.draw()
+            DispatchQueue.global(qos: .userInteractive).async {
+                self.mtkView.draw()
+            }
             
             return true
         } catch {
@@ -257,7 +259,7 @@ class VideoCapture: AttractorRendererDelegate {
         self.mtkView.framebufferOnly = false
         self.mtkView.colorspace = CGColorSpace(name: CGColorSpace.genericLab)
         
-        self.renderer = try AttractorRenderer(metalKitView: self.mtkView, delegate: self)
+        self.renderer = try AttractorRenderer(metalKitView: self.mtkView, delegate: self, isVideoCaptureMode: true)
         
         self.mtkView.delegate = self.renderer
     }
@@ -331,8 +333,6 @@ class VideoCapture: AttractorRendererDelegate {
             guard let base_buffer = CVPixelBufferGetBaseAddress(pixel_buffer) else {
                 throw VideoCaptureError.FailedToGetPixelBaseAddress
             }
-            print("Texture Width: \(texture.width) -- \(texture.sampleCount)")
-            print("Buffer Width: \(CVPixelBufferGetWidth(pixel_buffer))")
             texture.getBytes(base_buffer,
                              bytesPerRow:CVPixelBufferGetBytesPerRow(pixel_buffer),
                              from: MTLRegionMake2D(0, 0, texture.width, texture.height),
@@ -357,10 +357,14 @@ class VideoCapture: AttractorRendererDelegate {
                 self.attractor_manager.current_frame,
                 texture: self.mtkView.currentDrawable!.texture)
             
+//            print("Completed Frame: \(self.attractor_manager.current_frame) - \(self.bench.elapsedTime)")
             self.attractor_manager.current_frame += 1
             
             if self.attractor_manager.current_frame < self.settings.frame_count {
-                self.mtkView.draw()
+                // draw next frame
+                DispatchQueue.global(qos: .userInteractive).async {
+                    self.mtkView.draw()
+                }
             } else {
                 self.finishCapturingVideo()
             }
@@ -369,12 +373,14 @@ class VideoCapture: AttractorRendererDelegate {
     
     private func calculateOverallProgress(elapsedTime: TimeInterval) -> (progress: Double, remaining: Double) {
         let per_frame_percent = 1.0 / Double(self.settings.frame_count)
-        let progress = per_frame_percent * (Double(self.attractor_manager.current_frame) + self.currentFrameProgress)
+        var progress = per_frame_percent * (Double(self.attractor_manager.current_frame+1) + self.currentFrameProgress)
         
         var remaining: Double = 0.0
         if progress != 0 {
             remaining = (elapsedTime / progress) * (1.0 - progress)
         }
+        
+        progress = max(0.0, min(progress, 1.0))
         
         return (progress, remaining)
     }

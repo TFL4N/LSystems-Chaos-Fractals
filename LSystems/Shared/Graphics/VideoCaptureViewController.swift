@@ -49,7 +49,7 @@ class VideoCaptureViewController: NSViewController, VideoCaptureDelegate {
     // MARK: Video Capture Delegate
     private func updateProgressViews(frame: FrameId, frameProgress: Double, frameElapsedTime: TimeInterval, frameRemainingTime: TimeInterval, overallProgress: Double, overallElapsedTime: TimeInterval, overallTimeRemaining: TimeInterval) {
         DispatchQueue.main.async {
-            self.overallProgressView.title = "Frame \(frame+1) of \(self.video_capture.settings.frame_count)"
+            self.showMessage("Frame \(frame+1) of \(self.video_capture.settings.frame_count)")
             self.overallProgressView.setProgess(overallProgress, elapsedTime: overallElapsedTime, remainingTime: overallTimeRemaining)
             
             self.frameProgressView.setProgess(frameProgress, elapsedTime: frameElapsedTime, remainingTime: frameRemainingTime)

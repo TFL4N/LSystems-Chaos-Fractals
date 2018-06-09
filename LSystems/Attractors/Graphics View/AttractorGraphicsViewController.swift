@@ -77,7 +77,7 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
     
     // MARK: Attractor Renderer Delegate
     func rendererDidDraw() {
- 
+        
     }
     
     lazy var progressBench = Benchmark()

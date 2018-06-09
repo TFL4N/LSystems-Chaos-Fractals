@@ -1206,22 +1206,22 @@
             <objects>
                 <viewController id="ZIw-ob-J2g" customClass="VideoCaptureViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="nbX-47-zG8">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="249"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="299"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="auw-Ay-988">
-                                <rect key="frame" x="10" y="10" width="300" height="229"/>
+                                <rect key="frame" x="10" y="10" width="300" height="279"/>
                                 <subviews>
                                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L4s-k9-hq5">
-                                        <rect key="frame" x="-2" y="212" width="304" height="17"/>
+                                        <rect key="frame" x="-2" y="262" width="304" height="17"/>
                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="vdE-Ts-ZdQ">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <customView horizontalHuggingPriority="750" verticalHuggingPriority="750" placeholderIntrinsicWidth="300" placeholderIntrinsicHeight="96" translatesAutoresizingMaskIntoConstraints="NO" id="XM9-Kq-S3f" customClass="ProgressView" customModule="L_Systems" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="133" width="300" height="96"/>
+                                    <customView horizontalHuggingPriority="750" placeholderIntrinsicWidth="300" placeholderIntrinsicHeight="96" translatesAutoresizingMaskIntoConstraints="NO" id="XM9-Kq-S3f" customClass="ProgressView" customModule="L_Systems" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="133" width="300" height="146"/>
                                     </customView>
                                     <customView horizontalHuggingPriority="750" verticalHuggingPriority="750" placeholderIntrinsicWidth="300" placeholderIntrinsicHeight="96" translatesAutoresizingMaskIntoConstraints="NO" id="yMX-S0-c4P" customClass="ProgressView" customModule="L_Systems" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="29" width="300" height="96"/>
@@ -1275,7 +1275,7 @@ Gw
                 </viewController>
                 <customObject id="EAS-ha-dpg" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2552.5" y="1021.5"/>
+            <point key="canvasLocation" x="2552" y="1046.5"/>
         </scene>
         <!--Color Picker Panel-->
         <scene sceneID="d7A-ax-COc">

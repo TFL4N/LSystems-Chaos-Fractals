@@ -9,6 +9,8 @@
 import Foundation
 
 class AttractorManager: NSObject {
+    typealias Buffers = (frame: FrameId, buffers: [AttractorBuffer])
+    
     let attractor: Attractor
     lazy var operation_queue: OperationQueue = {
         let queue = OperationQueue()
@@ -23,8 +25,8 @@ class AttractorManager: NSObject {
     private var requesting_refresh: Bool = false
 
     private var current_buffers_lock = ReadWriteLock()
-    private var current_buffers_store: [AttractorBuffer]?
-    var current_buffers: [AttractorBuffer]? {
+    private var current_buffers_store: Buffers?
+    var current_buffers: Buffers? {
         get {
             self.current_buffers_lock.readLock()
             defer {
@@ -40,8 +42,8 @@ class AttractorManager: NSObject {
                 self.current_buffers_lock.unlock()
             }
             
-            if let buffers = self.current_buffers_store {
-                for buf in buffers {
+            if let buffer = self.current_buffers_store {
+                for buf in buffer.buffers {
                     buf.release()
                 }
             }
@@ -80,28 +82,40 @@ class AttractorManager: NSObject {
         self.requesting_refresh = true
     }
     
-    func buildAttractorVertexDataAtCurrentFrame(bufferPool: BigBufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
-        self.buildAttractorVertexData(atFrame: self.current_frame, bufferPool: bufferPool, progressHandler: progressHandler, didStartHandler: didStartHandler, didFinishHandler: didFinishHandler, force: force)
+    func buildAttractorVertexDataAtCurrentFrame(bufferPool: BigBufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil,  sync: Bool = false) {
+        self.buildAttractorVertexData(atFrame: self.current_frame, bufferPool: bufferPool, progressHandler: progressHandler, didStartHandler: didStartHandler, didFinishHandler: didFinishHandler, sync: sync)
     }
     
-    func buildAttractorVertexData(atFrame: FrameId, bufferPool: BigBufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, force: Bool = false) {
-        if self.attractor.didChange || self.requesting_refresh || force {
+    func buildAttractorVertexData(atFrame: FrameId, bufferPool: BigBufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, sync: Bool = false) {
+        var buffers_outdated = false
+        if let buf = self.current_buffers {
+            buffers_outdated = buf.frame != self.current_frame
+        }
+        
+        if self.attractor.didChange
+            || self.requesting_refresh
+            || buffers_outdated {
             self.attractor.didChange = false
             self.requesting_refresh = false
             
+            let frame_id = self.current_frame
             let operation = self.attractor.buildOperationData(atFrame: atFrame, bufferPool: bufferPool)
             operation.did_start_handler = didStartHandler
             operation.progress_handler = progressHandler
             operation.completionBlock = {
                 if let buffers = operation.data_buffers {
-                    self.current_buffers = buffers
+                    self.current_buffers = Buffers(frame_id, buffers)
                 }
                 
                 didFinishHandler?(operation.isCancelled)
             }
             
-            self.operation_queue.cancelAllOperations()
-            self.operation_queue.addOperation(operation)
+            if sync {
+                operation.start()
+            } else {
+                self.operation_queue.cancelAllOperations()
+                self.operation_queue.addOperation(operation)
+            }
         }
     }
     

@@ -54,6 +54,10 @@ class ProgressView: NSBox {
     }
     
     private func commonInit() {
+        self.titlePosition = .aboveTop
+        self.boxType = .primary
+        self.borderType = .grooveBorder
+        
         let font = NSFont.systemFont(ofSize: 16)
         
         self.progressIndicator = NSProgressIndicator(frame: NSRect.zero)
