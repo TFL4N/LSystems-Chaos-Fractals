@@ -337,8 +337,8 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
                     for buffers in data_buffer {
                         renderEncoder.setCullMode(.back)
                         renderEncoder.setFrontFacing(.counterClockwise)
-                        renderEncoder.setRenderPipelineState(pipelineState)
-                        renderEncoder.setDepthStencilState(depthState)
+                        renderEncoder.setRenderPipelineState(self.pipelineState)
+                        renderEncoder.setDepthStencilState(self.depthState)
                         
                         // set uniform buffer
                         renderEncoder

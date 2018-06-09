@@ -263,7 +263,7 @@ class VideoCapture: AttractorRendererDelegate {
     }
     
     private func createVideoAssetWriter() throws {
-        let output_url = URL(fileURLWithPath: "/Users/SpaiceMaine/GoodKarmaCoding/LSystems Documents/capture/video.mov")
+        let output_url = self.settings.output_file_url!
         
         // create writer
         do {
@@ -287,8 +287,8 @@ class VideoCapture: AttractorRendererDelegate {
         // buffer adapter
         let sourceBufferAttributes : [String : AnyObject] = [
             kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: kCVPixelFormatType_32BGRA),
-            kCVPixelBufferWidthKey as String : NSNumber(value: Int(self.settings.video_size.width)),
-            kCVPixelBufferHeightKey as String : NSNumber(value: Int(self.settings.video_size.height)),
+            kCVPixelBufferWidthKey as String : NSNumber(value: Int(self.settings.video_size.width * 2)),
+            kCVPixelBufferHeightKey as String : NSNumber(value: Int(self.settings.video_size.height * 2)),
             ]
         self.pixel_buffer_adapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: self.video_writer_input, sourcePixelBufferAttributes: sourceBufferAttributes)
     }
@@ -312,8 +312,8 @@ class VideoCapture: AttractorRendererDelegate {
             }
             
             guard CVPixelBufferCreate(kCFAllocatorDefault,
-                                      Int(self.settings.video_size.width),
-                                      Int(self.settings.video_size.height),
+                                      Int(self.settings.video_size.width * 2),
+                                      Int(self.settings.video_size.height * 2),
                                       kCVPixelFormatType_32BGRA,
                                       nil,
                                       pixel_buffer_ptr) == kCVReturnSuccess,
@@ -331,6 +331,8 @@ class VideoCapture: AttractorRendererDelegate {
             guard let base_buffer = CVPixelBufferGetBaseAddress(pixel_buffer) else {
                 throw VideoCaptureError.FailedToGetPixelBaseAddress
             }
+            print("Texture Width: \(texture.width) -- \(texture.sampleCount)")
+            print("Buffer Width: \(CVPixelBufferGetWidth(pixel_buffer))")
             texture.getBytes(base_buffer,
                              bytesPerRow:CVPixelBufferGetBytesPerRow(pixel_buffer),
                              from: MTLRegionMake2D(0, 0, texture.width, texture.height),

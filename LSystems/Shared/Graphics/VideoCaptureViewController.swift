@@ -83,36 +83,42 @@ class VideoCaptureViewController: NSViewController, VideoCaptureDelegate {
     }
     
     func captureDidComplete(_: VideoCapture) {
-        self.showMessage(
-            """
-            Video Capture Complete
+        DispatchQueue.main.async {
+            self.showMessage(
+                """
+                Video Capture Complete
+                
+                Saved to \(self.video_capture.settings.output_file_url!.path)
+                """
+            )
             
-            Saved to \(self.video_capture.settings.output_file_url!.path)
-            """
-        )
-        
-        self.cancelButton.title = "Close"
+            self.cancelButton.title = "Close"
+        }
     }
     
     func captureDidFail(_: VideoCapture) {
-        self.showMessage(
-            """
-            Video Capture Failed
+        DispatchQueue.main.async {
+            self.showMessage(
+                """
+                Video Capture Failed
+                
+                Error \(self.video_capture.error!)
+                """
+            )
             
-            Error \(self.video_capture.error!)
-            """
-        )
-        
-        self.cancelButton.title = "Close"
+            self.cancelButton.title = "Close"
+        }
     }
     
     func captureDidCancel(_: VideoCapture) {
-        self.showMessage(
-            """
+        DispatchQueue.main.async {
+            self.showMessage(
+                """
             Video Capture Cancelled
             """
-        )
-        
-        self.cancelButton.title = "Close"
+            )
+            
+            self.cancelButton.title = "Close"
+        }
     }
 }
