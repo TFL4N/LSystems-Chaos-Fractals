@@ -109,7 +109,7 @@ class PickoverAttractorOperation: AttractorOperation {
         let C = self.attractor.parameter(withName: "C")!.value(atFrame: self.frame_id)!.floatValue!
         let D = self.attractor.parameter(withName: "D")!.value(atFrame: self.frame_id)!.floatValue!
         
-        //        print("A: \(A), B: \(B), C: \(C), D: \(D)")
+                print("A: \(A), B: \(B), C: \(C), D: \(D)")
         
         var x: Float = 0
         var y: Float = 0

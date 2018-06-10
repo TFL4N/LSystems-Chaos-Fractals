@@ -169,10 +169,6 @@ class VideoCapture: AttractorRendererDelegate {
             self.video_writer.startWriting()
             self.video_writer.startSession(atSourceTime: kCMTimeZero)
             
-            //            if self.pixel_buffer_adapter.pixelBufferPool == nil {
-            //                throw VideoCaptureError.FailedToCreatePixelBufferPool
-            //            }
-            
             self.status = .capturing
             self.bench = Benchmark()
             
@@ -291,6 +287,7 @@ class VideoCapture: AttractorRendererDelegate {
             kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: kCVPixelFormatType_32BGRA),
             kCVPixelBufferWidthKey as String : NSNumber(value: Int(self.settings.video_size.width * 2)),
             kCVPixelBufferHeightKey as String : NSNumber(value: Int(self.settings.video_size.height * 2)),
+            kCVImageBufferCGColorSpaceKey as String : CGColorSpace(name: CGColorSpace.genericLab)!
             ]
         self.pixel_buffer_adapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: self.video_writer_input, sourcePixelBufferAttributes: sourceBufferAttributes)
     }
@@ -304,9 +301,6 @@ class VideoCapture: AttractorRendererDelegate {
         try autoreleasepool {
             // Get Pixel Buffer
             /////////////
-            //            guard let pixel_buffer_pool = self.pixel_buffer_adapter.pixelBufferPool else {
-            //                throw VideoCaptureError.FailedToGetPixelBufferPool
-            //            }
             
             let pixel_buffer_ptr = UnsafeMutablePointer<CVPixelBuffer?>.allocate(capacity: 1)
             defer {
@@ -322,6 +316,9 @@ class VideoCapture: AttractorRendererDelegate {
                 let pixel_buffer = pixel_buffer_ptr.pointee else {
                     throw VideoCaptureError.FailedToCreatePixelBuffer
             }
+            
+            CVBufferSetAttachment(pixel_buffer, kCVImageBufferICCProfileKey, CGColorSpace(name: CGColorSpace.genericLab)!.copyICCData()!, CVAttachmentMode.shouldPropagate)
+            
             
             // Get Pixel Data
             ////////////////////
