@@ -333,19 +333,18 @@ class GradientColorItem: NSObject, NSCoding {
     
     required convenience init?(coder aDecoder: NSCoder) {
         let coder = aDecoder as! NSKeyedUnarchiver
-        guard let color = coder.decodeObject(forKey: "gradientcolor_item_color") as? NSColor else {
-            return nil
+        guard let color = coder.decodeObject(forKey: "gradientcolor_item_color") as? NSColor,
+            let pos = coder.decodeObject(forKey: "gradientcolor_item_position") as? NSNumber else {
+                return nil
         }
         
-        let pos = coder.decodeFloat(forKey: "gradientcolor_item_position")
-        
-        self.init(position: pos, color: color.cgColor)
+        self.init(position: pos.floatValue, color: color.cgColor)
     }
     
     func encode(with aCoder: NSCoder) {
         let coder = aCoder as! NSKeyedArchiver
         
-        coder.encode(self.position, forKey: "gradientcolor_item_position")
+        coder.encode(self.position as Any, forKey: "gradientcolor_item_position")
         coder.encode(self.nscolor, forKey: "gradientcolor_item_color")
     }
 }

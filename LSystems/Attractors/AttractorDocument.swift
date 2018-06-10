@@ -38,6 +38,7 @@ class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
     weak var coloring_info_panel_window_ctlr: NSWindowController!
     
     weak var video_capture_window_ctlr: NSWindowController!
+    weak var animation_info_window_ctlr: NSWindowController!
     
     // MARK: - Lifecycle
     override init() {
@@ -81,9 +82,8 @@ class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
     }
     
     func showColoringInfo() {
-        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-        
         if self.coloring_info_panel_window_ctlr == nil {
+             let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
             self.coloring_info_panel_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Coloring Info Panel")) as! NSWindowController
             self.coloring_info_panel_window_ctlr.shouldCloseDocument = false
             
@@ -91,6 +91,27 @@ class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
         }
         
         self.coloring_info_panel_window_ctlr.showWindow(self)
+    }
+    
+    // MARK: Animation Info
+    func showAnimationInfo(forParameter parameter: Parameter) {
+        if self.animation_info_window_ctlr == nil {
+            let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
+            self.animation_info_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Animation Info Window")) as! NSWindowController
+            self.animation_info_window_ctlr.shouldCloseDocument = false
+            
+            self.addWindowController(self.animation_info_window_ctlr)
+        }
+        
+        let animation_vc = self.animation_info_window_ctlr.contentViewController as! AnimationInfoViewController
+        
+        if parameter.animation == nil {
+            parameter.animation = AnimationSequence()
+        }
+        animation_vc.valueType = parameter.value_type
+        animation_vc.animationSequence = parameter.animation
+        
+        self.animation_info_window_ctlr.showWindow(self)
     }
     
     // MARK: Video Capture

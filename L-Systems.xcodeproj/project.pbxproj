@@ -65,6 +65,8 @@
 		6595A64F20C25EF4006A1DF0 /* Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A64E20C25EF3006A1DF0 /* Benchmark.swift */; };
 		6595A65120C273D2006A1DF0 /* GradientColorItemCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65020C273D2006A1DF0 /* GradientColorItemCellView.swift */; };
 		6595A65320C2798D006A1DF0 /* GradientColorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65220C2798D006A1DF0 /* GradientColorSettingsViewController.swift */; };
+		65CC9C3420CD1427002C54AA /* AnimationFrameTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CC9C3320CD1427002C54AA /* AnimationFrameTableCellView.swift */; };
+		65CC9C3720CD180C002C54AA /* AnimationInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CC9C3620CD180C002C54AA /* AnimationInfoViewController.swift */; };
 		65D8447F20B7E53E00FDCBCC /* RendererUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */; };
 		65F0D36820C375AD00E94785 /* LABColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */; };
 		65F0D36920C375DB00E94785 /* LABColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */; };
@@ -169,6 +171,8 @@
 		6595A65520C27E5D006A1DF0 /* LabColorPickerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LabColorPickerView.xib; sourceTree = "<group>"; };
 		6595A65720C28056006A1DF0 /* LabColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabColorPicker.swift; sourceTree = "<group>"; };
 		6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LABColorSlider.swift; sourceTree = "<group>"; };
+		65CC9C3320CD1427002C54AA /* AnimationFrameTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFrameTableCellView.swift; sourceTree = "<group>"; };
+		65CC9C3620CD180C002C54AA /* AnimationInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationInfoViewController.swift; sourceTree = "<group>"; };
 		65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererUtils.swift; sourceTree = "<group>"; };
 		65F0D36A20C378BA00E94785 /* LabColorPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabColorPickerViewController.swift; sourceTree = "<group>"; };
 		65F0D36C20C388E700E94785 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -318,6 +322,7 @@
 				65252A4820B7DF83008CD676 /* RenderOptionsViewController.swift */,
 				65F0D36A20C378BA00E94785 /* LabColorPickerViewController.swift */,
 				65034AC820CA7DE6001D7315 /* CaptureOptionsViewController.swift */,
+				65CC9C3520CD17DD002C54AA /* Animation */,
 			);
 			path = Panels;
 			sourceTree = "<group>";
@@ -414,6 +419,15 @@
 				6581E13A20C2C36300B5447A /* Info.plist */,
 			);
 			path = LabColorPicker;
+			sourceTree = "<group>";
+		};
+		65CC9C3520CD17DD002C54AA /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				65CC9C3320CD1427002C54AA /* AnimationFrameTableCellView.swift */,
+				65CC9C3620CD180C002C54AA /* AnimationInfoViewController.swift */,
+			);
+			path = Animation;
 			sourceTree = "<group>";
 		};
 		65F1EB15206C8083007DF72B = {
@@ -686,8 +700,10 @@
 				65F0D36D20C388E700E94785 /* Utils.swift in Sources */,
 				65252A2D20B62B8B008CD676 /* AttractorDataStructs.swift in Sources */,
 				65034ACB20CA8D01001D7315 /* FilePathTextField.swift in Sources */,
+				65CC9C3720CD180C002C54AA /* AnimationInfoViewController.swift in Sources */,
 				65F0D37120C3F28400E94785 /* GradientColorWell.swift in Sources */,
 				6595A64520BB640B006A1DF0 /* ValueSliderCellView.swift in Sources */,
+				65CC9C3420CD1427002C54AA /* AnimationFrameTableCellView.swift in Sources */,
 				6595A64720BB8540006A1DF0 /* VideoCapture.swift in Sources */,
 				65F1EB24206C8083007DF72B /* LGraphicsViewController.swift in Sources */,
 				6568AB39209F7AEA009B828A /* LSystemRenderer.swift in Sources */,

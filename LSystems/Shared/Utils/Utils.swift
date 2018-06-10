@@ -9,6 +9,24 @@
 import Foundation
 import Cocoa
 
+extension Array {
+    public mutating func remove(atIndices: IndexSet) {
+        for i in atIndices.reversed() {
+            self.remove(at: i)
+        }
+    }
+    
+    public mutating func move(with indexes: IndexSet, to toIndex: Index) {
+        let movingData = indexes.map{ self[$0] }
+        let targetIndex = toIndex - indexes.filter{ $0 < toIndex }.count
+        for (i, e) in indexes.enumerated() {
+            self.remove(at: e - i)
+        }
+        
+        self.insert(contentsOf: movingData, at: targetIndex)
+    }
+}
+
 extension CGColor {
     func fromLABtoMTLColor() -> [Float] {
         let comps = self.components!.map {Float($0)}

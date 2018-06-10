@@ -265,12 +265,20 @@ enum ValueType: String, Codable {
 
 class Parameter: NSObject, NSCoding {
     let name: String
+    let value_type: ValueType
     @objc dynamic var value: Value?
     var animation: AnimationSequence?
+
+    init(name: String, valueType: ValueType) {
+        self.name = name
+        self.value = nil
+        self.value_type = valueType
+    }
     
-    init(name: String, value: Value?) {
+    init(name: String, value: Value) {
         self.name = name
         self.value = value
+        self.value_type = value.type
         
         super.init()
     }
@@ -280,9 +288,13 @@ class Parameter: NSObject, NSCoding {
         guard let name = coder.decodeObject(forKey: "parameter_name") as? String
             else { return nil }
         
-        let value = coder.decodeObject(forKey: "parameter_value") as? Value
+        let value_type = coder.decodeDecodable(ValueType.self, forKey: "parameter_value_type")
         
-        self.init(name: name, value: value)
+        if let value = coder.decodeObject(forKey: "parameter_value") as? Value {
+            self.init(name: name, value: value)
+        } else {
+            self.init(name: name, valueType: value_type ?? .float)
+        }
     }
     
     func encode(with aCoder: NSCoder) {
@@ -290,6 +302,7 @@ class Parameter: NSObject, NSCoding {
         
         coder.encode(self.name, forKey: "parameter_name")
         coder.encode(self.value, forKey: "parameter_value")
+        try! coder.encodeEncodable(self.value_type, forKey: "parameter_value_type")
     }
     
     func value(atFrame: FrameId) -> Value? {
@@ -341,6 +354,10 @@ class AnimationSequence {
     var key_frames: [KeyFrame]
     var interpolator: InterpolateProtocol = LinearInterpolator()
     
+    convenience init() {
+        self.init(keyFrames: [])
+    }
+    
     init(keyFrames: [KeyFrame]) {
         self.key_frames = keyFrames
     }
@@ -362,12 +379,28 @@ class LinearInterpolator: InterpolateProtocol {
     }
 }
 
-class KeyFrame {
-    var value: Value
-    var duration: FrameInterval
+class KeyFrame: NSObject, NSCoding {
+    @objc dynamic var value: Value
+    @objc dynamic var duration: FrameInterval
     
     init(value: Value, duration: FrameInterval) {
         self.value = value
         self.duration = duration
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        let coder = aDecoder as! NSKeyedUnarchiver
+        guard let value = coder.decodeObject(forKey: "keyframe_value") as? Value,
+            let duration = coder.decodeObject(forKey: "keyframe_duration") as? NSNumber
+            else { return nil }
+        
+        self.init(value: value, duration: duration.uintValue)
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        let coder = aCoder as! NSKeyedArchiver
+        
+        coder.encode(self.value, forKey: "keyframe_value")
+        coder.encode(self.duration, forKey: "keyframe_duration")
     }
 }
