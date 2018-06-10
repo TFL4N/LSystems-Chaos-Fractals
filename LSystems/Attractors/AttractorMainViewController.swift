@@ -71,6 +71,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
     private enum CellID {
         static let ParameterName = NSUserInterfaceItemIdentifier(rawValue: "parameter_name")
         static let ParameterValue = NSUserInterfaceItemIdentifier(rawValue: "parameter_value")
+        static let ParameterAnimation = NSUserInterfaceItemIdentifier(rawValue: "parameter_animation")
     }
     
     func numberOfRows(in tableView: NSTableView) -> Int {
@@ -113,6 +114,21 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
                 case .integer:
                     value_cell.valueSlider.multiplier = 5
                 }
+            }
+        } else if tableColumn == self.parametersTableView.tableColumns[2] {
+            // create cell
+            cell = tableView.makeView(withIdentifier: CellID.ParameterAnimation, owner: nil) as? NSTableCellView
+            
+            if cell == nil {
+                cell = ButtonTableCellView()
+                cell!.identifier = CellID.ParameterAnimation
+            }
+            
+            // fill data
+            let button_cell = cell as! ButtonTableCellView
+            button_cell.button.title = "Animation"
+            button_cell.handler = { (_) in
+                self.document?.showAnimationInfo(forParameter: self.attractor_manager.attractor.parameters[row])
             }
         }
         

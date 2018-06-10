@@ -15,11 +15,20 @@ class TextFieldCellView: NSTableCellView, NSTextFieldDelegate {
     
     public init() {
         super.init(frame: NSRect.zero)
+        self.commonInit()
+    }
     
+    required init?(coder decoder: NSCoder) {
+        super.init(coder: decoder)
+        self.commonInit()
+    }
+    
+    private func commonInit() {
         self.mainTextField = NSTextField(frame: NSRect.zero)
+        self.mainTextField.translatesAutoresizingMaskIntoConstraints = false
         self.mainTextField.tag = 1
         self.mainTextField.delegate = self
-        self.mainTextField.translatesAutoresizingMaskIntoConstraints = false
+        
         
         self.addSubview(self.mainTextField)
         
@@ -28,10 +37,6 @@ class TextFieldCellView: NSTableCellView, NSTextFieldDelegate {
         
         self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-marg-[main(100)]-marg-|", options: .alignAllCenterY, metrics: metrics, views: views))
         self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-marg-[main]-marg-|", options: [], metrics: metrics, views: views))
-    }
-    
-    required init?(coder decoder: NSCoder) {
-        super.init(coder: decoder)
     }
     
     // MARK: NSTextField Delegate

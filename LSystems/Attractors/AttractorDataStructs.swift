@@ -194,6 +194,10 @@ class Value: NSObject, NSCoding {
     
     @objc dynamic var numberValue: NSNumber? {
         get {
+            if self.value_store == nil {
+                return nil
+            }
+            
             switch self.type {
             case .float:
                 return NSNumber(value: self.floatValue!)
@@ -269,18 +273,21 @@ class Parameter: NSObject, NSCoding {
     @objc dynamic var value: Value?
     var animation: AnimationSequence?
 
-    init(name: String, valueType: ValueType) {
-        self.name = name
-        self.value = nil
-        self.value_type = valueType
-    }
-    
-    init(name: String, value: Value) {
+    private init(name: String, value: Value?, valueType: ValueType, animation: AnimationSequence?) {
         self.name = name
         self.value = value
-        self.value_type = value.type
+        self.value_type = valueType
+        self.animation = animation
         
         super.init()
+    }
+    
+    convenience init(name: String, valueType: ValueType, animation: AnimationSequence? = nil) {
+        self.init(name: name, value: nil, valueType: valueType, animation: animation)
+    }
+    
+    convenience init(name: String, value: Value, animation: AnimationSequence? = nil) {
+        self.init(name: name, value: value, valueType: value.type, animation: animation)
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
@@ -289,11 +296,12 @@ class Parameter: NSObject, NSCoding {
             else { return nil }
         
         let value_type = coder.decodeDecodable(ValueType.self, forKey: "parameter_value_type")
+        let animation = coder.decodeObject(forKey: "parameter_animation_sequence") as? AnimationSequence
         
         if let value = coder.decodeObject(forKey: "parameter_value") as? Value {
-            self.init(name: name, value: value)
+            self.init(name: name, value: value, animation: animation)
         } else {
-            self.init(name: name, valueType: value_type ?? .float)
+            self.init(name: name, valueType: value_type ?? .float, animation: animation)
         }
     }
     
@@ -303,6 +311,7 @@ class Parameter: NSObject, NSCoding {
         coder.encode(self.name, forKey: "parameter_name")
         coder.encode(self.value, forKey: "parameter_value")
         try! coder.encodeEncodable(self.value_type, forKey: "parameter_value_type")
+        coder.encode(self.animation, forKey: "parameter_animation_sequence")
     }
     
     func value(atFrame: FrameId) -> Value? {
@@ -350,16 +359,30 @@ class Parameter: NSObject, NSCoding {
     }
 }
 
-class AnimationSequence {
+class AnimationSequence: NSObject, NSCoding {
     var key_frames: [KeyFrame]
     var interpolator: InterpolateProtocol = LinearInterpolator()
     
-    convenience init() {
+    convenience override init() {
         self.init(keyFrames: [])
     }
     
     init(keyFrames: [KeyFrame]) {
         self.key_frames = keyFrames
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        let coder = aDecoder as! NSKeyedUnarchiver
+        guard let key_frames = coder.decodeObject(forKey: "animation_sequence_key_frames") as? [KeyFrame]
+            else { return nil }
+        
+        self.init(keyFrames: key_frames)
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        let coder = aCoder as! NSKeyedArchiver
+        
+        coder.encode(self.key_frames, forKey: "animation_sequence_key_frames")
     }
 }
 

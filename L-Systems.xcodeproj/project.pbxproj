@@ -67,6 +67,7 @@
 		6595A65320C2798D006A1DF0 /* GradientColorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65220C2798D006A1DF0 /* GradientColorSettingsViewController.swift */; };
 		65CC9C3420CD1427002C54AA /* AnimationFrameTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CC9C3320CD1427002C54AA /* AnimationFrameTableCellView.swift */; };
 		65CC9C3720CD180C002C54AA /* AnimationInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CC9C3620CD180C002C54AA /* AnimationInfoViewController.swift */; };
+		65CC9C3920CD27F2002C54AA /* ButtonTableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65CC9C3820CD27F2002C54AA /* ButtonTableCellView.swift */; };
 		65D8447F20B7E53E00FDCBCC /* RendererUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */; };
 		65F0D36820C375AD00E94785 /* LABColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */; };
 		65F0D36920C375DB00E94785 /* LABColorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */; };
@@ -173,6 +174,7 @@
 		6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LABColorSlider.swift; sourceTree = "<group>"; };
 		65CC9C3320CD1427002C54AA /* AnimationFrameTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationFrameTableCellView.swift; sourceTree = "<group>"; };
 		65CC9C3620CD180C002C54AA /* AnimationInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationInfoViewController.swift; sourceTree = "<group>"; };
+		65CC9C3820CD27F2002C54AA /* ButtonTableCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTableCellView.swift; sourceTree = "<group>"; };
 		65D8447E20B7E53E00FDCBCC /* RendererUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererUtils.swift; sourceTree = "<group>"; };
 		65F0D36A20C378BA00E94785 /* LabColorPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabColorPickerViewController.swift; sourceTree = "<group>"; };
 		65F0D36C20C388E700E94785 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				65034AC220CA62CC001D7315 /* ProgressView.swift */,
 				65034ABE20CA5EB1001D7315 /* NibLoadable.swift */,
 				65034ACA20CA8D01001D7315 /* FilePathTextField.swift */,
+				65CC9C3820CD27F2002C54AA /* ButtonTableCellView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -696,6 +699,7 @@
 				65F0D36B20C378BA00E94785 /* LabColorPickerViewController.swift in Sources */,
 				65F1EB28206C8083007DF72B /* LSystemShaders.metal in Sources */,
 				6595A64920BBA345006A1DF0 /* Locks.swift in Sources */,
+				65CC9C3920CD27F2002C54AA /* ButtonTableCellView.swift in Sources */,
 				65034ABF20CA5EB1001D7315 /* NibLoadable.swift in Sources */,
 				65F0D36D20C388E700E94785 /* Utils.swift in Sources */,
 				65252A2D20B62B8B008CD676 /* AttractorDataStructs.swift in Sources */,

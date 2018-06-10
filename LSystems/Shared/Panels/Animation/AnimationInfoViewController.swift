@@ -19,13 +19,19 @@ class AnimationInfoViewController: NSViewController, NSTableViewDelegate, NSTabl
         }
     }
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
         let pasteboard_types = [NSPasteboard.PasteboardType(rawValue: "public.data")]
         self.animationTableView.registerForDraggedTypes(pasteboard_types)
         self.animationTableView.delegate = self
         self.animationTableView.dataSource = self
+    }
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        
+        self.animationTableView.reloadData()
     }
     
     // MARK: - TableView Datasource
@@ -87,9 +93,13 @@ class AnimationInfoViewController: NSViewController, NSTableViewDelegate, NSTabl
         let key_frame = KeyFrame(value: Value(type: self.valueType, value: nil),
                                  duration: 0)
         self.animationSequence?.key_frames.append(key_frame)
+        
+        self.animationTableView.reloadData()
     }
     
     @IBAction func handleRemoveFramePress(_: Any?) {
         self.animationSequence?.key_frames.remove(atIndices: self.animationTableView.selectedRowIndexes)
+        
+        self.animationTableView.reloadData()
     }
 }

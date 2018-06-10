@@ -22,6 +22,8 @@ class AnimationKeyFrameTableCellView: NSTableCellView {
         didSet {
             if let frame = self.keyframe {
                 self.valueTextField.formatter = frame.value.createNumberFormatter()
+                self.durationTextField.formatter = NumberFormatter.buildIntegerFormatter(min: 0, max: nil)
+                
                 self.valueTextField.bind(.value,
                                          to: frame.value,
                                          withKeyPath: "numberValue",
@@ -33,15 +35,11 @@ class AnimationKeyFrameTableCellView: NSTableCellView {
                 
             } else {
                 self.valueTextField.formatter = nil
+                self.durationTextField.formatter = nil
+                
                 self.valueTextField.stringValue = ""
                 self.durationTextField.stringValue = ""
             }
         }
-    }
-    
-    required init?(coder decoder: NSCoder) {
-        super.init(coder: decoder)
-        
-        self.durationTextField.formatter = NumberFormatter.buildIntegerFormatter(min: 0, max: nil)
     }
 }
