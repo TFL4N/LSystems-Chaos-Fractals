@@ -331,7 +331,7 @@ class AttractorRenderer: NSObject, MTKViewDelegate {
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
             if let renderPassDescriptor = view.currentRenderPassDescriptor {
-                renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor( CGColor.whiteLabColor.fromLABtoMTLColor() )
+                renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor( [1.0, 1.0, 1.0, 1.0] )
                 
 //                if let output = output_texture {
 //                    renderPassDescriptor.colorAttachments[0].storeAction = .multisampleResolve

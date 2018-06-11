@@ -36,7 +36,9 @@ void getColors( float mu, constant A_ColorItem* color_items,  int  count, thread
     output[0] = first;
     output[1] = last;
     
-    if( mu == 0.0 ) {
+    if( count == 0 ) {
+        return;
+    } else if( mu == 0.0 ) {
         // return [first, first]
         output[1] = first;
     } else if( mu == 1.0 ) {

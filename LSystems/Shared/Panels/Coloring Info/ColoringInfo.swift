@@ -109,6 +109,7 @@ class ColorMap: NSObject, NSCoding {
     }
 }
 
+typealias GradientColorTuple = (position: Float, color: CGColor)
 class GradientColor: NSObject, NSCoding {
     private(set) var colors: [GradientColorItem]
     
@@ -190,12 +191,8 @@ class GradientColor: NSObject, NSCoding {
         self.didChange = true
     }
     
-    func alignedColorItems(inColorSpace color_space: CGColorSpace = CGColorSpace(name: CGColorSpace.genericLab)!) -> [GradientColorItem]? {
-        var items = self.colors.map({ (item) -> GradientColorItem in
-            let lab_color = item.color.converted(to: color_space, intent: .absoluteColorimetric, options: nil)!
-            return GradientColorItem(position: item.position, color: lab_color)
-        })
-        
+    func alignedColorItems() -> [GradientColorItem]? {
+        var items = self.colors
         guard items.count > 0 else {
             return nil
         }
@@ -214,12 +211,63 @@ class GradientColor: NSObject, NSCoding {
         return items
     }
     
+    func getInterpolatedGradientItems(interpolatingColorSpace: CGColorSpace, outputColorSpace: CGColorSpace) -> [GradientColorTuple]? {
+        guard self.colors.count > 0 else {
+            return nil
+        }
+        
+        guard let interpolator = GradientColor
+            .Interpolator(color: self,
+                          interpolatingColorSpace: interpolatingColorSpace,
+                          outputColorSpace: outputColorSpace)
+            else { return nil }
+        
+        
+        var output: [GradientColorTuple] = [(self.colors[0].position, self.colors[0].color)]
+        for i in 1..<self.colors.count {
+            let first_color = self.colors[i-1]
+            let second_color = self.colors[i]
+            
+            let min = first_color.position
+            let max = second_color.position
+            
+            let min_mid = InterpolateUtils.interpolate(mu: 0.25, from: min, to: max)
+            let mid = InterpolateUtils.interpolate(mu: 0.5, from: min, to: max)
+            let max_mid = InterpolateUtils.interpolate(mu: 0.75, from: min, to: max)
+            
+            let new_positions = [
+                min_mid, mid, max_mid, max
+            ]
+            
+            for pos in new_positions {
+                output.append((pos, interpolator.interpolate(mu: pos)))
+            }
+        }
+        
+        // check alignment
+        let first_item = output.first!
+        if first_item.position != 0.0 {
+            output.insert((position: 0.0, color: first_item.color.copy()!),
+                         at: 0)
+        }
+        
+        let last_item = output.last!
+        if last_item.position != 1.0 {
+            output.append((position: 1.0, color: last_item.color.copy()!))
+        }
+        
+        return output
+    }
+    
     func getMTLGradientColorItems() -> [A_ColorItem]? {
-        return self.alignedColorItems(inColorSpace: CGColorSpace(name: CGColorSpace.genericLab)!)?.map({ (item) -> A_ColorItem in
-            return A_ColorItem(
-                color: vector_float4(item.color.fromLABtoMTLColor()),
-                position: item.position)
-        })
+        return self.getInterpolatedGradientItems(
+            interpolatingColorSpace: CGColorSpace(name: CGColorSpace.genericLab)!,
+            outputColorSpace: CGColorSpaceCreateDeviceRGB())?
+            .map({ (item) -> A_ColorItem in
+                return A_ColorItem(
+                    color: vector_float4(item.color.fromRGBtoMTLColor()),
+                    position: item.position)
+            })
     }
     
     // MARK: - Interpolator
@@ -229,11 +277,15 @@ class GradientColor: NSObject, NSCoding {
         let output_color_space: CGColorSpace
         
         init?(color: GradientColor, interpolatingColorSpace: CGColorSpace, outputColorSpace: CGColorSpace, outputsFloat: Bool = true) {
-            guard let items = color.alignedColorItems(inColorSpace: interpolatingColorSpace) else {
+            guard let items = color.alignedColorItems() else {
                 return nil
             }
             
-            self.items = items
+            self.items = items.map({ (item) -> GradientColorItem in
+                let new_color = item.color.converted(to: interpolatingColorSpace, intent: .absoluteColorimetric, options: nil)!
+                return GradientColorItem(position: item.position, color: new_color)
+            })
+            
             self.interpolating_color_space = interpolatingColorSpace
             self.output_color_space = outputColorSpace
         }

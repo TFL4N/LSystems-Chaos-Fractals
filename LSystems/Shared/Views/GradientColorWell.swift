@@ -64,53 +64,23 @@ class GradientColorWell: NSView {
     }
  
     func update(withGradientColor color: GradientColor) {
-        if color.colors.count == 0 {
+        let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
+        guard let items = color.getInterpolatedGradientItems(interpolatingColorSpace: color_space, outputColorSpace: color_space) else {
             self.gradient_layer.colors = []
             self.gradient_layer.locations = []
-        } else if color.colors.count == 1 {
-            self.gradient_layer.colors = [color.colors[0],color.colors[0]]
-            self.gradient_layer.locations = []
+            
+            return
         }
         
-        let color_space = CGColorSpace(name: CGColorSpace.genericLab)!
-        if let interpolator = GradientColor.Interpolator(color: color,
-                                                         interpolatingColorSpace: color_space,
-                                                         outputColorSpace: color_space) {
-            
-            var colors: [CGColor] = [color.colors[0].color]
-            var positions: [NSNumber] = [0.0]
-            
-            
-            for i in 1..<color.colors.count {
-                let first_color = color.colors[i-1]
-                let second_color = color.colors[i]
-                
-                let min = first_color.position
-                let max = second_color.position
-                
-                let min_mid = InterpolateUtils.interpolate(mu: 0.25, from: min, to: max)
-                let mid = InterpolateUtils.interpolate(mu: 0.5, from: min, to: max)
-                let max_mid = InterpolateUtils.interpolate(mu: 0.75, from: min, to: max)
-                
-                let new_positions = [
-                    min_mid, mid, max_mid, max
-                ]
-                
-                for pos in new_positions {
-                    colors.append(interpolator.interpolate(mu: pos))
-                    positions.append(NSNumber(value: pos))
-                }
-            }
-            
-            //        print(positions)
-            //        print(colors)
-            //        print()
-            
-            self.gradient_layer.colors = colors
-            self.gradient_layer.locations = positions
-        } else {
-            self.gradient_layer.colors = []
-            self.gradient_layer.locations = []
+        var colors = [CGColor]()
+        var positions = [NSNumber]()
+        
+        for i in items {
+            colors.append(i.color)
+            positions.append(NSNumber(value: i.position))
         }
+        
+        self.gradient_layer.colors = colors
+        self.gradient_layer.locations = positions
     }
 }

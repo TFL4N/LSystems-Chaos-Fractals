@@ -253,7 +253,6 @@ class VideoCapture: AttractorRendererDelegate {
         self.mtkView.isPaused = true
         self.mtkView.enableSetNeedsDisplay = false
         self.mtkView.framebufferOnly = false
-        self.mtkView.colorspace = CGColorSpace(name: CGColorSpace.genericLab)
         
         self.renderer = try AttractorRenderer(metalKitView: self.mtkView, delegate: self, isVideoCaptureMode: true)
         
@@ -286,8 +285,7 @@ class VideoCapture: AttractorRendererDelegate {
         let sourceBufferAttributes : [String : AnyObject] = [
             kCVPixelBufferPixelFormatTypeKey as String : NSNumber(value: kCVPixelFormatType_32BGRA),
             kCVPixelBufferWidthKey as String : NSNumber(value: Int(self.settings.video_size.width * 2)),
-            kCVPixelBufferHeightKey as String : NSNumber(value: Int(self.settings.video_size.height * 2)),
-            kCVImageBufferCGColorSpaceKey as String : CGColorSpace(name: CGColorSpace.genericLab)!
+            kCVPixelBufferHeightKey as String : NSNumber(value: Int(self.settings.video_size.height * 2))
             ]
         self.pixel_buffer_adapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: self.video_writer_input, sourcePixelBufferAttributes: sourceBufferAttributes)
     }
@@ -316,9 +314,6 @@ class VideoCapture: AttractorRendererDelegate {
                 let pixel_buffer = pixel_buffer_ptr.pointee else {
                     throw VideoCaptureError.FailedToCreatePixelBuffer
             }
-            
-            CVBufferSetAttachment(pixel_buffer, kCVImageBufferICCProfileKey, CGColorSpace(name: CGColorSpace.genericLab)!.copyICCData()!, CVAttachmentMode.shouldPropagate)
-            
             
             // Get Pixel Data
             ////////////////////

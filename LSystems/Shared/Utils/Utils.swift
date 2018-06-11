@@ -38,6 +38,10 @@ extension CGColor {
         ]
     }
     
+    func fromRGBtoMTLColor() -> [Float] {
+        return self.components!.map {Float($0)}
+    }
+    
     static var whiteLabColor: CGColor {
         return CGColor.white.converted(to: CGColorSpace(name: CGColorSpace.genericLab)!,
                                intent: .absoluteColorimetric,
