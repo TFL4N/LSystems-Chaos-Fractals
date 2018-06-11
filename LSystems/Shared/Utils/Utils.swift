@@ -96,6 +96,7 @@ extension NumberFormatter {
 }
 
 class NSObjectUtils {
+    // returns: (didChange, newValue)
     static func observedValueDidChange<T: Equatable>(_ change: [NSKeyValueChangeKey : Any]) -> (Bool, T?) {
         let new_change = change[NSKeyValueChangeKey.newKey] as? T
         let old_change = change[NSKeyValueChangeKey.oldKey] as? T

@@ -87,12 +87,7 @@ class ColoringInfo: NSObject, NSCoding {
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "didChange" {
-            if let change = change {
-                let foo: (Bool, Bool?) = NSObjectUtils.observedValueDidChange(change)
-                if foo.0 && foo.1! {
-                    self.didChange = true
-                }
-            }
+            self.didChange = true
         }
     }
 }
