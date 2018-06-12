@@ -21,7 +21,7 @@ class AttractorManager: NSObject {
         return queue
     }()
     
-    var current_frame: FrameId = 0
+    @objc dynamic var current_frame: FrameId = 0
     private var requesting_refresh: Bool = false
 
     private var current_buffers_lock = ReadWriteLock()
@@ -88,8 +88,10 @@ class AttractorManager: NSObject {
     
     func buildAttractorVertexData(atFrame: FrameId, bufferPool: BigBufferPool, progressHandler: AttractorOperation.ProgressHandler? = nil, didStartHandler: AttractorOperation.DidStartHandler? = nil, didFinishHandler: ((Bool)->())? = nil, sync: Bool = false) {
         var buffers_outdated = false
+        let current_operation = self.operation_queue.operations.first as? AttractorOperation
         if let buf = self.current_buffers {
-            buffers_outdated = buf.frame != self.current_frame
+            let op_bool = current_operation == nil || current_operation!.frame_id != self.current_frame
+            buffers_outdated = buf.frame != self.current_frame && op_bool
         }
         
         if self.attractor.didChange

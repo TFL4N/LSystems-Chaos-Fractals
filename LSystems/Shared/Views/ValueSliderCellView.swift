@@ -9,7 +9,6 @@
 import Cocoa
 
 class ValueSliderCellView: NSTableCellView {
-
     var mainTextField: NSTextField!
     var valueSlider: ValueSlider!
     

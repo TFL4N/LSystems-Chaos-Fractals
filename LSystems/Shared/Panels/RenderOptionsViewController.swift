@@ -11,6 +11,10 @@ import Cocoa
 class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldDelegate {
 
     @IBOutlet var renderModeButton: NSPopUpButton!
+    
+    @IBOutlet var currentFrameTextField: NSTextField!
+    @IBOutlet var currentFrameValueSlider: IncrementalSlider!
+    
     @IBOutlet var pointSizeTextField: NSTextField!
     @IBOutlet var renderRefreshButton: NSButton!
     
@@ -35,6 +39,24 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
         RenderMode.static.rawValue
         ])
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.currentFrameTextField.formatter = NumberFormatter.buildIntegerFormatter(min: 0, max: nil)
+        self.currentFrameValueSlider.multiplier = IncrementalSlider.integerValueMultiplier
+        self.currentFrameValueSlider.handler = { (inc) in
+            let frame = Int(self.document!.attractor_manager.current_frame)
+            let new_value = frame + Int(inc)
+            
+            self.document!.attractor_manager.current_frame = UInt(max(0, new_value))
+        }
+        
+        self.pointSizeTextField.formatter = AttractorRenderer.pointSizeFormatter()
+        self.cameraTranslationTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
+        self.cameraRotationTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
+        self.cameraScaleTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
+    }
+    
     private var needsBindings = true
     override func viewWillAppear() {
         super.viewWillAppear()
@@ -43,6 +65,32 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
             self.needsBindings = false
             
             let renderer = self.document!.graphics_view_cltr.renderer!
+            
+            
+            // Rendering
+            /////////////
+            self.renderModeButton
+                .bind(.content,
+                      to: self.render_mode_controller,
+                      withKeyPath: "arrangedObjects",
+                      options: nil)
+            self.renderModeButton
+                .bind(.selectedObject,
+                      to: self.document!.graphics_view_cltr!,
+                      withKeyPath: "render_mode_raw",
+                      options: nil)
+            
+            self.currentFrameTextField
+                .bind(.value,
+                      to: self.document!.attractor_manager,
+                      withKeyPath: "current_frame",
+                      options: nil)
+            
+            self.pointSizeTextField
+                .bind(.value,
+                      to: renderer,
+                      withKeyPath: "pointSize",
+                      options: nil)
             
             // Camera
             //////////////
@@ -88,35 +136,7 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
 //                      to: self,
 //                      withKeyPath: "foo",
 //                      options: nil)
-            
-            // Rendering
-            /////////////
-            self.renderModeButton
-                .bind(.content,
-                      to: self.render_mode_controller,
-                      withKeyPath: "arrangedObjects",
-                      options: nil)
-            self.renderModeButton
-                .bind(.selectedObject,
-                      to: self.document!.graphics_view_cltr!,
-                      withKeyPath: "render_mode_raw",
-                      options: nil)
-            
-            self.pointSizeTextField
-            .bind(.value,
-                  to: renderer,
-                  withKeyPath: "pointSize",
-                  options: nil)
         }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.pointSizeTextField.formatter = AttractorRenderer.pointSizeFormatter()
-        self.cameraTranslationTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
-        self.cameraRotationTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
-        self.cameraScaleTextField.formatter = NumberFormatter.buildFloatFormatter(min: nil, max: nil)
     }
    
     override func controlTextDidEndEditing(_ notification: Notification) {

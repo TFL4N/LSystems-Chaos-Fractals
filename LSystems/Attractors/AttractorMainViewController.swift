@@ -110,9 +110,9 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
             if let value = value {
                 switch value.type {
                 case .float:
-                    value_cell.valueSlider.multiplier = 0.01
+                    value_cell.valueSlider.multiplier = IncrementalSlider.floatValueMultiplier
                 case .integer:
-                    value_cell.valueSlider.multiplier = 5
+                    value_cell.valueSlider.multiplier = IncrementalSlider.integerValueMultiplier
                 }
             }
         } else if tableColumn == self.parametersTableView.tableColumns[2] {

@@ -43,9 +43,7 @@ extension CGColor {
     }
     
     static var whiteLabColor: CGColor {
-        return CGColor.white.converted(to: CGColorSpace(name: CGColorSpace.genericLab)!,
-                               intent: .absoluteColorimetric,
-                               options: nil)!
+        return CGColor(colorSpace: CGColorSpace(name: CGColorSpace.genericLab)!, components: [100,63.5,0,1])!
     }
 }
 
