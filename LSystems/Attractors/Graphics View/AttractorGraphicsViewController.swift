@@ -123,14 +123,13 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
     
     func dataBuildDidFinished(wasCancelled: Bool) {
         DispatchQueue.main.async {
+            print("Data Build Finished")
             if self.progressView.alphaValue != 0.0 {
-//                print("Hide Progress")
                 NSAnimationContext.runAnimationGroup({ (context) in
                     context.duration = 0.3
                     self.progressView.alphaValue = 0.0
                 }, completionHandler: {
-//                    print("Hide Progress Complete")
-//                    self.progressContainerView.isHidden = true
+                    
                 })
             }
         }

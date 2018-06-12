@@ -27,9 +27,11 @@ class AttractorOperation: Operation {
     var progress_handler: ProgressHandler? = nil
     var did_start_handler: DidStartHandler? = nil
     
+    private var last_dispatched_progress: Float = 0.0
     @objc dynamic var progress: Float = 0.0 {
         didSet {
-            if abs(self.progress - oldValue) > 0.0001 {
+            if abs(self.progress - self.last_dispatched_progress) > 0.0001 {
+                self.last_dispatched_progress = self.progress
                 progress_handler?(self.progress)
             }
         }
