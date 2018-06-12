@@ -2246,14 +2246,14 @@ Gw
             <objects>
                 <viewController id="6PI-Nn-9Xz" customClass="AttractorMainViewController" customModule="L_Systems" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="KZJ-3f-bDW">
-                        <rect key="frame" x="0.0" y="0.0" width="654" height="550"/>
+                        <rect key="frame" x="0.0" y="0.0" width="654" height="565"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="028-2N-2Ek">
-                                <rect key="frame" x="20" y="20" width="614" height="510"/>
+                                <rect key="frame" x="20" y="20" width="614" height="525"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F32-KN-abz">
-                                        <rect key="frame" x="-2" y="491" width="115" height="19"/>
+                                        <rect key="frame" x="-2" y="506" width="115" height="19"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Attractor Detail" id="naL-Rf-anD">
                                             <font key="font" metaFont="system" size="16"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -2261,13 +2261,13 @@ Gw
                                         </textFieldCell>
                                     </textField>
                                     <scrollView horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="anS-m1-a2C">
-                                        <rect key="frame" x="0.0" y="175" width="614" height="308"/>
+                                        <rect key="frame" x="0.0" y="248" width="614" height="250"/>
                                         <clipView key="contentView" id="EOm-Af-ysU">
-                                            <rect key="frame" x="1" y="0.0" width="612" height="307"/>
+                                            <rect key="frame" x="1" y="0.0" width="612" height="249"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="pBp-UO-g2V" viewBased="YES" id="9ex-Al-pet">
-                                                    <rect key="frame" x="0.0" y="0.0" width="612" height="284"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="612" height="226"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -2372,7 +2372,7 @@ Gw
                                                                 </tableCellView>
                                                             </prototypeCellViews>
                                                         </tableColumn>
-                                                        <tableColumn identifier="" width="142" minWidth="10" maxWidth="3.4028234663852886e+38" id="x55-JM-gIs">
+                                                        <tableColumn identifier="" width="142.5" minWidth="10" maxWidth="3.4028234663852886e+38" id="x55-JM-gIs">
                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
                                                                 <font key="font" metaFont="smallSystem"/>
                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -2386,11 +2386,11 @@ Gw
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="gzj-ak-IeI">
-                                                                    <rect key="frame" x="467.5" y="1" width="142" height="17"/>
+                                                                    <rect key="frame" x="467.5" y="1" width="143" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xoj-AG-jLG">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="142" height="17"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="143" height="17"/>
                                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                                                             <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="ztK-MM-hin">
                                                                                 <font key="font" metaFont="system"/>
@@ -2426,7 +2426,7 @@ Gw
                                         </tableHeaderView>
                                     </scrollView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pra-YA-JqF">
-                                        <rect key="frame" x="0.0" y="146" width="119" height="21"/>
+                                        <rect key="frame" x="0.0" y="219" width="119" height="21"/>
                                         <subviews>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1M0-ea-Hta">
                                                 <rect key="frame" x="-6" y="-7" width="131" height="32"/>
@@ -2446,6 +2446,36 @@ Gw
                                             <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mV4-a3-eOf">
+                                        <rect key="frame" x="0.0" y="146" width="614" height="65"/>
+                                        <subviews>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vXy-Dm-jfa">
+                                                <rect key="frame" x="-2" y="23" width="88" height="19"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="BG Color:" id="d31-fR-oc4">
+                                                    <font key="font" metaFont="system" size="16"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="LGP-Qj-KDk" customClass="ColorWell" customModule="L_Systems" customModuleProvider="target">
+                                                <rect key="frame" x="92" y="10" width="522" height="45"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="45" id="LVY-BA-DWB"/>
+                                                </constraints>
+                                            </customView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="LGP-Qj-KDk" firstAttribute="height" secondItem="mV4-a3-eOf" secondAttribute="height" constant="-20" id="8JN-rZ-4AG"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                         </customSpacing>
                                     </stackView>
@@ -2483,7 +2513,7 @@ Gw
                                         <rect key="frame" x="0.0" y="0.0" width="614" height="65"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CMf-z1-Sfa">
-                                                <rect key="frame" x="-2" y="23" width="87" height="19"/>
+                                                <rect key="frame" x="-2" y="23" width="88" height="19"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Main Color:" id="WH5-oG-qGW">
                                                     <font key="font" metaFont="system" size="16"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -2491,7 +2521,7 @@ Gw
                                                 </textFieldCell>
                                             </textField>
                                             <customView horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="1wJ-u7-enT" customClass="GradientColorWell" customModule="L_Systems" customModuleProvider="target">
-                                                <rect key="frame" x="91" y="10" width="523" height="45"/>
+                                                <rect key="frame" x="92" y="10" width="522" height="45"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="45" id="NRL-56-qvB"/>
                                                 </constraints>
@@ -2513,6 +2543,8 @@ Gw
                                 <constraints>
                                     <constraint firstItem="anS-m1-a2C" firstAttribute="width" secondItem="028-2N-2Ek" secondAttribute="width" id="6Ur-sj-QVA"/>
                                     <constraint firstItem="FK1-l5-RhW" firstAttribute="width" secondItem="028-2N-2Ek" secondAttribute="width" id="N9A-bj-SgW"/>
+                                    <constraint firstItem="bYe-ow-GQu" firstAttribute="leading" secondItem="1wJ-u7-enT" secondAttribute="leading" id="Ne1-TL-kZ1"/>
+                                    <constraint firstItem="LGP-Qj-KDk" firstAttribute="leading" secondItem="bYe-ow-GQu" secondAttribute="leading" id="QFx-Wy-Gaq"/>
                                     <constraint firstItem="e82-mF-qIC" firstAttribute="width" secondItem="028-2N-2Ek" secondAttribute="width" id="vCI-jR-yfr"/>
                                 </constraints>
                                 <visibilityPriorities>
@@ -2521,8 +2553,10 @@ Gw
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
+                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -2542,6 +2576,7 @@ Gw
                     </view>
                     <connections>
                         <outlet property="baseColorWell" destination="bYe-ow-GQu" id="1ue-Sz-gVt"/>
+                        <outlet property="bgColorWell" destination="LGP-Qj-KDk" id="oKK-eh-pr1"/>
                         <outlet property="mainGradientColorWell" destination="1wJ-u7-enT" id="3qg-Bl-u5o"/>
                         <outlet property="parametersTableView" destination="9ex-Al-pet" id="SWh-Bj-CMM"/>
                         <outlet property="showGraphicsButton" destination="1M0-ea-Hta" id="rGe-3h-KdI"/>

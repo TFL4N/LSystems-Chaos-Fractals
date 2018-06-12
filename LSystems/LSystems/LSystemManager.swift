@@ -86,7 +86,7 @@ class LSystemManager {
         var currentPos: Position = Position()
         var currentAngle: Float = 0.0
         var currentRange = working.startIndex...working.startIndex
-        var currentSegmentLength: Float = 1.0
+        let currentSegmentLength: Float = 1.0
         
         let positionStack = PositionStack()
         let ruleMap = self.mapRules()

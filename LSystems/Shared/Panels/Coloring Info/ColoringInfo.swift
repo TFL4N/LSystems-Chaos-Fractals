@@ -39,6 +39,17 @@ class ColoringInfo: NSObject, NSCoding {
         }
     }
     
+    var bgColor: CGColor
+    var bgNSColor: NSColor {
+        get {
+            return NSColor(cgColor: self.bgColor)!
+        }
+        
+        set {
+            self.bgColor = newValue.cgColor
+        }
+    }
+    
     dynamic var colorMap: ColorMap?
     dynamic var gradientColor: GradientColor? {
         willSet {
@@ -57,11 +68,12 @@ class ColoringInfo: NSObject, NSCoding {
     dynamic var didChange: Bool = false
     
     override convenience init() {
-        self.init(type: .None, baseColor: CGColor.white, colorMap: nil, gradientColor: nil)
+        self.init(type: .None, bgColor: CGColor.white, baseColor: CGColor.white, colorMap: nil, gradientColor: nil)
     }
     
-    init(type: ColoringType, baseColor: CGColor, colorMap: ColorMap?, gradientColor: GradientColor?) {
+    init(type: ColoringType, bgColor: CGColor, baseColor: CGColor, colorMap: ColorMap?, gradientColor: GradientColor?) {
         self.coloringType = type
+        self.bgColor = bgColor
         self.baseColor = baseColor
         self.colorMap = colorMap
         self.gradientColor = nil
@@ -80,8 +92,10 @@ class ColoringInfo: NSObject, NSCoding {
         }
         
         let base_color = (coder.decodeObject(forKey: "colorinfo_basecolor") as? NSColor)?.cgColor ?? CGColor.white
+        let bg_color = (coder.decodeObject(forKey: "colorinfo_bgcolor") as? NSColor)?.cgColor ?? CGColor.white
         
         self.init(type: type,
+                  bgColor: bg_color,
                   baseColor: base_color,
                   colorMap: coder.decodeObject(forKey: "colorinfo_colormap") as? ColorMap,
                   gradientColor: coder.decodeObject(forKey: "colorinfo_linearcolor") as? GradientColor)
@@ -97,6 +111,7 @@ class ColoringInfo: NSObject, NSCoding {
         try! coder.encodeEncodable(self.coloringType, forKey: "colorinfo_type")
         coder.encode(self.colorMap, forKey: "colorinfo_colormap")
         coder.encode(self.gradientColor, forKey: "colorinfo_linearcolor")
+        coder.encode(self.bgNSColor, forKey: "colorinfo_bgcolor")
         coder.encode(self.baseNSColor, forKey: "colorinfo_basecolor")
     }
     
@@ -238,7 +253,12 @@ class GradientColor: NSObject, NSCoding {
             else { return nil }
         
         
-        var output: [GradientColorTuple] = [(self.colors[0].position, self.colors[0].color)]
+        var output: [GradientColorTuple] = [
+            (self.colors[0].position,
+             self.colors[0].color.converted(to: outputColorSpace,
+                                            intent: .absoluteColorimetric,
+                                            options: nil)!)
+        ]
         for i in 1..<self.colors.count {
             let first_color = self.colors[i-1]
             let second_color = self.colors[i]
@@ -333,13 +353,6 @@ class GradientColor: NSObject, NSCoding {
                                               from: colors.from.color.components![i],
                                               to: colors.to.color.components![i])
             }
-            
-//            print("*****************")
-//            print(mu)
-//            print(colors.from.color.components!)
-//            print(colors.to.color.components!)
-//            print("** \(output_comps)")
-//            print("-------------------")
             
             let new_color = CGColor(colorSpace: self.interpolating_color_space, components: output_comps)!
             return new_color.converted(to: self.output_color_space, intent: .absoluteColorimetric, options: nil)!

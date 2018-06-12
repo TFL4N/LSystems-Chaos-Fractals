@@ -24,6 +24,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
     @IBOutlet var parametersTableView: NSTableView!
     @IBOutlet var showGraphicsButton: NSButton!
     
+    @IBOutlet var bgColorWell: ColorWell!
     @IBOutlet var baseColorWell: ColorWell!
     @IBOutlet var mainGradientColorWell: GradientColorWell!
     
@@ -34,6 +35,10 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
         self.parametersTableView.delegate = self
         self.parametersTableView.dataSource = self
         self.parametersTableView.usesAutomaticRowHeights = true
+        
+        self.bgColorWell.didSelectColor = { (color) in
+            self.attractor_manager.attractor.coloring_info.bgColor = color
+        }
         
         self.baseColorWell.didSelectColor = { (color) in
             self.attractor_manager.attractor.coloring_info.baseColor = color
