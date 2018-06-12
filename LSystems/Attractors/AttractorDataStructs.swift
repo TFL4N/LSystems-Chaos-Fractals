@@ -274,22 +274,24 @@ class Parameter: NSObject, NSCoding {
     let value_type: ValueType
     @objc dynamic var value: Value?
     var animation: AnimationSequence?
+    var uses_animation: Bool
 
-    private init(name: String, value: Value?, valueType: ValueType, animation: AnimationSequence?) {
+    private init(name: String, value: Value?, valueType: ValueType, animation: AnimationSequence?, uses_animation: Bool) {
         self.name = name
         self.value = value
         self.value_type = valueType
         self.animation = animation
+        self.uses_animation = uses_animation
         
         super.init()
     }
     
-    convenience init(name: String, valueType: ValueType, animation: AnimationSequence? = nil) {
-        self.init(name: name, value: nil, valueType: valueType, animation: animation)
+    convenience init(name: String, valueType: ValueType, animation: AnimationSequence? = nil, uses_animation: Bool = false) {
+        self.init(name: name, value: nil, valueType: valueType, animation: animation, uses_animation: uses_animation)
     }
     
-    convenience init(name: String, value: Value, animation: AnimationSequence? = nil) {
-        self.init(name: name, value: value, valueType: value.type, animation: animation)
+    convenience init(name: String, value: Value, animation: AnimationSequence? = nil, uses_animation: Bool = false) {
+        self.init(name: name, value: value, valueType: value.type, animation: animation, uses_animation: uses_animation)
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
@@ -299,11 +301,12 @@ class Parameter: NSObject, NSCoding {
         
         let value_type = coder.decodeDecodable(ValueType.self, forKey: "parameter_value_type")
         let animation = coder.decodeObject(forKey: "parameter_animation_sequence") as? AnimationSequence
+        let uses_animation = coder.decodeBool(forKey: "parameter_uses_animation")
         
         if let value = coder.decodeObject(forKey: "parameter_value") as? Value {
-            self.init(name: name, value: value, animation: animation)
+            self.init(name: name, value: value, animation: animation, uses_animation: uses_animation)
         } else {
-            self.init(name: name, valueType: value_type ?? .float, animation: animation)
+            self.init(name: name, valueType: value_type ?? .float, animation: animation, uses_animation: uses_animation)
         }
     }
     
@@ -314,11 +317,14 @@ class Parameter: NSObject, NSCoding {
         coder.encode(self.value, forKey: "parameter_value")
         try! coder.encodeEncodable(self.value_type, forKey: "parameter_value_type")
         coder.encode(self.animation, forKey: "parameter_animation_sequence")
+        coder.encode(self.uses_animation, forKey: "parameter_uses_animation")
     }
     
     func value(atFrame: FrameId) -> Value? {
-        guard let anim = self.animation, anim.key_frames.count > 0 else {
-            return self.value
+        guard let anim = self.animation,
+            anim.key_frames.count > 0,
+            self.uses_animation else {
+                return self.value
         }
         
         // find the current key frame

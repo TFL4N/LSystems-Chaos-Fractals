@@ -72,6 +72,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
         static let ParameterName = NSUserInterfaceItemIdentifier(rawValue: "parameter_name")
         static let ParameterValue = NSUserInterfaceItemIdentifier(rawValue: "parameter_value")
         static let ParameterAnimation = NSUserInterfaceItemIdentifier(rawValue: "parameter_animation")
+        static let ParameterUseAnimation = NSUserInterfaceItemIdentifier(rawValue: "parameter_use_animation")
     }
     
     func numberOfRows(in tableView: NSTableView) -> Int {
@@ -117,7 +118,7 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
             }
         } else if tableColumn == self.parametersTableView.tableColumns[2] {
             // create cell
-            cell = tableView.makeView(withIdentifier: CellID.ParameterAnimation, owner: nil) as? NSTableCellView
+            cell = tableView.makeView(withIdentifier: CellID.ParameterUseAnimation, owner: nil) as? NSTableCellView
             
             if cell == nil {
                 cell = ButtonTableCellView()
@@ -129,6 +130,26 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
             button_cell.button.title = "Animation"
             button_cell.handler = { (_) in
                 self.document?.showAnimationInfo(forParameter: self.attractor_manager.attractor.parameters[row])
+            }
+        } else if tableColumn == self.parametersTableView.tableColumns[3] {
+            // create cell
+            cell = tableView.makeView(withIdentifier: CellID.ParameterAnimation, owner: nil) as? NSTableCellView
+            
+            if cell == nil {
+                let new_cell = ButtonTableCellView()
+                new_cell.identifier = CellID.ParameterUseAnimation
+                new_cell.button.setButtonType(.switch)
+                new_cell.button.title = "Use animations"
+                
+                cell = new_cell
+            }
+            
+            // fill data
+            let parameter = self.attractor_manager.attractor.parameters[row]
+            let button_cell = cell as! ButtonTableCellView
+            button_cell.button.integerValue = NSNumber(value: parameter.uses_animation).intValue
+            button_cell.handler = { (view) in
+                parameter.uses_animation = NSNumber(value: view.button.integerValue).boolValue
             }
         }
         
