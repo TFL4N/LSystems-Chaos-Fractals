@@ -114,6 +114,10 @@ class GradientColor: NSObject, NSCoding {
         self.init(colors: [])
     }
     
+    override var description: String {
+        return "{didChange: \(self.didChange), colors: (\(self.colors.count)) \(self.colors)}"
+    }
+    
     init(colors: [GradientColorItem]) {
         self.colors = colors
         super.init()
@@ -365,6 +369,10 @@ class GradientColorItem: NSObject, NSCoding {
         set {
             self.color = newValue.cgColor
         }
+    }
+    
+    override var description: String {
+        return "{pos: \(self.position), color: \(self.color)}"
     }
     
     convenience override init() {

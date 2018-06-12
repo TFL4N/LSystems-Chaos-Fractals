@@ -249,18 +249,14 @@
 		65252A3020B62CE7008CD676 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				65DC259620CFB42A0079757A /* TableCellViews */,
 				6595A65920C28BA1006A1DF0 /* LABColorSlider.swift */,
 				6595A64220BB5FDD006A1DF0 /* ValueSlider.swift */,
-				6568AA9C209EFF65009B828A /* TextFieldCellView.swift */,
-				6568AA9E209F076E009B828A /* PopUpCellView.swift */,
-				6595A64420BB640B006A1DF0 /* ValueSliderCellView.swift */,
-				6595A65020C273D2006A1DF0 /* GradientColorItemCellView.swift */,
 				65F0D36E20C3B0FB00E94785 /* ColorWell.swift */,
 				65F0D37020C3F28400E94785 /* GradientColorWell.swift */,
 				65034AC220CA62CC001D7315 /* ProgressView.swift */,
 				65034ABE20CA5EB1001D7315 /* NibLoadable.swift */,
 				65034ACA20CA8D01001D7315 /* FilePathTextField.swift */,
-				65CC9C3820CD27F2002C54AA /* ButtonTableCellView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -431,6 +427,18 @@
 				65CC9C3620CD180C002C54AA /* AnimationInfoViewController.swift */,
 			);
 			path = Animation;
+			sourceTree = "<group>";
+		};
+		65DC259620CFB42A0079757A /* TableCellViews */ = {
+			isa = PBXGroup;
+			children = (
+				6568AA9C209EFF65009B828A /* TextFieldCellView.swift */,
+				65CC9C3820CD27F2002C54AA /* ButtonTableCellView.swift */,
+				6568AA9E209F076E009B828A /* PopUpCellView.swift */,
+				6595A65020C273D2006A1DF0 /* GradientColorItemCellView.swift */,
+				6595A64420BB640B006A1DF0 /* ValueSliderCellView.swift */,
+			);
+			path = TableCellViews;
 			sourceTree = "<group>";
 		};
 		65F1EB15206C8083007DF72B = {

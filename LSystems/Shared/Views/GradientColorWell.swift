@@ -82,5 +82,12 @@ class GradientColorWell: NSView {
         
         self.gradient_layer.colors = colors
         self.gradient_layer.locations = positions
+        
+//        print("*************")
+//        print(color)
+//        print()
+//        print(positions)
+//        print(colors)
+//        print("___________________")
     }
 }
