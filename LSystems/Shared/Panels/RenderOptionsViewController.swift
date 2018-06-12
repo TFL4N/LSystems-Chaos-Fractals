@@ -154,39 +154,16 @@ class RenderOptionsViewController: AttractorDocumentViewController, NSTextFieldD
         }
     }
     
-    // MARK: Render Settings
-    @IBAction func handleRenderModeSelection(_ sender: AnyObject) {
-        guard let selected_title = (sender as! NSPopUpButton).selectedItem?.title,
-            let mode = RenderMode(rawValue: selected_title)
-        else {
-            return
-        }
-        
-        
-    }
-    
+    // MARK: Actions
     @IBAction func handleRenderRefreshPress(_ sender: AnyObject) {
         self.document?.graphics_view_cltr?.handleRefreshPress()
     }
-    
-    // MARK: Camera Settings
-    @IBAction func handleCameraViewingModeSelection(_ sender: AnyObject) {
-        guard let selected_title = (sender as! NSPopUpButton).selectedItem?.title,
-            let mode = CameraViewingMode(rawValue: selected_title)
-            else {
-                return
-        }
-        
-        
-    }
-    
+
     @IBAction func handleCameraProjectionModeSelection(_ sender: AnyObject) {
-        guard let selected_title = (sender as! NSPopUpButton).selectedItem?.title,
-            let mode = CameraProjectionMode(rawValue: selected_title)
-            else {
-                return
-        }
-        
-        
+//        guard let selected_title = (sender as! NSPopUpButton).selectedItem?.title,
+//            let mode = CameraProjectionMode(rawValue: selected_title)
+//            else {
+//                return
+//        }
     }
 }

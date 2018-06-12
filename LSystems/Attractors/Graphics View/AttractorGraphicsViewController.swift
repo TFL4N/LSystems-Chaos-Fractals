@@ -132,6 +132,10 @@ class AttractorGraphicsViewController: AttractorDocumentViewController, Attracto
                     
                 })
             }
+            
+            if !wasCancelled && self.render_mode == .static {
+                self.mtkView.draw()
+            }
         }
     }
     

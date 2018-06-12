@@ -776,9 +776,6 @@
                                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                 <font key="font" metaFont="system"/>
                                                             </buttonCell>
-                                                            <connections>
-                                                                <action selector="handleSaveImagePress:" target="3v3-ta-aM8" id="Zdn-9U-XgJ"/>
-                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <visibilityPriorities>
@@ -1919,9 +1916,6 @@ Gw
                                                                 <font key="font" metaFont="menu"/>
                                                                 <menu key="menu" id="mEV-Qr-3Fb"/>
                                                             </popUpButtonCell>
-                                                            <connections>
-                                                                <action selector="handleRenderModeSelection:" target="3v3-ta-aM8" id="Z3B-P0-ZZO"/>
-                                                            </connections>
                                                         </popUpButton>
                                                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9gZ-e1-Y06">
                                                             <rect key="frame" x="0.0" y="77" width="279" height="22"/>
@@ -2055,9 +2049,6 @@ Gw
                                                                 <font key="font" metaFont="menu"/>
                                                                 <menu key="menu" id="jlE-bz-ck0"/>
                                                             </popUpButtonCell>
-                                                            <connections>
-                                                                <action selector="handleCameraViewingModeSelection:" target="3v3-ta-aM8" id="HRd-wS-4oc"/>
-                                                            </connections>
                                                         </popUpButton>
                                                         <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="57G-Nk-wMz">
                                                             <rect key="frame" x="-2" y="87" width="37" height="26"/>
