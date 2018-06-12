@@ -30,6 +30,11 @@ class GradientColorWell: NSView {
         new_bg_layer.backgroundColor = Style.createDefaultCheckerColor()
         new_bg_layer.cornerRadius = corner_radius
         new_bg_layer.constraints = ViewUtils.constraintsEqualSizeAndPosition(toLayer: "superlayer")
+        new_bg_layer.actions = [
+            "backgroundColor": NSNull(),
+            "position": NSNull(),
+            "bounds": NSNull()
+        ]
         
         self.background_layer = new_bg_layer
         
@@ -44,7 +49,8 @@ class GradientColorWell: NSView {
         new_fg_layer.actions = [
             "backgroundColor": NSNull(),
             "colors": NSNull(),
-            "position": NSNull()
+            "position": NSNull(),
+            "bounds": NSNull()
         ]
         
         self.gradient_layer = new_fg_layer
