@@ -87,7 +87,7 @@ vertex ColorInOut attractorVertexShader(Vertex in [[stage_in]],
             local_mu = (in.mu - from_color.position) / (to_color.position - from_color.position);
         }
         
-        out.color = mix(from_color.color, to_color.color, float4(in.mu));
+        out.color = *base_color * mix(from_color.color, to_color.color, float4(in.mu));
     } else {
         // defaults
         out.color = *base_color;

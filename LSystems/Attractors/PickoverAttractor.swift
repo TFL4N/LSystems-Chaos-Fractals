@@ -137,6 +137,8 @@ class PickoverAttractorOperation: AttractorOperation {
             z = new_z
             
             if iteration > skip_iters {
+//                print("\(mu) ** \([x, y, z])")
+                
                 // vertex
                 current_vertices.append(contentsOf: [
                     x, y, z

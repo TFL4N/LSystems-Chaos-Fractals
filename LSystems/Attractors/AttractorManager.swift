@@ -126,7 +126,7 @@ class AttractorManager: NSObject {
     }
     
     func getMTLBaseColor(atFrame: FrameId) -> vector_float4 {
-        return vector_float4(1.0)
+        return vector_float4(self.attractor.coloring_info.baseColor.toMTLColor())
     }
    
     func getMainColorsAtCurrentFrame() -> [A_ColorItem]? {

@@ -35,9 +35,8 @@ class AttractorMainViewController: AttractorDocumentViewController, NSTextFieldD
         self.parametersTableView.dataSource = self
         self.parametersTableView.usesAutomaticRowHeights = true
         
-        self.baseColorWell.mode = .custom
-        self.baseColorWell.didClickHandler = { (color_well) in
-            
+        self.baseColorWell.didSelectColor = { (color) in
+            self.attractor_manager.attractor.coloring_info.baseColor = color
         }
         
         let click_gesture = NSClickGestureRecognizer(target: self, action: #selector(handleMainColorClick(_:)))

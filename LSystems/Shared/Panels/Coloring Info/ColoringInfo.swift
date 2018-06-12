@@ -28,8 +28,18 @@ class ColoringInfo: NSObject, NSCoding {
         }
     }
     
-    dynamic var colorMap: ColorMap?
+    var baseColor: CGColor
+    var baseNSColor: NSColor {
+        get {
+            return NSColor(cgColor: self.baseColor)!
+        }
+        
+        set {
+            self.baseColor = newValue.cgColor
+        }
+    }
     
+    dynamic var colorMap: ColorMap?
     dynamic var gradientColor: GradientColor? {
         willSet {
             if let color = self.gradientColor {
@@ -47,11 +57,12 @@ class ColoringInfo: NSObject, NSCoding {
     dynamic var didChange: Bool = false
     
     override convenience init() {
-        self.init(type: .None, colorMap: nil, gradientColor: nil)
+        self.init(type: .None, baseColor: CGColor.white, colorMap: nil, gradientColor: nil)
     }
     
-    init(type: ColoringType, colorMap: ColorMap?, gradientColor: GradientColor?) {
+    init(type: ColoringType, baseColor: CGColor, colorMap: ColorMap?, gradientColor: GradientColor?) {
         self.coloringType = type
+        self.baseColor = baseColor
         self.colorMap = colorMap
         self.gradientColor = nil
         super.init()
@@ -68,7 +79,10 @@ class ColoringInfo: NSObject, NSCoding {
             return nil
         }
         
+        let base_color = (coder.decodeObject(forKey: "colorinfo_basecolor") as? NSColor)?.cgColor ?? CGColor.white
+        
         self.init(type: type,
+                  baseColor: base_color,
                   colorMap: coder.decodeObject(forKey: "colorinfo_colormap") as? ColorMap,
                   gradientColor: coder.decodeObject(forKey: "colorinfo_linearcolor") as? GradientColor)
     }
@@ -83,6 +97,7 @@ class ColoringInfo: NSObject, NSCoding {
         try! coder.encodeEncodable(self.coloringType, forKey: "colorinfo_type")
         coder.encode(self.colorMap, forKey: "colorinfo_colormap")
         coder.encode(self.gradientColor, forKey: "colorinfo_linearcolor")
+        coder.encode(self.baseNSColor, forKey: "colorinfo_basecolor")
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -104,6 +119,7 @@ class ColorMap: NSObject, NSCoding {
     }
 }
 
+// MARK: -
 typealias GradientColorTuple = (position: Float, color: CGColor)
 class GradientColor: NSObject, NSCoding {
     private(set) var colors: [GradientColorItem]
