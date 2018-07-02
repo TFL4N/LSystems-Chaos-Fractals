@@ -31,6 +31,7 @@ class LSystemDocument: NSDocument {
         self.l_system_window_ctlr = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("LSystem Document Window Controller")) as! NSWindowController
         
         self.addWindowController(self.l_system_window_ctlr)
+        self.l_system_window_ctlr.showWindow(self)
     }
     
     func showGraphicsWindowController() {
