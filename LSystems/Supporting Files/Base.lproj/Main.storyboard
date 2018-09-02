@@ -2912,7 +2912,7 @@ Gw
                                         </tableHeaderView>
                                     </scrollView>
                                     <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0XM-r3-lAv">
-                                        <rect key="frame" x="0.0" y="208" width="262" height="18"/>
+                                        <rect key="frame" x="0.0" y="208" width="311" height="18"/>
                                         <subviews>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eyQ-Oe-DR7" userLabel="Add Variable">
                                                 <rect key="frame" x="0.0" y="-1" width="86" height="19"/>
@@ -2944,13 +2944,22 @@ Gw
                                                     <action selector="showGraphicsWindow:" target="3Le-LH-v21" id="3Lb-75-XaG"/>
                                                 </connections>
                                             </button>
+                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ruC-fJ-dY0">
+                                                <rect key="frame" x="270" y="-1" width="41" height="19"/>
+                                                <buttonCell key="cell" type="roundRect" title="Help" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yvh-I9-aDp">
+                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                    <font key="font" metaFont="cellTitle"/>
+                                                </buttonCell>
+                                            </button>
                                         </subviews>
                                         <visibilityPriorities>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
                                             <integer value="1000"/>
+                                            <integer value="1000"/>
                                         </visibilityPriorities>
                                         <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
                                             <real value="3.4028234663852886e+38"/>
@@ -2960,8 +2969,8 @@ Gw
                                         <rect key="frame" x="0.0" y="0.0" width="442" height="200"/>
                                         <subviews>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OHe-ey-dXK">
-                                                <rect key="frame" x="-6" y="172" width="81" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Create" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lRn-0J-V7n">
+                                                <rect key="frame" x="-6" y="172" width="121" height="32"/>
+                                                <buttonCell key="cell" type="push" title="Create String" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lRn-0J-V7n">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
@@ -3046,6 +3055,72 @@ Gw
                 <userDefaultsController representsSharedInstance="YES" id="dAI-gQ-KLT"/>
             </objects>
             <point key="canvasLocation" x="-671" y="273"/>
+        </scene>
+        <!--Window Controller-->
+        <scene sceneID="5ZM-NQ-j78">
+            <objects>
+                <windowController id="gSK-WJ-gxp" sceneMemberID="viewController">
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="deE-TE-Jgy">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="196" y="249" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
+                        <connections>
+                            <outlet property="delegate" destination="gSK-WJ-gxp" id="NNf-wP-vVL"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="Ukj-rd-IzD" kind="relationship" relationship="window.shadowedContentViewController" id="4q5-y2-54z"/>
+                    </connections>
+                </windowController>
+                <customObject id="aib-93-5Te" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-690" y="957"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="2Qr-73-Vkc">
+            <objects>
+                <viewController id="Ukj-rd-IzD" sceneMemberID="viewController">
+                    <view key="view" id="4Fl-rP-Sr5">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="309"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="peX-sz-MHy">
+                                <rect key="frame" x="8" y="10" width="464" height="289"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="nHE-kF-sxk">
+                                    <font key="font" metaFont="system"/>
+                                    <mutableString key="title">LSystem Help
+
+An LSystem iteratively creates turtle drawing commands by applying a list of transformation rules to a base axiom.
+
+Variables represent individual elements of the command string
+     Draw:          Turtle will draw one segment
+     Non-Draw:  Turtle will ignore completely, useful for placeholders
+     Angle:          Turtle will rotate in units degrees, one must be present if
+                          using reserved characters [, ], -, or +
+
+Reserved Characters
+     [     push current turtle state onto stack
+     ]     pop and set turtle state from stack
+     -     decrease turtle angle (first angle variable)
+     +     increase turtle angle (first angle variable)
+</mutableString>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="peX-sz-MHy" firstAttribute="centerX" secondItem="4Fl-rP-Sr5" secondAttribute="centerX" id="E4y-Z1-nOu"/>
+                            <constraint firstItem="peX-sz-MHy" firstAttribute="height" secondItem="4Fl-rP-Sr5" secondAttribute="height" constant="-20" id="TCL-UC-UnU"/>
+                            <constraint firstItem="peX-sz-MHy" firstAttribute="width" secondItem="4Fl-rP-Sr5" secondAttribute="width" constant="-20" id="bbc-ae-XfB"/>
+                            <constraint firstItem="peX-sz-MHy" firstAttribute="centerY" secondItem="4Fl-rP-Sr5" secondAttribute="centerY" id="y81-pe-B0S"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="qcS-D4-VVa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-690" y="1425.5"/>
         </scene>
         <!--Graphics View Controller-->
         <scene sceneID="xIX-Xn-yFc">

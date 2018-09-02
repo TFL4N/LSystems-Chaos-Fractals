@@ -228,20 +228,20 @@ class AttractorDocument: NSDocument, VideoCaptureViewControllerDelegate {
     //
     //
     //
-    func adjustAttractor(_ obj: Attractor) {
-        var param = obj.parameter(withName: "D")!
-        param.animation = AnimationSequence(keyFrames: [
-            KeyFrame(value: Value(type: .float, value: 1.7), duration: 500),
-            KeyFrame(value: Value(type: .float, value: 2.0), duration: 200),
-            KeyFrame(value: Value(type: .float, value: 1.9), duration: 100)
-            ])
-        
-        param = obj.parameter(withName: "B")!
-        param.animation = AnimationSequence(keyFrames: [
-            KeyFrame(value: Value(type: .float, value: 1.0), duration: 700),
-            KeyFrame(value: Value(type: .float, value: 1.0), duration: 200),
-            KeyFrame(value: Value(type: .float, value: 1.6), duration: 100)
-            ])
-    }
+//    func adjustAttractor(_ obj: Attractor) {
+//        var param = obj.parameter(withName: "D")!
+//        param.animation = AnimationSequence(keyFrames: [
+//            KeyFrame(value: Value(type: .float, value: 1.7), duration: 500),
+//            KeyFrame(value: Value(type: .float, value: 2.0), duration: 200),
+//            KeyFrame(value: Value(type: .float, value: 1.9), duration: 100)
+//            ])
+//        
+//        param = obj.parameter(withName: "B")!
+//        param.animation = AnimationSequence(keyFrames: [
+//            KeyFrame(value: Value(type: .float, value: 1.0), duration: 700),
+//            KeyFrame(value: Value(type: .float, value: 1.0), duration: 200),
+//            KeyFrame(value: Value(type: .float, value: 1.6), duration: 100)
+//            ])
+//    }
 }
 

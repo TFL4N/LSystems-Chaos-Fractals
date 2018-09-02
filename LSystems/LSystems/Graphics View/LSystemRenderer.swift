@@ -108,6 +108,7 @@ class LSystemRenderer: NSObject, MTKViewDelegate {
             let tex_length = texCoords.count * MemoryLayout<Float>.stride
             self.texCoordsBuffer = self.device.makeBuffer(bytes: texCoords, length: tex_length, options: [])!
         } catch {
+            print("Build Vertex and Texture Buffer Fail")
             throw error
         }
         
@@ -117,6 +118,7 @@ class LSystemRenderer: NSObject, MTKViewDelegate {
             let url = bundle.urlForImageResource(NSImage.Name(rawValue: "colormap_6"))!
             self.colorMap = try LSystemRenderer.loadTexture(device: self.device, textureUrl: url)
         } catch {
+            print("Load Texture Fail")
             throw error
         }
             

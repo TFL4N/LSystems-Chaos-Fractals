@@ -62,7 +62,7 @@ class LSystemDocument: NSDocument {
         
         let dict: [String: Any] = [
             "l_system": self.l_system,
-//            "color_info": self.color_info
+//            "color_info": self.coloring_info
         ]
         
         let data = NSMutableData()
@@ -82,7 +82,7 @@ class LSystemDocument: NSDocument {
         
         let dict = NSKeyedUnarchiver.unarchiveObject(with: data) as! [String: Any]
         self.l_system = dict["l_system"] as! LSystem
-//        self.color_info = dict["color_info"] as! ColorInfo
+//        self.color_info = dict["color_info"] as! ColoringInfo
     }
 
 

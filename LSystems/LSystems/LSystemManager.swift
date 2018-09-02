@@ -13,9 +13,11 @@ class LSystemManager {
     var output_str: String? = nil
     
     enum LSystemError: Error {
-        case RuleNotFound
-        case UnsupportedReserveCharacter
+        case RuleNotFound(named: String)
+        case UnsupportedReserveCharacter(named: String)
         case MissingAngleVariable
+        case InvalidCharacter(named: String)
+        case InvalidVariable(named: String)
     }
     
     static let reservedCharacters = ["[","]","\\","|","/","-","+"]
@@ -40,12 +42,17 @@ class LSystemManager {
                 
                 if LSystemManager.reservedCharacters.contains(el) {
                     working.append(el)
-                } else {
-                    if let rule = self.system.rule(withVariableName: String(el)) {
-                        working.append(rule.value)
+                } else if let rule = self.system.rule(withVariableName: el) {
+                    working.append(rule.value)
+                } else if let variable = self.system.variable(withName: el) {
+                    if variable.type == .Draw
+                    || variable.type == .NonDraw {
+                        working.append(el)
                     } else {
-                        throw LSystemError.RuleNotFound
+                        throw LSystemError.InvalidVariable(named: el)
                     }
+                } else {
+                    throw LSystemError.InvalidCharacter(named: el)
                 }
                 
                 // loop condition
@@ -87,9 +94,7 @@ class LSystemManager {
         var currentAngle: Float = 0.0
         var currentRange = working.startIndex...working.startIndex
         let currentSegmentLength: Float = 1.0
-        
         let positionStack = PositionStack()
-        let ruleMap = self.mapRules()
         
         while currentRange.upperBound < working.endIndex {
             let el = String(working[currentRange])
@@ -111,34 +116,26 @@ class LSystemManager {
                 case "+":
                     currentAngle += angleValue!
                 default:
-                    throw LSystemError.UnsupportedReserveCharacter
+                    throw LSystemError.UnsupportedReserveCharacter(named: el)
                 }
             } else {
-                guard let rule = ruleMap.first(where: { (item) -> Bool in
-                    if let variable = item.variable {
-                        return variable.name == el
-                    } else {
-                        return false
-                    }
-                }) else {
-                    throw LSystemError.RuleNotFound
+                guard let variable = self.system.variable(withName: el) else {
+                    throw LSystemError.InvalidVariable(named: el)
                 }
                 
-                if let variable = rule.variable {
-                    if variable.type == .Draw {
-                        // append current pos
-                        appendPosition(currentPos, buffer: &outputBuffer)
-                        
-                        // move turtle
-                        let new_x = sinf(radians_from_degrees(currentAngle)) * currentSegmentLength
-                        let new_y = cosf(radians_from_degrees(currentAngle)) * currentSegmentLength
-                        let new_z = Float(0.0)
-                        
-                        currentPos += Position(x: new_x, y: new_y, z: new_z)
-                        
-                        // append new pos
-                        appendPosition(currentPos, buffer: &outputBuffer)
-                    }
+                if variable.type == .Draw {
+                    // append current pos
+                    appendPosition(currentPos, buffer: &outputBuffer)
+                    
+                    // move turtle
+                    let new_x = sinf(radians_from_degrees(currentAngle)) * currentSegmentLength
+                    let new_y = cosf(radians_from_degrees(currentAngle)) * currentSegmentLength
+                    let new_z = Float(0.0)
+                    
+                    currentPos += Position(x: new_x, y: new_y, z: new_z)
+                    
+                    // append new pos
+                    appendPosition(currentPos, buffer: &outputBuffer)
                 }
             }
             
