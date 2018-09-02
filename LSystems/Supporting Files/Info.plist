@@ -17,16 +17,14 @@
 			<string>Editor</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>Attractor</string>
+				<string>spaice.attractor</string>
 			</array>
 			<key>NSDocumentClass</key>
 			<string>$(PRODUCT_MODULE_NAME).AttractorDocument</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>lsys</string>
-			</array>
+			<array/>
 			<key>CFBundleTypeIconFile</key>
 			<string></string>
 			<key>CFBundleTypeName</key>
@@ -35,7 +33,7 @@
 			<string>Editor</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>LSystem</string>
+				<string>spaice.lsystem</string>
 			</array>
 			<key>NSDocumentClass</key>
 			<string>$(PRODUCT_MODULE_NAME).LSystemDocument</string>
@@ -65,5 +63,44 @@
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Attractor Data File</string>
+			<key>UTTypeIdentifier</key>
+			<string>spaice.attractor</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>atr</string>
+					<string>attractor</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>LSystem Data File</string>
+			<key>UTTypeIdentifier</key>
+			<string>spaice.lsystem</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>lsys</string>
+					<string>system</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
 </dict>
 </plist>

@@ -23,17 +23,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 
     @IBAction func newLSystemDocument(sender: Any?) {
-        print("wtf1")
-        self.createNewDocument(ofType: "LSystem")
+        self.createNewDocument(ofType: "spaice.lsystem")
     }
     
     @IBAction func newAttractorDocument(sender: Any?) {
-        print("wtf2")
-        self.createNewDocument(ofType: "Attractor")
+        self.createNewDocument(ofType: "spaice.attractor")
     }
     
     @IBAction func newFractalDocument(sender: Any?) {
-        print("wtf3")
+        
     }
     
     private func createNewDocument(ofType type: String) {
@@ -47,11 +45,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         
-        print("new doc: \(type)")
-        print("doc class: \(new_doc)")
         doc_cntlr.addDocument(new_doc)
         new_doc.makeWindowControllers()
-        print("new doc created")
     }
 }
 
