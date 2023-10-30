@@ -6,6 +6,8 @@ I wrote this app in my spare time.  I had written a few fractal generators in C+
 ## Features
 * Leverages Metal to render drawings
 * Uses the NSDocument class to archive rules, axioms, and colors
+* Real-time editting (for reasonable iteration limits)
+  * Attractor conditions can be modified and colors changed, then rendered automatically   
 * Multiple coloring options
   * Solid colors (LAB palette)
   * Customizable gradients
@@ -47,6 +49,7 @@ Newtonian and Julian fractals are mostly implemented on a separate branch, but n
 # Issues
 ## More friendly GUI
 + Currently the only way to zoom the draw is to use the pinch gesture on the trackpad of a laptop.  Need to add hotkey options (and add help dialog to explain this)
+  + Panning also in 3D renderer (uses 2 finger swipe on trackpad) 
 + Video output url textbox is broken (might be hardcoded)
 + Add way to remove variables and rules in lsystems
 + Color info for lsystems seems to hardcoded to a colormap, add coloring options like attractors
@@ -54,7 +57,11 @@ Newtonian and Julian fractals are mostly implemented on a separate branch, but n
 + Add blurb in color selector "Click to apply color" above preview panel
 + Maybe allow other color palettes over than LAB
 + Allow user to color map (currently hardcoded)
++ Add reordering to color gradient picker
 + Double check animations are working correctly
++ LSystem renderer creates some artifacts near the origin
++ Video capture is doing too work on the main thread for some reason (non responsive)
+
 
 # References
 * Some of the examples and formulas were found on [Paul Bourke's website](https://paulbourke.net/fractals/), which contains an extensive collections of everything self-similar and fractal.
