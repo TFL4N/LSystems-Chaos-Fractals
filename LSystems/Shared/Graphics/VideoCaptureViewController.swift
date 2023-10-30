@@ -102,7 +102,7 @@ class VideoCaptureViewController: NSViewController, VideoCaptureDelegate {
                 """
                 Video Capture Failed
                 
-                Error \(self.video_capture.error!)
+                Error \(self.video_capture.error ?? VideoCaptureError.UserCancelOrUnknownError)
                 """
             )
             
@@ -114,8 +114,8 @@ class VideoCaptureViewController: NSViewController, VideoCaptureDelegate {
         DispatchQueue.main.async {
             self.showMessage(
                 """
-            Video Capture Cancelled
-            """
+                Video Capture Cancelled
+                """
             )
             
             self.cancelButton.title = "Close"

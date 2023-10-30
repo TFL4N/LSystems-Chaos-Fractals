@@ -15,7 +15,7 @@ class FilePathTextField: NSTextField {
             return URL(fileURLWithPath: self.stringValue)
         }
         set {
-            self.stringValue = self.fileURL?.path ?? ""
+            self.stringValue = newValue?.path ?? ""
         }
     }
     

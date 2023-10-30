@@ -19,6 +19,8 @@ enum VideoCaptureError: Error {
     case FailedToGetPixelBaseAddress
     
     case FailedToCreateMTLDevice
+    
+    case UserCancelOrUnknownError
 }
 
 class VideoCaptureSettings: NSObject, NSCoding {
