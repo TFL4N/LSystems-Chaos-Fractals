@@ -3,6 +3,8 @@ A macOS application to generating and animating LSystems, Chaos Theory's Strange
 
 I wrote this app in my spare time.  I had written a few fractal generators in C++ and libPNG years and wanted to consolidate those old programs into a single application. It could use more GUI elements to make the user experience better. (So far the only user has been the developer, who can just edit and rebuild as needed).  But with that said, it is usable through the GUI todo some cool things and some more features are in the works (as always).
 
+![Gif of Attractor](/Examples/Screenshots/Attractor_Animated.gif)
+
 ## Features
 * Leverages Metal to render drawings
 * Uses the NSDocument class to archive rules, axioms, and colors
@@ -45,6 +47,10 @@ let new_z: Float = z
 Newtonian and Julian fractals are mostly implemented on a separate branch, but not ready to be user facing (the issues below take the cake).  Will try to add these sooner than later
 
 # Screen Shots
+![Screenshot of Bush](/Examples/Screenshots/Cool_Bush_Screenshot.png)
+![Screenshot of Evergreen](/Examples/Screenshots/Evergreen_Screenshot.png)
+![Screenshot of Triangle](/Examples/Screenshots/Sieroinskis_Triangle_Screenshot.png)
+![Screenshot of Attractor](/Examples/Screenshots/Attractor_Screenshot.png)
 
 # Issues
 ## More friendly GUI
@@ -60,7 +66,7 @@ Newtonian and Julian fractals are mostly implemented on a separate branch, but n
 + Add reordering to color gradient picker
 + Double check animations are working correctly
 + LSystem renderer creates some artifacts near the origin
-+ Video capture is doing too work on the main thread for some reason (non responsive)
++ Video capture can be non responive at time, there might be a memory leak or maybe too much work on the main thread
 
 
 # References
