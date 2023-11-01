@@ -1,7 +1,7 @@
 # LSystems-Chaos-Fractals
 A macOS application to generating and animating LSystems, Chaos Theory's Strange Attractors, and Fractals
 
-I wrote this app in my spare time.  I had written a few fractal generators in C++ and libPNG years and wanted to consolidate those old programs into a single application. It could use more GUI elements to make the user experience better. (So far the only user has been the developer, who can just edit and rebuild as needed).  But with that said, it is usable through the GUI todo some cool things and some more features are in the works (as always).
+I wrote this app in my spare time.  I had written a few fractal generators in C++ and libPNG years ago and wanted to consolidate those old programs into a single application. It could use more GUI elements to make the user experience better. (So far the only user has been the developer, who can just edit and rebuild as needed).  But with that said, it is usable through the GUI todo some cool things and some more features are in the works (as always).
 
 ![Gif of Attractor](/Examples/Screenshots/Attractor_Animated.gif)
 
